@@ -757,6 +757,115 @@
   .sl-status.err{color:var(--neon-pink);}
   .sl-hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;}
 
+  /* ============ contact section (extracted from connect; at page bottom) ============ */
+  .contact-inner{text-align:center;max-width:640px;margin:0 auto;}
+  .contact-title{
+    font-family:'Bungee',sans-serif;font-size:clamp(28px,4.5vw,46px);
+    line-height:1.05;color:var(--cream);letter-spacing:-.5px;
+    margin:14px 0 16px;
+  }
+  .contact-title em{color:var(--neon-cyan);font-style:italic;}
+  .contact-lead{
+    font-size:16px;color:var(--cream);opacity:.85;max-width:520px;
+    margin:0 auto 26px;line-height:1.6;
+  }
+
+  /* ============ cat strip (3 wandering cats above footer) ============ */
+  .cat-strip{
+    position:relative;height:130px;overflow:hidden;
+    background:linear-gradient(180deg,transparent 0%,rgba(31,82,56,.18) 55%,rgba(22,65,47,.42) 100%);
+    border-top:1px dashed rgba(31,82,56,.4);
+    margin-top:40px;
+  }
+  .strip-grass{
+    position:absolute;bottom:0;left:0;right:0;height:18px;
+    background:repeating-linear-gradient(90deg,
+      rgba(31,82,56,.4) 0px,rgba(31,82,56,.4) 6px,
+      transparent 6px,transparent 12px);
+  }
+  .strip-cat{
+    position:absolute;bottom:18px;
+    cursor:pointer;outline:none;display:inline-block;
+  }
+  .strip-cat svg{display:block;animation:strip-bob .35s steps(2) infinite;}
+  .strip-cat:hover svg{filter:brightness(1.2);}
+  .strip-cat:focus-visible svg{filter:drop-shadow(0 0 8px var(--neon-cyan));}
+  @keyframes strip-bob{50%{transform:translateY(-2px);}}
+
+  .sc-knife{color:#9bc5d5;animation:strip-walk-a 24s linear infinite;}
+  .sc-ling {color:#e8e0c5;animation:strip-walk-b 28s linear infinite;animation-delay:-9s;}
+  .sc-pot  {color:#ff8a3d;animation:strip-walk-c 19s linear infinite;animation-delay:-4s;}
+
+  @keyframes strip-walk-a{
+    0%   {left:-90px; transform:scaleX(1);}
+    49%  {left:100%;  transform:scaleX(1);}
+    50%  {left:100%;  transform:scaleX(-1);}
+    99%  {left:-90px; transform:scaleX(-1);}
+    100% {left:-90px; transform:scaleX(1);}
+  }
+  @keyframes strip-walk-b{
+    0%   {left:30%;   transform:scaleX(-1);}
+    49%  {left:-90px; transform:scaleX(-1);}
+    50%  {left:-90px; transform:scaleX(1);}
+    99%  {left:100%;  transform:scaleX(1);}
+    100% {left:30%;   transform:scaleX(-1);}
+  }
+  @keyframes strip-walk-c{
+    0%   {left:70%;   transform:scaleX(1);}
+    49%  {left:100%;  transform:scaleX(1);}
+    50%  {left:100%;  transform:scaleX(-1);}
+    99%  {left:-90px; transform:scaleX(-1);}
+    100% {left:70%;   transform:scaleX(1);}
+  }
+
+  .strip-meow{
+    position:absolute;left:50%;top:-30px;transform:translateX(-50%);
+    background:var(--cream);color:var(--ink);
+    font-family:'Caveat',cursive;font-size:18px;font-weight:700;
+    padding:4px 14px;border-radius:14px;
+    opacity:0;transition:opacity .2s;pointer-events:none;white-space:nowrap;
+  }
+  .strip-meow::after{
+    content:"";position:absolute;left:50%;bottom:-5px;transform:translateX(-50%);
+    width:0;height:0;
+    border-left:6px solid transparent;border-right:6px solid transparent;
+    border-top:6px solid var(--cream);
+  }
+  .strip-cat.meowing .strip-meow{opacity:1;}
+  /* knife teleport flash */
+  .strip-cat.flash{animation:strip-flash 1.6s ease-out;}
+  @keyframes strip-flash{
+    0%   {filter:none;}
+    20%  {filter:drop-shadow(0 0 20px var(--neon-yellow)) brightness(1.8);transform:scale(1.4);}
+    100% {filter:none;transform:scale(1);}
+  }
+
+  /* feed-the-cats tip jar — pinned to cat strip */
+  .feed-cats{
+    position:absolute;right:18px;bottom:18px;z-index:20;
+    display:inline-flex;align-items:center;gap:8px;
+    background:linear-gradient(135deg,var(--neon-yellow) 0%,#ffb83a 100%);
+    color:var(--ink);text-decoration:none;
+    font-family:'Bungee',sans-serif;font-size:10.5px;letter-spacing:1.3px;
+    padding:10px 16px;border-radius:999px;
+    box-shadow:0 8px 22px -8px rgba(255,210,63,.7);
+    transition:transform .2s,box-shadow .2s;
+    animation:feed-pulse 3s ease-in-out infinite;
+  }
+  .feed-cats:hover{
+    transform:translateY(-2px) scale(1.05);
+    box-shadow:0 12px 30px -8px rgba(255,210,63,.9);
+    animation:none;
+  }
+  .feed-cats .feed-emo{font-family:system-ui;font-size:14px;}
+  @keyframes feed-pulse{
+    0%,100%{box-shadow:0 8px 22px -8px rgba(255,210,63,.7);}
+    50%    {box-shadow:0 8px 28px -6px rgba(255,210,63,1);}
+  }
+  @media (max-width:600px){
+    .feed-cats{font-size:9.5px;padding:8px 12px;right:10px;bottom:10px;}
+  }
+
   /* ============ swamp easter eggs (toast / rain / sophie modal / floating meow) ============ */
   .swamp-toast{
     position:fixed;right:18px;bottom:18px;z-index:9000;
@@ -882,7 +991,7 @@
     <a href="#obsessions">Obsessions</a>
     <a href="#blues">Blues</a>
     <a href="cognitive-recipes.html" style="color:var(--neon-lime);">Recipes</a>
-    <a href="/swamp-ui/" style="color:var(--neon-cyan);">Swamp UI ✦</a>
+    <a href="swamp-ui/index.html" style="color:var(--neon-cyan);">Swamp UI ✦</a>
     <a href="#connect">Connect</a>
   </div>
 </nav>
@@ -1799,21 +1908,118 @@
         </div>
       </div>
 
-      <!-- swamp letters → newsletter signup (Netlify Forms) -->
-      <div class="swamp-letters reveal">
-        <span class="sl-kicker">The Swamp Writes Letters</span>
-        <p class="sl-tag">Every now and then, when something stirs &mdash;<br>drop your email and I'll slide one under your door.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ contact form (moved to page bottom) ============ -->
+<section class="block anchor" id="contact">
+  <div class="wrap">
+    <div class="contact-inner reveal">
+      <span class="kicker">Write to the Swamp</span>
+      <h2 class="contact-title">Got a question, an idea, or<br>something you <em>need</em>?</h2>
+      <p class="contact-lead">Leave your email and I'll write back. Collaborations, strange ideas, requests, introductions, or just hello — the swamp listens.</p>
+      <div class="swamp-letters">
         <form name="swamp-letters" method="POST" data-netlify="true" data-netlify-honeypot="bot-field" class="sl-form" id="slForm">
           <input type="hidden" name="form-name" value="swamp-letters" />
           <p class="sl-hp"><label>Don't fill: <input name="bot-field" /></label></p>
           <input type="email" name="email" placeholder="you@somewhere.world" required autocomplete="email" />
-          <button type="submit" class="sl-submit">slip me in →</button>
+          <button type="submit" class="sl-submit">send →</button>
         </form>
         <p class="sl-status" id="slStatus" aria-live="polite"></p>
       </div>
     </div>
   </div>
 </section>
+
+<!-- ============ cat strip: Mr. Knife, Ms. Ling, Littlehotpot wander ============ -->
+<div class="cat-strip" id="catStrip">
+  <div class="strip-grass"></div>
+
+  <!-- tip jar: feed the cats -->
+  <a class="feed-cats" id="feedCats" href="https://buymeacoffee.com/sophieren" target="_blank" rel="noopener" aria-label="Feed the cats (tip jar)">
+    <span class="feed-emo">🐈‍⬛🐈</span>
+    <span>FEED THE CATS</span>
+  </a>
+
+  <!-- Mr. Knife — silver-blue exotic shorthair -->
+  <div class="strip-cat sc-knife" data-name="Mr. Knife" data-meow="meow ♡" tabindex="0" role="button" aria-label="Mr. Knife the cat">
+    <div class="strip-meow">meow ♡</div>
+    <svg width="64" height="44" viewBox="0 0 64 44" xmlns="http://www.w3.org/2000/svg">
+      <path d="M5 24 Q-1 16 4 9" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <ellipse cx="24" cy="27" rx="17" ry="10" fill="currentColor"/>
+      <ellipse cx="44" cy="22" rx="11" ry="10" fill="currentColor"/>
+      <path d="M36 16 L37 9 L42 14 Z" fill="currentColor"/>
+      <path d="M52 16 L51 9 L46 14 Z" fill="currentColor"/>
+      <circle cx="41" cy="22" r="1.7" fill="#52a4ff"/>
+      <circle cx="47" cy="22" r="1.7" fill="#52a4ff"/>
+      <circle cx="44" cy="25" r="1" fill="#ff4d8d"/>
+      <line x1="48" y1="25" x2="56" y2="24" stroke="#081310" stroke-width=".6"/>
+      <line x1="48" y1="26" x2="56" y2="27" stroke="#081310" stroke-width=".6"/>
+      <line x1="40" y1="25" x2="34" y2="24" stroke="#081310" stroke-width=".6"/>
+      <line x1="40" y1="26" x2="34" y2="27" stroke="#081310" stroke-width=".6"/>
+      <rect x="13" y="33" width="2.5" height="6" fill="currentColor" rx="1"/>
+      <rect x="19" y="33" width="2.5" height="6" fill="currentColor" rx="1"/>
+      <rect x="28" y="33" width="2.5" height="6" fill="currentColor" rx="1"/>
+      <rect x="34" y="33" width="2.5" height="6" fill="currentColor" rx="1"/>
+    </svg>
+  </div>
+
+  <!-- Ms. Ling — cream exotic shorthair -->
+  <div class="strip-cat sc-ling" data-name="Ms. Ling" data-meow="meeeow ✦" tabindex="0" role="button" aria-label="Ms. Ling the cat">
+    <div class="strip-meow">meeeow ✦</div>
+    <svg width="64" height="44" viewBox="0 0 64 44" xmlns="http://www.w3.org/2000/svg">
+      <path d="M5 24 Q-1 16 4 9" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <ellipse cx="24" cy="27" rx="17" ry="10" fill="currentColor"/>
+      <ellipse cx="44" cy="22" rx="11" ry="10" fill="currentColor"/>
+      <path d="M36 16 L37 9 L42 14 Z" fill="currentColor"/>
+      <path d="M52 16 L51 9 L46 14 Z" fill="currentColor"/>
+      <circle cx="41" cy="22" r="1.7" fill="#52a4ff"/>
+      <circle cx="47" cy="22" r="1.7" fill="#52a4ff"/>
+      <circle cx="44" cy="25" r="1" fill="#ff4d8d"/>
+      <line x1="48" y1="25" x2="56" y2="24" stroke="#081310" stroke-width=".6"/>
+      <line x1="48" y1="26" x2="56" y2="27" stroke="#081310" stroke-width=".6"/>
+      <line x1="40" y1="25" x2="34" y2="24" stroke="#081310" stroke-width=".6"/>
+      <line x1="40" y1="26" x2="34" y2="27" stroke="#081310" stroke-width=".6"/>
+      <rect x="13" y="33" width="2.5" height="6" fill="currentColor" rx="1"/>
+      <rect x="19" y="33" width="2.5" height="6" fill="currentColor" rx="1"/>
+      <rect x="28" y="33" width="2.5" height="6" fill="currentColor" rx="1"/>
+      <rect x="34" y="33" width="2.5" height="6" fill="currentColor" rx="1"/>
+    </svg>
+  </div>
+
+  <!-- Littlehotpot — bengal/leopard with spots -->
+  <div class="strip-cat sc-pot" data-name="Littlehotpot" data-meow="MROW!" tabindex="0" role="button" aria-label="Littlehotpot the cat">
+    <div class="strip-meow">MROW!</div>
+    <svg width="64" height="44" viewBox="0 0 64 44" xmlns="http://www.w3.org/2000/svg">
+      <path d="M5 24 Q-1 16 4 9" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <ellipse cx="24" cy="27" rx="17" ry="10" fill="currentColor"/>
+      <ellipse cx="44" cy="22" rx="11" ry="10" fill="currentColor"/>
+      <!-- leopard spots -->
+      <circle cx="18" cy="25" r="1.6" fill="#4a1f10" opacity=".55"/>
+      <circle cx="24" cy="29" r="1.4" fill="#4a1f10" opacity=".55"/>
+      <circle cx="29" cy="24" r="1.5" fill="#4a1f10" opacity=".55"/>
+      <circle cx="33" cy="29" r="1.2" fill="#4a1f10" opacity=".55"/>
+      <circle cx="14" cy="29" r="1.2" fill="#4a1f10" opacity=".55"/>
+      <path d="M36 16 L37 9 L42 14 Z" fill="currentColor"/>
+      <path d="M52 16 L51 9 L46 14 Z" fill="currentColor"/>
+      <!-- yellow eyes (wilder) -->
+      <ellipse cx="41" cy="22" rx="1.6" ry="2.2" fill="#ffd23f"/>
+      <ellipse cx="47" cy="22" rx="1.6" ry="2.2" fill="#ffd23f"/>
+      <line x1="41" y1="20" x2="41" y2="24" stroke="#081310" stroke-width=".8"/>
+      <line x1="47" y1="20" x2="47" y2="24" stroke="#081310" stroke-width=".8"/>
+      <circle cx="44" cy="25" r="1" fill="#ff4d8d"/>
+      <line x1="48" y1="25" x2="56" y2="24" stroke="#081310" stroke-width=".6"/>
+      <line x1="48" y1="26" x2="56" y2="27" stroke="#081310" stroke-width=".6"/>
+      <line x1="40" y1="25" x2="34" y2="24" stroke="#081310" stroke-width=".6"/>
+      <line x1="40" y1="26" x2="34" y2="27" stroke="#081310" stroke-width=".6"/>
+      <rect x="13" y="33" width="2.5" height="6" fill="currentColor" rx="1"/>
+      <rect x="19" y="33" width="2.5" height="6" fill="currentColor" rx="1"/>
+      <rect x="28" y="33" width="2.5" height="6" fill="currentColor" rx="1"/>
+      <rect x="34" y="33" width="2.5" height="6" fill="currentColor" rx="1"/>
+    </svg>
+  </div>
+</div>
 
 <!-- ============ footer ============ -->
 <footer>
@@ -2241,6 +2447,58 @@ function toast(msg){
   });
 })();
 
+/* ============ cat strip — clicks (meow) + 3-click → "feed me?" tip link ============ */
+(function(){
+  const TIP_URL = 'https://buymeacoffee.com/sophieren';
+  document.querySelectorAll('.strip-cat').forEach(cat => {
+    const bubble = cat.querySelector('.strip-meow');
+    const originalText = bubble.textContent;
+    let count = 0;
+    let resetTimer = null;
+
+    function fireMeow(){
+      count++;
+      cat.classList.add('meowing');
+      clearTimeout(resetTimer);
+
+      if(count >= 3){
+        // third quick click → escalate to tip link
+        bubble.innerHTML = 'feed me 🍣';
+        bubble.style.background = '#ffd23f';
+        bubble.style.cursor = 'pointer';
+        bubble.style.pointerEvents = 'auto';
+        bubble.onclick = (e) => {
+          e.stopPropagation();
+          window.open(TIP_URL, '_blank', 'noopener');
+        };
+        count = 0;
+        resetTimer = setTimeout(() => {
+          cat.classList.remove('meowing');
+          bubble.textContent = originalText;
+          bubble.style.background = '';
+          bubble.style.pointerEvents = 'none';
+          bubble.onclick = null;
+        }, 2600);
+      } else {
+        // normal meow
+        bubble.textContent = originalText;
+        bubble.style.background = '';
+        bubble.style.pointerEvents = 'none';
+        bubble.onclick = null;
+        resetTimer = setTimeout(() => {
+          cat.classList.remove('meowing');
+          count = 0;
+        }, 1200);
+      }
+    }
+
+    cat.addEventListener('click', fireMeow);
+    cat.addEventListener('keydown', e => {
+      if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); fireMeow(); }
+    });
+  });
+})();
+
 /* ============ swamp name generator (first-visit toast + localStorage) ============ */
 (function(){
   const KEY = 'swamp:name';
@@ -2345,7 +2603,17 @@ function toast(msg){
     m.querySelector('.sm-close').addEventListener('click',close);
   }
   function doKnife(){
-    /* main page has no cats — show a "knife is napping" line */
+    /* main page now has Mr. Knife on the cat strip — flash + scroll to him */
+    const knife = document.querySelector('.strip-cat[data-name="Mr. Knife"]');
+    if(knife){
+      knife.scrollIntoView({behavior:'smooth', block:'center'});
+      setTimeout(()=>{
+        knife.classList.add('flash');
+        setTimeout(()=>knife.classList.remove('flash'), 1700);
+      }, 700);
+      return;
+    }
+    /* fallback if strip not present */
     const m=document.createElement('div');
     m.className='float-meow';
     m.textContent='Mr. Knife is in the kitchen ↗';

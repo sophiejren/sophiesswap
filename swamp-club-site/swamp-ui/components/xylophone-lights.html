@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<!--
+  Swamp UI — Xylophone Lights
+  String of camp lights, each plays a pentatonic note on hover/click.
+  Pentatonic = nothing ever sounds wrong, no matter the order.
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Xylophone Lights — Swamp UI</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%230b2018'/><circle cx='16' cy='17' r='8' fill='%23ff4d8d'/><circle cx='16' cy='17' r='3.4' fill='%23081310'/></svg>" />
+
+<meta name="description" content="Xylophone Lights — a copy-paste component from Swamp UI. A string of camp lights where each bulb plays a pentatonic note. Pure Web Audio + 50 lines of JS." />
+<meta property="og:title" content="Xylophone Lights — Swamp UI" />
+<meta property="og:description" content="A string of camp lights that play music when clicked. Pentatonic = nothing ever sounds wrong." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://sophieren.com/swamp-ui/components/xylophone-lights.html" />
+<meta property="og:image" content="https://sophieren.com/images/og-image.png" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Caveat:wght@600;700&family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+<style>
+  :root{
+    --ink:#081310;
+    --swamp-deep:#0b2018;
+    --swamp:#0f2e22;
+    --swamp-light:#16412f;
+    --panel:#102a20;
+    --moss:#1f5238;
+    --neon-yellow:#ffd23f;
+    --neon-pink:#ff4d8d;
+    --neon-cyan:#52ffe0;
+    --neon-orange:#ff8a3d;
+    --neon-lime:#b6ff5b;
+    --cream:#f3eedd;
+    --muted:#86a596;
+    --line:rgba(243,238,221,.12);
+    --code-bg:#06110d;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:'Space Grotesk',system-ui,sans-serif;
+    background:var(--ink);color:var(--cream);overflow-x:hidden;line-height:1.65;
+    min-height:100vh;position:relative;
+  }
+  a{color:inherit;text-decoration:none;}
+  ::selection{background:var(--neon-pink);color:var(--ink);}
+
+  body::before{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:9000;
+    background:radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,.6) 100%);
+  }
+  body::after{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:9001;opacity:.04;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  .backdrop{
+    position:fixed;inset:0;z-index:-2;overflow:hidden;
+    background:radial-gradient(ellipse 80% 55% at 50% 20%,#103226 0%,#081814 60%,#040a08 100%);
+  }
+
+  /* nav */
+  nav{
+    position:fixed;top:0;left:0;right:0;z-index:1000;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:14px clamp(16px,4vw,44px);
+    background:linear-gradient(180deg,rgba(7,16,12,.95) 0%,rgba(7,16,12,.55) 60%,rgba(7,16,12,0) 100%);
+  }
+  .brand{display:flex;align-items:center;gap:10px;font-family:'Bungee',sans-serif;font-size:14px;letter-spacing:.5px;color:var(--cream);}
+  .brand b{color:var(--neon-pink);}
+  .brand-dot{width:14px;height:14px;border-radius:50%;background:var(--neon-pink);box-shadow:0 0 12px var(--neon-pink);}
+  .nav-links{display:flex;gap:8px;align-items:center;}
+  .nav-link{
+    font-family:'Bungee',sans-serif;font-size:10.5px;letter-spacing:1.5px;
+    color:var(--neon-cyan);padding:9px 16px;border:1px solid rgba(82,255,224,.35);
+    border-radius:999px;transition:all .2s;
+  }
+  .nav-link:hover{background:rgba(82,255,224,.1);box-shadow:0 0 14px rgba(82,255,224,.3);}
+
+  /* container */
+  .container{max-width:1100px;margin:0 auto;padding:120px clamp(20px,5vw,40px) 100px;}
+
+  /* breadcrumb */
+  .crumb{
+    font-family:'Bungee',sans-serif;font-size:10px;letter-spacing:2px;
+    color:var(--muted);margin-bottom:30px;
+  }
+  .crumb a{color:var(--neon-cyan);transition:color .2s;}
+  .crumb a:hover{color:var(--neon-pink);}
+  .crumb .sep{color:var(--neon-yellow);margin:0 10px;}
+
+  /* hero */
+  header.hero{margin-bottom:60px;}
+  h1.title{
+    font-family:'Bungee',sans-serif;font-size:clamp(40px,7vw,80px);line-height:.98;
+    color:var(--cream);letter-spacing:-1px;margin-bottom:14px;
+  }
+  .sub{font-family:'Caveat',cursive;font-size:26px;color:var(--neon-pink);margin-bottom:16px;font-weight:600;}
+  .lede{font-size:17px;color:var(--cream);opacity:.85;max-width:660px;line-height:1.6;}
+  .lede em{color:var(--neon-pink);font-style:italic;}
+
+  .meta{display:flex;gap:8px;margin-top:22px;flex-wrap:wrap;}
+  .chip{
+    font-family:'Space Grotesk',sans-serif;font-size:11.5px;letter-spacing:.4px;
+    padding:5px 12px;border:1px solid var(--line);border-radius:999px;
+    color:var(--cream);background:rgba(15,46,34,.5);
+  }
+  .chip b{color:var(--neon-pink);margin-right:5px;}
+
+  /* ============ XYLOPHONE LIGHTS — the live demo ============ */
+  .stage{
+    background:linear-gradient(180deg,var(--swamp) 0%,var(--swamp-deep) 100%);
+    border:1px solid var(--line);border-radius:18px;padding:50px 26px 36px;
+    margin:48px 0;position:relative;
+  }
+  .stage-label{
+    position:absolute;top:14px;left:18px;
+    font-family:'Bungee',sans-serif;font-size:9px;letter-spacing:2px;color:var(--muted);
+  }
+
+  /* the lights themselves */
+  .xylo{
+    position:relative;height:180px;margin:0 auto;
+    display:flex;justify-content:center;align-items:flex-start;
+    padding-top:30px;
+  }
+  /* wire / string */
+  .xylo::before{
+    content:"";position:absolute;top:30px;left:5%;right:5%;height:60px;
+    border-top:1px solid rgba(243,238,221,.25);
+    border-radius:50%/100%;
+    border-bottom:none;border-left:none;border-right:none;
+    pointer-events:none;
+  }
+  .bulbs{
+    display:flex;gap:clamp(20px, 6vw, 60px);
+    z-index:2;
+  }
+  .bulb{
+    position:relative;
+    width:30px;height:46px;
+    cursor:pointer;
+    transition:transform .15s ease-out;
+  }
+  .bulb:hover{transform:translateY(2px) rotate(3deg);}
+  .bulb.playing{transform:translateY(4px) scale(1.18);}
+
+  /* the bulb cap (wire connector at top) */
+  .bulb::before{
+    content:"";position:absolute;top:0;left:50%;transform:translateX(-50%);
+    width:8px;height:6px;background:#2a2522;
+    border-radius:2px 2px 0 0;
+  }
+  /* the bulb body */
+  .bulb-body{
+    position:absolute;top:6px;left:0;width:30px;height:40px;
+    border-radius:50% 50% 50% 50% / 60% 60% 40% 40%;
+    background:var(--bulb-color, var(--neon-pink));
+    box-shadow:
+      0 0 14px var(--bulb-glow, rgba(255,77,141,.55)),
+      0 0 28px var(--bulb-glow, rgba(255,77,141,.3));
+    transition:box-shadow .15s, filter .15s;
+  }
+  .bulb:hover .bulb-body{filter:brightness(1.3);}
+  .bulb.playing .bulb-body{
+    filter:brightness(1.8);
+    box-shadow:
+      0 0 25px var(--bulb-color, var(--neon-pink)),
+      0 0 50px var(--bulb-glow, rgba(255,77,141,.6));
+  }
+  /* note labels (visible on hover) */
+  .bulb .note-label{
+    position:absolute;bottom:-22px;left:50%;transform:translateX(-50%);
+    font-family:'Bungee',sans-serif;font-size:9px;letter-spacing:1px;
+    color:var(--bulb-color, var(--neon-pink));
+    opacity:0;transition:opacity .15s;
+    pointer-events:none;white-space:nowrap;
+  }
+  .bulb:hover .note-label,
+  .bulb.playing .note-label{opacity:1;}
+
+  .xylo-hint{
+    text-align:center;
+    font-family:'Caveat',cursive;font-size:18px;color:var(--neon-pink);opacity:.7;
+    margin-top:28px;
+  }
+
+  /* controls */
+  .demo-controls{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:24px;}
+  .demo-control{
+    font-family:'Bungee',sans-serif;font-size:10px;letter-spacing:1.3px;
+    padding:8px 14px;border-radius:999px;cursor:pointer;border:1px solid var(--line);
+    background:rgba(0,0,0,.3);color:var(--muted);transition:all .2s;
+  }
+  .demo-control.active{color:var(--ink);background:var(--neon-pink);border-color:var(--neon-pink);}
+  .demo-control:hover:not(.active){color:var(--cream);border-color:rgba(243,238,221,.4);}
+
+  /* sections */
+  section{margin:64px 0;}
+  h2.shead{
+    font-family:'Bungee',sans-serif;font-size:22px;color:var(--cream);
+    letter-spacing:.3px;margin-bottom:18px;
+    display:flex;align-items:center;gap:12px;
+  }
+  h2.shead::before{
+    content:"";width:8px;height:8px;background:var(--neon-pink);border-radius:50%;
+    box-shadow:0 0 12px var(--neon-pink);
+  }
+  .p{font-size:16px;color:var(--cream);opacity:.88;line-height:1.7;margin-bottom:14px;}
+  .p em{color:var(--neon-pink);font-style:italic;}
+  .p code{
+    font-family:'JetBrains Mono',monospace;font-size:13.5px;
+    background:var(--code-bg);padding:2px 7px;border-radius:5px;color:var(--neon-pink);
+  }
+
+  /* code block */
+  .code-wrap{
+    background:var(--code-bg);border:1px solid var(--line);border-radius:14px;overflow:hidden;
+    margin:24px 0;
+  }
+  .code-tabs{
+    display:flex;align-items:center;justify-content:space-between;
+    background:rgba(0,0,0,.4);border-bottom:1px solid var(--line);padding:0 12px 0 0;
+  }
+  .code-tablist{display:flex;}
+  .code-tab{
+    font-family:'Bungee',sans-serif;font-size:10.5px;letter-spacing:1.5px;
+    color:var(--neon-pink);padding:14px 18px;border:none;background:transparent;
+    border-bottom:2px solid var(--neon-pink);
+  }
+  .copy-btn{
+    font-family:'Bungee',sans-serif;font-size:10px;letter-spacing:1.5px;
+    color:var(--neon-pink);background:transparent;border:1px solid rgba(255,77,141,.35);
+    padding:7px 13px;border-radius:7px;cursor:pointer;transition:all .2s;
+  }
+  .copy-btn:hover{background:rgba(255,77,141,.12);}
+  .copy-btn.copied{color:var(--ink);background:var(--neon-pink);border-color:var(--neon-pink);}
+  pre.code{
+    margin:0;padding:22px 24px;overflow-x:auto;
+    font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.6;color:var(--cream);
+  }
+  pre.code .kw{color:var(--neon-pink);}
+  pre.code .tag{color:var(--neon-lime);}
+  pre.code .attr{color:var(--neon-cyan);}
+  pre.code .str{color:var(--neon-yellow);}
+  pre.code .com{color:var(--muted);font-style:italic;}
+  pre.code .num{color:var(--neon-orange);}
+  pre.code .prop{color:var(--neon-cyan);}
+
+  /* params table */
+  table.params{
+    width:100%;border-collapse:collapse;margin:18px 0;
+    background:rgba(15,46,34,.3);border:1px solid var(--line);border-radius:12px;overflow:hidden;
+  }
+  table.params th{
+    text-align:left;padding:14px 16px;
+    font-family:'Bungee',sans-serif;font-size:10px;letter-spacing:1.5px;
+    color:var(--neon-pink);background:rgba(0,0,0,.3);border-bottom:1px solid var(--line);
+  }
+  table.params td{
+    padding:14px 16px;border-bottom:1px solid var(--line);font-size:14px;color:var(--cream);
+  }
+  table.params tr:last-child td{border-bottom:none;}
+  table.params code{
+    font-family:'JetBrains Mono',monospace;font-size:12.5px;
+    background:var(--code-bg);padding:2px 7px;border-radius:5px;color:var(--neon-pink);
+  }
+  table.params .def{color:var(--neon-yellow);font-family:'JetBrains Mono',monospace;font-size:12.5px;}
+
+  /* skip-to */
+  .skip-grid{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:24px 0;
+  }
+  .skip-btn{
+    background:rgba(15,46,34,.4);border:1px solid var(--line);border-radius:10px;
+    padding:12px 14px;text-align:left;cursor:pointer;transition:all .2s;
+  }
+  .skip-btn:hover{border-color:var(--neon-pink);background:rgba(255,77,141,.06);}
+  .skip-btn .n{font-family:'Bungee',sans-serif;font-size:9.5px;letter-spacing:1.5px;color:var(--neon-cyan);}
+  .skip-btn .l{font-size:13px;color:var(--cream);margin-top:4px;}
+
+  /* tip jar */
+  .tipjar{
+    background:linear-gradient(135deg,rgba(255,210,63,.08) 0%,rgba(255,77,141,.08) 100%);
+    border:1px solid rgba(255,210,63,.3);border-radius:16px;
+    padding:30px 28px;margin:48px 0;
+    display:flex;align-items:center;gap:24px;flex-wrap:wrap;
+    position:relative;overflow:hidden;
+  }
+  .tipjar::before{
+    content:"";position:absolute;top:-20px;right:-20px;width:160px;height:160px;
+    background:radial-gradient(circle,rgba(255,210,63,.15) 0%,transparent 70%);pointer-events:none;
+  }
+  .tipjar-cats{font-size:54px;line-height:1;flex-shrink:0;}
+  .tipjar-body{flex:1;min-width:220px;}
+  .tipjar-title{
+    font-family:'Bungee',sans-serif;font-size:15px;letter-spacing:.4px;color:var(--cream);margin-bottom:6px;
+  }
+  .tipjar-title .h{color:var(--neon-yellow);}
+  .tipjar-sub{font-size:14px;color:var(--muted);line-height:1.55;}
+  .tipjar-sub b{color:var(--cream);}
+  .tipjar-btn{
+    font-family:'Bungee',sans-serif;font-size:11.5px;letter-spacing:1.5px;
+    color:var(--ink);background:var(--neon-yellow);padding:14px 22px;border-radius:999px;transition:all .2s;
+    white-space:nowrap;
+  }
+  .tipjar-btn:hover{background:var(--cream);transform:translateY(-2px);box-shadow:0 10px 24px -10px rgba(255,210,63,.7);}
+
+  /* next CTA */
+  .next-cta{
+    display:flex;align-items:center;justify-content:space-between;gap:20px;
+    background:linear-gradient(180deg,var(--swamp) 0%,var(--swamp-deep) 100%);
+    border:1px solid var(--line);border-radius:14px;padding:24px 28px;margin:48px 0;flex-wrap:wrap;
+  }
+  .next-cta .l b{display:block;font-family:'Bungee',sans-serif;font-size:14px;color:var(--cream);letter-spacing:.5px;margin-bottom:4px;}
+  .next-cta .l span{font-size:13.5px;color:var(--muted);}
+  .next-cta a{
+    font-family:'Bungee',sans-serif;font-size:11px;letter-spacing:1.5px;
+    color:var(--ink);background:var(--neon-pink);padding:12px 20px;border-radius:999px;transition:all .2s;
+  }
+  .next-cta a:hover{background:var(--cream);}
+
+  /* footer */
+  footer{
+    padding:50px 24px 40px;text-align:center;border-top:1px solid var(--line);background:rgba(8,19,16,.6);margin-top:80px;
+  }
+  footer .flinks{display:flex;gap:24px;justify-content:center;margin-bottom:14px;flex-wrap:wrap;}
+  footer .flinks a{color:var(--cream);font-size:13px;opacity:.75;}
+  footer .flinks a:hover{color:var(--neon-pink);opacity:1;}
+  footer .copy{color:var(--muted);font-size:12px;}
+  footer .copy b{color:var(--neon-pink);}
+
+  @media (max-width:600px){
+    .bulb{width:24px;height:38px;}
+    .bulb-body{width:24px;height:32px;}
+    .next-cta{flex-direction:column;text-align:center;}
+  }
+</style>
+</head>
+<body>
+
+<div class="backdrop"></div>
+
+<nav>
+  <a class="brand" href="/swamp-ui/">
+    <span class="brand-dot"></span>
+    <span>SWAMP <b>UI</b></span>
+  </a>
+  <div class="nav-links">
+    <a class="nav-link" href="/swamp-ui/">← all components</a>
+    <a class="nav-link" href="https://github.com/sophiejren/sophiesswap" target="_blank" rel="noopener">★ GitHub</a>
+  </div>
+</nav>
+
+<div class="container">
+
+  <div class="crumb">
+    <a href="/swamp-ui/">SWAMP UI</a>
+    <span class="sep">/</span>
+    COMPONENTS
+    <span class="sep">/</span>
+    XYLOPHONE LIGHTS
+  </div>
+
+  <header class="hero">
+    <h1 class="title">Xylophone Lights</h1>
+    <div class="sub">every bulb is a note</div>
+    <p class="lede">
+      A string of camp bulbs where every bulb is tuned to a note. Click any one to
+      play it. They use a <em>pentatonic scale</em>, which means no matter the order
+      you press them — solo, melody, or mash all five — <em>nothing ever sounds wrong.</em>
+    </p>
+    <div class="meta">
+      <div class="chip"><b>★</b> Web Audio (no files)</div>
+      <div class="chip"><b>★</b> Pentatonic = always musical</div>
+      <div class="chip"><b>★</b> Customizable note set</div>
+      <div class="chip"><b>★</b> Hover = preview, click = play</div>
+    </div>
+  </header>
+
+  <!-- LIVE PREVIEW -->
+  <div class="stage">
+    <div class="stage-label">LIVE PREVIEW · CLICK A BULB</div>
+
+    <div class="xylo">
+      <div class="bulbs" id="bulbsRow">
+        <!-- bulbs injected by JS so the script also acts as documentation -->
+      </div>
+    </div>
+
+    <div class="xylo-hint">↑ try playing left → right, then random</div>
+
+    <div class="demo-controls">
+      <button class="demo-control active" data-scale="pentaC">PENTATONIC C</button>
+      <button class="demo-control" data-scale="pentaA">PENTATONIC A (minor)</button>
+      <button class="demo-control" data-scale="chime">WIND CHIME</button>
+    </div>
+  </div>
+
+  <section>
+    <h2 class="shead">When to use</h2>
+    <p class="p">
+      A perfect "delight" element for <em>personal sites, artist portfolios, kids
+      sites, and product landing pages</em> where you want one moment of joy. The
+      pentatonic safeguard means even rapid mashing sounds intentional, never
+      cacophonous.
+    </p>
+    <p class="p">
+      Skip on anything that needs to feel serious or quiet (legal, medical, banking)
+      and on sites where audio would break a user's flow. Web Audio is muted by
+      default in modern browsers until first user gesture, so it won't surprise
+      anyone — they have to click first.
+    </p>
+  </section>
+
+  <section>
+    <h2 class="shead">Skip to</h2>
+    <div class="skip-grid">
+      <a class="skip-btn" href="#html"><div class="n">01</div><div class="l">HTML</div></a>
+      <a class="skip-btn" href="#css"><div class="n">02</div><div class="l">CSS</div></a>
+      <a class="skip-btn" href="#js"><div class="n">03</div><div class="l">JavaScript</div></a>
+      <a class="skip-btn" href="#params"><div class="n">04</div><div class="l">Parameters</div></a>
+      <a class="skip-btn" href="#scales"><div class="n">05</div><div class="l">Scales</div></a>
+    </div>
+  </section>
+
+  <!-- HTML -->
+  <section id="html">
+    <h2 class="shead">1. HTML</h2>
+    <p class="p">A container with one <code>.bulb</code> per note. Each bulb declares its color + note frequency via CSS variable + data attribute.</p>
+    <div class="code-wrap">
+      <div class="code-tabs">
+        <div class="code-tablist"><button class="code-tab">HTML</button></div>
+        <button class="copy-btn" data-target="code-html">COPY</button>
+      </div>
+<pre class="code" id="code-html"><span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"xylo"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"bulbs"</span><span class="tag">&gt;</span>
+
+    <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"bulb"</span> <span class="attr">data-freq</span>=<span class="str">"262"</span> <span class="attr">style</span>=<span class="str">"--bulb-color:#ff4d8d"</span><span class="tag">&gt;</span>
+      <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"bulb-body"</span><span class="tag">&gt;&lt;/div&gt;</span>
+      <span class="tag">&lt;span</span> <span class="attr">class</span>=<span class="str">"note-label"</span><span class="tag">&gt;</span>C<span class="tag">&lt;/span&gt;</span>
+    <span class="tag">&lt;/div&gt;</span>
+
+    <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"bulb"</span> <span class="attr">data-freq</span>=<span class="str">"294"</span> <span class="attr">style</span>=<span class="str">"--bulb-color:#ff8a3d"</span><span class="tag">&gt;</span>
+      <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"bulb-body"</span><span class="tag">&gt;&lt;/div&gt;</span>
+      <span class="tag">&lt;span</span> <span class="attr">class</span>=<span class="str">"note-label"</span><span class="tag">&gt;</span>D<span class="tag">&lt;/span&gt;</span>
+    <span class="tag">&lt;/div&gt;</span>
+
+    <span class="com">&lt;!-- ... E (330), G (392), A (440) ... --&gt;</span>
+  <span class="tag">&lt;/div&gt;</span>
+<span class="tag">&lt;/div&gt;</span></pre>
+    </div>
+  </section>
+
+  <!-- CSS -->
+  <section id="css">
+    <h2 class="shead">2. CSS</h2>
+    <p class="p">Bulb shape with a teardrop radius + glow via box-shadow. The <code>.playing</code> class fires on click for the brighter pop.</p>
+    <div class="code-wrap">
+      <div class="code-tabs">
+        <div class="code-tablist"><button class="code-tab">CSS</button></div>
+        <button class="copy-btn" data-target="code-css">COPY</button>
+      </div>
+<pre class="code" id="code-css"><span class="kw">.xylo</span> { <span class="prop">position</span>: relative; <span class="prop">padding-top</span>: <span class="num">30px</span>; }
+<span class="kw">.xylo::before</span> {
+  <span class="prop">content</span>: <span class="str">""</span>; <span class="prop">position</span>: absolute; <span class="prop">top</span>: <span class="num">0</span>; <span class="prop">left</span>: <span class="num">5%</span>; <span class="prop">right</span>: <span class="num">5%</span>; <span class="prop">height</span>: <span class="num">60px</span>;
+  <span class="prop">border-top</span>: <span class="num">1px</span> solid rgba(<span class="num">243, 238, 221, .25</span>);
+  <span class="prop">border-radius</span>: <span class="num">50%</span> / <span class="num">100%</span>;
+}
+<span class="kw">.bulbs</span> { <span class="prop">display</span>: flex; <span class="prop">gap</span>: <span class="num">40px</span>; <span class="prop">justify-content</span>: center; }
+
+<span class="kw">.bulb</span> {
+  <span class="prop">position</span>: relative; <span class="prop">width</span>: <span class="num">30px</span>; <span class="prop">height</span>: <span class="num">46px</span>;
+  <span class="prop">cursor</span>: pointer; <span class="prop">transition</span>: transform <span class="num">.15s</span> ease-out;
+}
+<span class="kw">.bulb::before</span> {  <span class="com">/* wire cap */</span>
+  <span class="prop">content</span>: <span class="str">""</span>; <span class="prop">position</span>: absolute; <span class="prop">top</span>: <span class="num">0</span>; <span class="prop">left</span>: <span class="num">50%</span>;
+  <span class="prop">transform</span>: translateX(<span class="num">-50%</span>);
+  <span class="prop">width</span>: <span class="num">8px</span>; <span class="prop">height</span>: <span class="num">6px</span>; <span class="prop">background</span>: <span class="str">#2a2522</span>; <span class="prop">border-radius</span>: <span class="num">2px 2px 0 0</span>;
+}
+<span class="kw">.bulb-body</span> {
+  <span class="prop">position</span>: absolute; <span class="prop">top</span>: <span class="num">6px</span>; <span class="prop">left</span>: <span class="num">0</span>;
+  <span class="prop">width</span>: <span class="num">30px</span>; <span class="prop">height</span>: <span class="num">40px</span>;
+  <span class="prop">border-radius</span>: <span class="num">50%</span> <span class="num">50%</span> <span class="num">50%</span> <span class="num">50%</span> / <span class="num">60%</span> <span class="num">60%</span> <span class="num">40%</span> <span class="num">40%</span>;
+  <span class="prop">background</span>: <span class="kw">var</span>(--bulb-color);
+  <span class="prop">box-shadow</span>: <span class="num">0 0 14px</span> <span class="kw">var</span>(--bulb-color);
+  <span class="prop">transition</span>: filter <span class="num">.15s</span>;
+}
+<span class="kw">.bulb:hover .bulb-body</span> { <span class="prop">filter</span>: brightness(<span class="num">1.3</span>); }
+<span class="kw">.bulb.playing</span> { <span class="prop">transform</span>: translateY(<span class="num">4px</span>) scale(<span class="num">1.18</span>); }
+<span class="kw">.bulb.playing .bulb-body</span> { <span class="prop">filter</span>: brightness(<span class="num">1.8</span>); }</pre>
+    </div>
+  </section>
+
+  <!-- JS -->
+  <section id="js">
+    <h2 class="shead">3. JavaScript</h2>
+    <p class="p">Web Audio creates each note on the fly — no audio files needed. The envelope (attack/decay) makes it sound like a soft glockenspiel hit, not a beep.</p>
+    <div class="code-wrap">
+      <div class="code-tabs">
+        <div class="code-tablist"><button class="code-tab">JS</button></div>
+        <button class="copy-btn" data-target="code-js">COPY</button>
+      </div>
+<pre class="code" id="code-js"><span class="com">// Swamp UI — Xylophone Lights</span>
+(<span class="kw">function</span> () {
+  <span class="kw">let</span> ctx = <span class="kw">null</span>;
+  <span class="kw">function</span> <span class="prop">note</span>(freq, duration) {
+    <span class="kw">try</span> {
+      <span class="kw">if</span> (!ctx) ctx = <span class="kw">new</span> (window.AudioContext || window.webkitAudioContext)();
+      <span class="kw">const</span> osc  = ctx.createOscillator();
+      <span class="kw">const</span> gain = ctx.createGain();
+      osc.connect(gain).connect(ctx.destination);
+      osc.type = <span class="str">'sine'</span>;
+      osc.frequency.setValueAtTime(freq, ctx.currentTime);
+
+      <span class="com">// gentle chime envelope</span>
+      gain.gain.setValueAtTime(<span class="num">0</span>, ctx.currentTime);
+      gain.gain.linearRampToValueAtTime(<span class="num">0.18</span>, ctx.currentTime + <span class="num">0.02</span>);
+      gain.gain.exponentialRampToValueAtTime(<span class="num">0.001</span>, ctx.currentTime + (duration || <span class="num">0.6</span>));
+
+      osc.start();
+      osc.stop(ctx.currentTime + (duration || <span class="num">0.6</span>));
+    } <span class="kw">catch</span> (e) {}
+  }
+
+  document.querySelectorAll(<span class="str">'.bulb'</span>).forEach(bulb =&gt; {
+    <span class="kw">const</span> freq = parseFloat(bulb.dataset.freq);
+    bulb.addEventListener(<span class="str">'click'</span>, () =&gt; {
+      note(freq);
+      bulb.classList.add(<span class="str">'playing'</span>);
+      setTimeout(() =&gt; bulb.classList.remove(<span class="str">'playing'</span>), <span class="num">300</span>);
+    });
+  });
+})();</pre>
+    </div>
+  </section>
+
+  <!-- PARAMETERS -->
+  <section id="params">
+    <h2 class="shead">4. Parameters you can tweak</h2>
+    <table class="params">
+      <thead>
+        <tr><th>Where</th><th>Default</th><th>Effect</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>HTML <code>data-freq</code></td>
+          <td><span class="def">261.6 (C4)</span></td>
+          <td>Frequency in Hz. Any number works. Use 1.5x for fifth, 2x for octave up.</td>
+        </tr>
+        <tr>
+          <td>HTML <code>--bulb-color</code> (CSS var)</td>
+          <td><span class="def">var(--neon-pink)</span></td>
+          <td>Each bulb's color. Set inline per bulb to mix palettes.</td>
+        </tr>
+        <tr>
+          <td>JS <code>osc.type</code></td>
+          <td><span class="def">sine</span></td>
+          <td>Waveform. <code>sine</code> = clean. <code>triangle</code> = warm. <code>sawtooth</code> = sharp.</td>
+        </tr>
+        <tr>
+          <td>JS gain peak</td>
+          <td><span class="def">0.18</span></td>
+          <td>Max loudness (0–1). Anything above 0.25 starts feeling rude.</td>
+        </tr>
+        <tr>
+          <td>JS <code>duration</code></td>
+          <td><span class="def">0.6 s</span></td>
+          <td>How long each note rings. Shorter = pluckier; longer = chime-y.</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- SCALES -->
+  <section id="scales">
+    <h2 class="shead">5. Why pentatonic?</h2>
+    <p class="p">
+      A pentatonic scale uses 5 notes spaced so no combination produces dissonance.
+      That means random clicks always sound musical. Three scales worth knowing:
+    </p>
+    <table class="params">
+      <thead>
+        <tr><th>Scale</th><th>Notes (Hz)</th><th>Vibe</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>Pentatonic C</code></td>
+          <td><span class="def">262, 294, 330, 392, 440</span></td>
+          <td>Bright, happy — default. Folk / pop.</td>
+        </tr>
+        <tr>
+          <td><code>Pentatonic A minor</code></td>
+          <td><span class="def">220, 262, 294, 330, 392</span></td>
+          <td>Melancholy, thoughtful. Studio Ghibli energy.</td>
+        </tr>
+        <tr>
+          <td><code>Wind chime</code></td>
+          <td><span class="def">523, 587, 698, 784, 880</span></td>
+          <td>High, ethereal. Garden / temple feeling.</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- TIP JAR -->
+  <div class="tipjar">
+    <div class="tipjar-cats">🐈‍⬛🐈</div>
+    <div class="tipjar-body">
+      <div class="tipjar-title">Liked this? <span class="h">Feed the cats.</span></div>
+      <div class="tipjar-sub">
+        Swamp UI is free and always will be. If it saved you time, consider buying
+        <b>Mr. Knife &amp; Ms. Ling</b> a week of dinner. They thank you with a slow blink.
+      </div>
+    </div>
+    <a class="tipjar-btn" href="https://buymeacoffee.com/sophieren" target="_blank" rel="noopener">FEED THEM →</a>
+  </div>
+
+  <!-- NEXT -->
+  <div class="next-cta">
+    <div class="l">
+      <b>More in the garden →</b>
+      <span>Firefly Tour (onboarding), Cat Wanderer, Swamp Name Generator.</span>
+    </div>
+    <a href="/swamp-ui/">Browse all →</a>
+  </div>
+
+</div>
+
+<footer>
+  <div class="flinks">
+    <a href="/swamp-ui/">Swamp UI</a>
+    <a href="/">Sophie's Swamp</a>
+    <a href="https://github.com/sophiejren/sophiesswap" target="_blank" rel="noopener">GitHub</a>
+  </div>
+  <p class="copy">© 2026 Sophie. <b>MIT licensed.</b> Use freely, credit kindly. 🐸</p>
+</footer>
+
+<!-- ============ SCRIPTS ============ -->
+<script>
+  // ===== Scales (frequencies in Hz + note labels) =====
+  const SCALES = {
+    pentaC: {
+      notes: [262, 294, 330, 392, 440],
+      labels: ['C', 'D', 'E', 'G', 'A'],
+    },
+    pentaA: {
+      notes: [220, 262, 294, 330, 392],
+      labels: ['A', 'C', 'D', 'E', 'G'],
+    },
+    chime: {
+      notes: [523, 587, 698, 784, 880],
+      labels: ['C', 'D', 'F', 'G', 'A'],
+    },
+  };
+  const COLORS = ['#ff4d8d','#ff8a3d','#ffd23f','#b6ff5b','#52ffe0'];
+
+  // ===== Build bulbs from a scale =====
+  const bulbsRow = document.getElementById('bulbsRow');
+  function renderBulbs(scaleKey){
+    const scale = SCALES[scaleKey];
+    bulbsRow.innerHTML = '';
+    scale.notes.forEach((freq, i)=>{
+      const b = document.createElement('div');
+      b.className = 'bulb';
+      b.dataset.freq = freq;
+      b.style.setProperty('--bulb-color', COLORS[i]);
+      b.innerHTML = `<div class="bulb-body"></div><span class="note-label">${scale.labels[i]}</span>`;
+      bulbsRow.appendChild(b);
+    });
+  }
+  renderBulbs('pentaC');
+
+  // ===== Web Audio note =====
+  let ctx = null;
+  function note(freq, duration){
+    try{
+      if(!ctx) ctx = new (window.AudioContext||window.webkitAudioContext)();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain).connect(ctx.destination);
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, ctx.currentTime);
+      gain.gain.setValueAtTime(0, ctx.currentTime);
+      gain.gain.linearRampToValueAtTime(0.18, ctx.currentTime + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + (duration || 0.6));
+      osc.start();
+      osc.stop(ctx.currentTime + (duration || 0.6));
+    }catch(e){}
+  }
+
+  // ===== Bulb click =====
+  bulbsRow.addEventListener('click', e=>{
+    const bulb = e.target.closest('.bulb');
+    if(!bulb) return;
+    note(parseFloat(bulb.dataset.freq));
+    bulb.classList.add('playing');
+    setTimeout(()=>bulb.classList.remove('playing'), 300);
+  });
+
+  // ===== Scale picker =====
+  const controls = document.querySelectorAll('.demo-control[data-scale]');
+  controls.forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      controls.forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      renderBulbs(btn.dataset.scale);
+    });
+  });
+
+  // ===== Copy buttons =====
+  document.querySelectorAll('.copy-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const target = document.getElementById(btn.dataset.target);
+      if(!target) return;
+      navigator.clipboard.writeText(target.innerText).then(()=>{
+        const original = btn.textContent;
+        btn.textContent = 'COPIED ✓';
+        btn.classList.add('copied');
+        setTimeout(()=>{
+          btn.textContent = original;
+          btn.classList.remove('copied');
+        }, 1600);
+      });
+    });
+  });
+</script>
+
+</body>
+</html>
