@@ -153,6 +153,54 @@
   footer .flinks a{color:var(--cream);font-size:13px;opacity:.75;}
   footer .copy{color:var(--muted);font-size:12px;}
   footer .copy b{color:var(--neon-cyan);}
+
+  /* ============ TIP JAR v2 — mini cat strip + treat button (FIX-APPENDED) ============ */
+  .tipjar-v2{
+    background:linear-gradient(135deg,rgba(255,210,63,.07) 0%,rgba(82,255,224,.06) 100%);
+    border:1px solid rgba(255,210,63,.28);border-radius:18px;
+    padding:28px 26px 32px;margin:48px 0;text-align:center;
+    position:relative;overflow:hidden;
+  }
+  .tj-headline{
+    font-family:'Space Grotesk',sans-serif;font-size:15.5px;line-height:1.6;
+    color:var(--cream);max-width:440px;margin:0 auto 14px;
+  }
+  .tj-headline b{color:var(--neon-yellow);}
+  .tj-strip{
+    position:relative;height:64px;margin:6px 0 24px;overflow:hidden;
+    border-radius:10px;
+    background:radial-gradient(ellipse at center top,rgba(31,82,56,.2) 0%,transparent 80%);
+  }
+  .tj-grass{
+    position:absolute;bottom:0;left:0;right:0;height:8px;
+    background:repeating-linear-gradient(90deg,
+      rgba(31,82,56,.45) 0px,rgba(31,82,56,.45) 4px,
+      transparent 4px,transparent 8px);
+  }
+  .tj-cat{position:absolute;bottom:8px;pointer-events:none;}
+  .tj-cat svg{display:block;animation:tj-bob .35s steps(2) infinite;}
+  @keyframes tj-bob{50%{transform:translateY(-1.5px);}}
+  .tj-knife{color:#9bc5d5;animation:tj-walk-a 14s linear infinite;}
+  .tj-ling {color:#e8e0c5;animation:tj-walk-b 17s linear infinite;animation-delay:-6s;}
+  .tj-pot  {color:#ff8a3d;animation:tj-walk-c 11s linear infinite;animation-delay:-3s;}
+  @keyframes tj-walk-a{0%{left:-50px;transform:scaleX(1);}49%{left:100%;transform:scaleX(1);}50%{left:100%;transform:scaleX(-1);}99%{left:-50px;transform:scaleX(-1);}100%{left:-50px;transform:scaleX(1);}}
+  @keyframes tj-walk-b{0%{left:30%;transform:scaleX(-1);}49%{left:-50px;transform:scaleX(-1);}50%{left:-50px;transform:scaleX(1);}99%{left:100%;transform:scaleX(1);}100%{left:30%;transform:scaleX(-1);}}
+  @keyframes tj-walk-c{0%{left:70%;transform:scaleX(1);}49%{left:100%;transform:scaleX(1);}50%{left:100%;transform:scaleX(-1);}99%{left:-50px;transform:scaleX(-1);}100%{left:70%;transform:scaleX(1);}}
+  .tj-btn{
+    display:inline-flex;align-items:center;gap:10px;
+    font-family:'Bungee',sans-serif;font-size:12px;letter-spacing:1.5px;
+    color:var(--ink);
+    background:linear-gradient(135deg,var(--neon-yellow) 0%,#ffb83a 100%);
+    padding:15px 26px;border-radius:999px;text-decoration:none;
+    box-shadow:0 8px 22px -8px rgba(255,210,63,.65);
+    transition:transform .2s,box-shadow .2s;
+    animation:tj-pulse 3s ease-in-out infinite;
+  }
+  .tj-btn:hover{transform:translateY(-2px) scale(1.04);box-shadow:0 14px 30px -8px rgba(255,210,63,.95);animation:none;}
+  .tj-btn .emo{font-family:system-ui,sans-serif;font-size:18px;line-height:1;}
+  .tj-btn .arr{margin-left:2px;}
+  @keyframes tj-pulse{0%,100%{box-shadow:0 8px 22px -8px rgba(255,210,63,.65);}50%{box-shadow:0 10px 30px -4px rgba(255,210,63,1);}}
+
 </style>
 </head>
 <body>
@@ -302,13 +350,79 @@ document.querySelectorAll(<span class="str">'.cat-stage'</span>).forEach(cat =&g
     </div>
   </section>
 
-  <div class="tipjar">
-    <div class="tipjar-cats">🐈‍⬛🐈</div>
-    <div class="tipjar-body">
-      <div class="tipjar-title">Liked this? <span class="h">Feed the cats.</span></div>
-      <div class="tipjar-sub">Cat Wanderer is modeled after my real cats <b>Mr. Knife &amp; Ms. Ling</b>. Tip jar buys them dinner.</div>
+  <!-- TIP JAR v2 — mini cat strip + treat button -->
+  <div class="tipjar-v2">
+    <div class="tj-headline">Liked this? <b>Feed Mr. Knife &amp; Ms. Ling.</b><br>And buy their owner a milk tea.</div>
+
+    <div class="tj-strip">
+      <div class="tj-grass"></div>
+
+      <!-- Mr. Knife (silver-blue exotic shorthair) -->
+      <div class="tj-cat tj-knife">
+        <svg width="48" height="34" viewBox="0 0 64 44" xmlns="http://www.w3.org/2000/svg">
+          <path d="M5 24 Q-1 16 4 9" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <ellipse cx="24" cy="27" rx="17" ry="10" fill="currentColor"/>
+          <ellipse cx="44" cy="22" rx="11" ry="10" fill="currentColor"/>
+          <path d="M36 16 L37 9 L42 14 Z" fill="currentColor"/>
+          <path d="M52 16 L51 9 L46 14 Z" fill="currentColor"/>
+          <circle cx="41" cy="22" r="1.5" fill="#52a4ff"/>
+          <circle cx="47" cy="22" r="1.5" fill="#52a4ff"/>
+          <circle cx="44" cy="25" r="1" fill="#ff4d8d"/>
+          <rect x="13" y="33" width="2.5" height="6" fill="currentColor" rx="1"/>
+          <rect x="19" y="33" width="2.5" height="6" fill="currentColor" rx="1"/>
+          <rect x="28" y="33" width="2.5" height="6" fill="currentColor" rx="1"/>
+          <rect x="34" y="33" width="2.5" height="6" fill="currentColor" rx="1"/>
+        </svg>
+      </div>
+
+      <!-- Ms. Ling (cream exotic shorthair) -->
+      <div class="tj-cat tj-ling">
+        <svg width="48" height="34" viewBox="0 0 64 44" xmlns="http://www.w3.org/2000/svg">
+          <path d="M5 24 Q-1 16 4 9" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <ellipse cx="24" cy="27" rx="17" ry="10" fill="currentColor"/>
+          <ellipse cx="44" cy="22" rx="11" ry="10" fill="currentColor"/>
+          <path d="M36 16 L37 9 L42 14 Z" fill="currentColor"/>
+          <path d="M52 16 L51 9 L46 14 Z" fill="currentColor"/>
+          <circle cx="41" cy="22" r="1.5" fill="#52a4ff"/>
+          <circle cx="47" cy="22" r="1.5" fill="#52a4ff"/>
+          <circle cx="44" cy="25" r="1" fill="#ff4d8d"/>
+          <rect x="13" y="33" width="2.5" height="6" fill="currentColor" rx="1"/>
+          <rect x="19" y="33" width="2.5" height="6" fill="currentColor" rx="1"/>
+          <rect x="28" y="33" width="2.5" height="6" fill="currentColor" rx="1"/>
+          <rect x="34" y="33" width="2.5" height="6" fill="currentColor" rx="1"/>
+        </svg>
+      </div>
+
+      <!-- Littlehotpot (bengal leopard with spots + yellow eyes) -->
+      <div class="tj-cat tj-pot">
+        <svg width="48" height="34" viewBox="0 0 64 44" xmlns="http://www.w3.org/2000/svg">
+          <path d="M5 24 Q-1 16 4 9" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <ellipse cx="24" cy="27" rx="17" ry="10" fill="currentColor"/>
+          <ellipse cx="44" cy="22" rx="11" ry="10" fill="currentColor"/>
+          <circle cx="18" cy="25" r="1.4" fill="#4a1f10" opacity=".55"/>
+          <circle cx="24" cy="29" r="1.2" fill="#4a1f10" opacity=".55"/>
+          <circle cx="29" cy="24" r="1.3" fill="#4a1f10" opacity=".55"/>
+          <circle cx="33" cy="29" r="1" fill="#4a1f10" opacity=".55"/>
+          <path d="M36 16 L37 9 L42 14 Z" fill="currentColor"/>
+          <path d="M52 16 L51 9 L46 14 Z" fill="currentColor"/>
+          <ellipse cx="41" cy="22" rx="1.5" ry="2" fill="#ffd23f"/>
+          <ellipse cx="47" cy="22" rx="1.5" ry="2" fill="#ffd23f"/>
+          <line x1="41" y1="20" x2="41" y2="24" stroke="#081310" stroke-width=".8"/>
+          <line x1="47" y1="20" x2="47" y2="24" stroke="#081310" stroke-width=".8"/>
+          <circle cx="44" cy="25" r="1" fill="#ff4d8d"/>
+          <rect x="13" y="33" width="2.5" height="6" fill="currentColor" rx="1"/>
+          <rect x="19" y="33" width="2.5" height="6" fill="currentColor" rx="1"/>
+          <rect x="28" y="33" width="2.5" height="6" fill="currentColor" rx="1"/>
+          <rect x="34" y="33" width="2.5" height="6" fill="currentColor" rx="1"/>
+        </svg>
+      </div>
     </div>
-    <a class="tipjar-btn" href="https://buymeacoffee.com/sophieren" target="_blank" rel="noopener">FEED THEM →</a>
+
+    <a class="tj-btn" href="https://buymeacoffee.com/sophiejr" target="_blank" rel="noopener">
+      <span class="emo">🧋</span>
+      <span>TREAT THE SWAMP</span>
+      <span class="arr">→</span>
+    </a>
   </div>
 
   <div class="next-cta">
