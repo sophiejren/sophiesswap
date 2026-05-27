@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<!--
+  Swamp UI — landing page
+  Organic, mechanical, weird components for the un-clean web.
+  A design system from sophieren.com
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Swamp UI — Organic components for the un-clean web</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%230b2018'/><circle cx='16' cy='17' r='8' fill='%23b6ff5b'/><circle cx='16' cy='17' r='3.4' fill='%23081310'/></svg>" />
+
+<meta name="description" content="Swamp UI — copy-paste components with personality. Organic, mechanical, weird. No npm. No React. Just delight." />
+<meta property="og:title" content="Swamp UI — Organic components for the un-clean web" />
+<meta property="og:description" content="Copy-paste components with personality. No npm. No React. Just delight." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://sophieren.com/swamp-ui/" />
+<meta property="og:image" content="https://sophieren.com/images/og-image.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Swamp UI — Organic components for the un-clean web" />
+<meta name="twitter:description" content="Copy-paste components with personality. No npm. No React. Just delight." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Caveat:wght@600;700&family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+<style>
+  /* ============ tokens (mirror main site) ============ */
+  :root{
+    --ink:#081310;
+    --swamp-deep:#0b2018;
+    --swamp:#0f2e22;
+    --swamp-light:#16412f;
+    --panel:#102a20;
+    --moss:#1f5238;
+    --neon-yellow:#ffd23f;
+    --neon-pink:#ff4d8d;
+    --neon-cyan:#52ffe0;
+    --neon-orange:#ff8a3d;
+    --neon-lime:#b6ff5b;
+    --cream:#f3eedd;
+    --muted:#86a596;
+    --line:rgba(243,238,221,.12);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:'Space Grotesk',system-ui,sans-serif;
+    background:var(--ink);color:var(--cream);
+    overflow-x:hidden;line-height:1.65;min-height:100vh;position:relative;
+  }
+  a{color:inherit;text-decoration:none;}
+  ::selection{background:var(--neon-lime);color:var(--ink);}
+
+  /* grain + vignette */
+  body::before{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:9000;
+    background:radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,.6) 100%);
+  }
+  body::after{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:9001;opacity:.04;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  .backdrop{
+    position:fixed;inset:0;z-index:-2;overflow:hidden;
+    background:radial-gradient(ellipse 80% 55% at 50% 25%,#103226 0%,#081814 60%,#040a08 100%);
+  }
+
+  /* ============ nav ============ */
+  nav{
+    position:fixed;top:0;left:0;right:0;z-index:1000;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:14px clamp(16px,4vw,44px);
+    background:linear-gradient(180deg,rgba(7,16,12,.95) 0%,rgba(7,16,12,.55) 60%,rgba(7,16,12,0) 100%);
+  }
+  .brand{
+    display:flex;align-items:center;gap:10px;
+    font-family:'Bungee',sans-serif;font-size:14px;letter-spacing:.5px;color:var(--cream);
+  }
+  .brand b{color:var(--neon-lime);}
+  .brand-dot{
+    width:14px;height:14px;border-radius:50%;background:var(--neon-lime);
+    box-shadow:0 0 12px var(--neon-lime);
+  }
+  .nav-links{display:flex;gap:8px;align-items:center;}
+  .nav-link{
+    font-family:'Bungee',sans-serif;font-size:10.5px;letter-spacing:1.5px;
+    color:var(--neon-cyan);padding:9px 16px;border:1px solid rgba(82,255,224,.35);
+    border-radius:999px;transition:all .2s;
+  }
+  .nav-link:hover{background:rgba(82,255,224,.1);box-shadow:0 0 14px rgba(82,255,224,.3);}
+  .nav-link.primary{color:var(--ink);background:var(--neon-lime);border-color:var(--neon-lime);}
+  .nav-link.primary:hover{background:var(--cream);border-color:var(--cream);}
+
+  /* ============ hero ============ */
+  .hero{
+    min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:120px 24px 80px;text-align:center;position:relative;
+  }
+  .eyebrow{
+    font-family:'Bungee',sans-serif;font-size:11px;letter-spacing:3px;
+    color:var(--neon-cyan);margin-bottom:24px;opacity:.9;
+  }
+  .eyebrow .dot{color:var(--neon-yellow);margin:0 10px;}
+  .eyebrow a{
+    color:var(--neon-lime);border-bottom:1px dotted rgba(182,255,91,.45);
+    transition:color .2s,border-color .2s;
+  }
+  .eyebrow a:hover{color:var(--cream);border-bottom-color:var(--cream);}
+  h1.title{
+    font-family:'Bungee',sans-serif;
+    font-size:clamp(56px,12vw,160px);line-height:.95;letter-spacing:-2px;
+    color:var(--cream);text-shadow:0 0 50px rgba(182,255,91,.25);
+    margin-bottom:24px;cursor:pointer;
+  }
+  .title .ch{display:inline-block;min-width:.55em;text-align:center;transition:color .15s;}
+  .title.flipping .ch{color:var(--neon-lime);text-shadow:0 0 14px rgba(182,255,91,.55);}
+  .title.flipping .ch.locked{color:var(--cream);text-shadow:0 0 20px rgba(82,255,224,.25);}
+  .tagline{
+    font-family:'Caveat',cursive;font-size:clamp(22px,3vw,32px);
+    color:var(--neon-cyan);margin-bottom:14px;font-weight:600;
+  }
+  .subline{
+    font-size:clamp(15px,1.6vw,18px);color:var(--cream);opacity:.78;max-width:640px;margin:0 auto 40px;
+  }
+  .hero-meta{
+    display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:48px;
+  }
+  .chip{
+    font-family:'Space Grotesk',sans-serif;font-size:12px;letter-spacing:.4px;
+    padding:7px 14px;border:1px solid var(--line);border-radius:999px;
+    color:var(--cream);background:rgba(15,46,34,.5);
+  }
+  .chip .x{color:var(--neon-pink);margin-right:5px;font-weight:700;}
+  .chip .y{color:var(--neon-lime);margin-right:5px;font-weight:700;}
+  .cta-row{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;}
+  .cta{
+    font-family:'Bungee',sans-serif;font-size:13px;letter-spacing:1.5px;
+    padding:16px 28px;border-radius:999px;transition:all .2s;cursor:pointer;
+  }
+  .cta.primary{color:var(--ink);background:var(--neon-lime);border:none;}
+  .cta.primary:hover{background:var(--cream);transform:translateY(-2px);box-shadow:0 10px 30px -10px rgba(182,255,91,.6);}
+  .cta.ghost{color:var(--neon-cyan);border:1px solid rgba(82,255,224,.45);background:transparent;}
+  .cta.ghost:hover{background:rgba(82,255,224,.1);box-shadow:0 0 18px rgba(82,255,224,.3);}
+
+  /* floating fireflies (decorative) */
+  .firefly{
+    position:fixed;width:4px;height:4px;border-radius:50%;
+    background:var(--neon-yellow);box-shadow:0 0 10px var(--neon-yellow),0 0 22px rgba(255,210,63,.4);
+    pointer-events:none;z-index:1;
+    animation:float 12s ease-in-out infinite;
+  }
+  @keyframes float{
+    0%,100%{transform:translate(0,0);opacity:.4;}
+    25%{transform:translate(40px,-30px);opacity:.9;}
+    50%{transform:translate(-30px,40px);opacity:.6;}
+    75%{transform:translate(50px,20px);opacity:.85;}
+  }
+
+  /* ============ catalog ============ */
+  section.catalog{
+    padding:80px clamp(16px,5vw,80px) 120px;max-width:1280px;margin:0 auto;
+  }
+  .section-header{margin-bottom:48px;text-align:center;}
+  .section-title{
+    font-family:'Bungee',sans-serif;font-size:clamp(28px,4vw,44px);color:var(--cream);
+    letter-spacing:-1px;margin-bottom:12px;
+  }
+  .section-sub{color:var(--muted);font-size:15px;max-width:580px;margin:0 auto;}
+
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
+    gap:22px;
+  }
+  .card{
+    background:linear-gradient(180deg,var(--swamp) 0%,var(--swamp-deep) 100%);
+    border:1px solid var(--line);border-radius:18px;
+    overflow:hidden;transition:all .25s;position:relative;
+    display:flex;flex-direction:column;
+  }
+  .card:hover{
+    border-color:rgba(182,255,91,.5);
+    transform:translateY(-3px);
+    box-shadow:0 16px 40px -20px rgba(0,0,0,.6),0 0 30px -10px rgba(182,255,91,.2);
+  }
+  .card-preview{
+    height:180px;display:flex;align-items:center;justify-content:center;
+    background:radial-gradient(ellipse at center,var(--swamp-light) 0%,var(--swamp-deep) 100%);
+    position:relative;overflow:hidden;border-bottom:1px solid var(--line);
+  }
+  .card-body{padding:20px 22px 22px;}
+  .card-name{
+    font-family:'Bungee',sans-serif;font-size:16px;color:var(--cream);
+    letter-spacing:.3px;margin-bottom:6px;
+  }
+  .card-desc{font-size:13.5px;color:var(--muted);line-height:1.5;margin-bottom:14px;min-height:42px;}
+  .card-foot{display:flex;justify-content:space-between;align-items:center;}
+  .status{
+    font-family:'Bungee',sans-serif;font-size:9.5px;letter-spacing:1.5px;
+    padding:5px 10px;border-radius:999px;
+  }
+  .status.live{color:var(--ink);background:var(--neon-lime);}
+  .status.soon{color:var(--neon-cyan);background:transparent;border:1px dashed rgba(82,255,224,.45);}
+  .open{
+    font-family:'Bungee',sans-serif;font-size:10px;letter-spacing:1.5px;
+    color:var(--neon-cyan);
+  }
+  .card a.cover{position:absolute;inset:0;z-index:2;}
+  .card.locked{opacity:.5;cursor:default;}
+  .card.locked a.cover{pointer-events:none;}
+
+  /* preview tiles per component */
+  .preview-flip{
+    font-family:'Bungee',sans-serif;font-size:30px;letter-spacing:1px;
+    color:var(--neon-lime);text-shadow:0 0 16px rgba(182,255,91,.55);
+  }
+  .preview-pond{position:relative;width:140px;height:80px;}
+  .preview-pond .water{
+    position:absolute;inset:0;border-radius:50%;
+    background:radial-gradient(ellipse at center,#1a4936 0%,#0a2418 80%);
+    border:1px solid rgba(82,255,224,.25);
+  }
+  .preview-pond .ripple{
+    position:absolute;left:50%;top:50%;width:20px;height:8px;
+    border:1px solid var(--neon-cyan);border-radius:50%;opacity:.7;
+    transform:translate(-50%,-50%);animation:ripple 2.2s ease-out infinite;
+  }
+  .preview-pond .ripple:nth-child(2){animation-delay:.7s;}
+  .preview-pond .ripple:nth-child(3){animation-delay:1.4s;}
+  @keyframes ripple{0%{width:8px;height:4px;opacity:.9;}100%{width:120px;height:50px;opacity:0;}}
+
+  .preview-firefly{position:relative;width:140px;height:80px;}
+  .preview-firefly i{
+    position:absolute;width:6px;height:6px;border-radius:50%;
+    background:var(--neon-yellow);box-shadow:0 0 12px var(--neon-yellow);
+    animation:fwander 4s ease-in-out infinite;
+  }
+  .preview-firefly i:nth-child(1){top:20%;left:15%;animation-delay:0s;}
+  .preview-firefly i:nth-child(2){top:60%;left:50%;animation-delay:1.2s;}
+  .preview-firefly i:nth-child(3){top:30%;left:75%;animation-delay:2.4s;}
+  @keyframes fwander{
+    0%,100%{transform:translate(0,0);opacity:.5;}
+    50%{transform:translate(15px,-10px);opacity:1;}
+  }
+
+  .preview-xylo{display:flex;gap:6px;align-items:end;height:60px;}
+  .preview-xylo span{
+    width:14px;border-radius:3px 3px 0 0;
+    animation:bounce 2.2s ease-in-out infinite;
+  }
+  .preview-xylo span:nth-child(1){height:70%;background:var(--neon-pink);animation-delay:0s;}
+  .preview-xylo span:nth-child(2){height:55%;background:var(--neon-orange);animation-delay:.15s;}
+  .preview-xylo span:nth-child(3){height:80%;background:var(--neon-yellow);animation-delay:.3s;}
+  .preview-xylo span:nth-child(4){height:65%;background:var(--neon-lime);animation-delay:.45s;}
+  .preview-xylo span:nth-child(5){height:90%;background:var(--neon-cyan);animation-delay:.6s;}
+  @keyframes bounce{0%,100%{transform:scaleY(1);}50%{transform:scaleY(1.15);}}
+
+  .preview-cat{font-size:46px;animation:catwalk 3s ease-in-out infinite;}
+  @keyframes catwalk{0%,100%{transform:translateX(-15px);}50%{transform:translateX(15px);}}
+
+  .preview-name{
+    font-family:'Caveat',cursive;font-size:22px;color:var(--neon-cyan);
+    text-align:center;line-height:1.2;
+  }
+  .preview-name .sm{font-size:14px;color:var(--muted);display:block;}
+
+  .preview-soon{
+    color:var(--muted);font-family:'Bungee',sans-serif;font-size:11px;letter-spacing:2px;
+  }
+
+  /* ============ philosophy strip ============ */
+  .philosophy{
+    background:linear-gradient(180deg,transparent 0%,rgba(15,46,34,.4) 50%,transparent 100%);
+    padding:100px clamp(20px,5vw,80px);text-align:center;
+  }
+  .pquote{
+    font-family:'Caveat',cursive;font-size:clamp(26px,3.5vw,42px);
+    color:var(--cream);max-width:780px;margin:0 auto 16px;line-height:1.4;font-weight:600;
+  }
+  .pquote em{color:var(--neon-lime);font-style:italic;}
+  .psign{color:var(--muted);font-size:13px;letter-spacing:1px;}
+  .psign b{color:var(--neon-cyan);}
+
+  /* ============ how-to strip ============ */
+  .howto{padding:80px clamp(16px,5vw,80px);max-width:1100px;margin:0 auto;}
+  .howto-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:24px;margin-top:42px;}
+  .howto-step{
+    background:rgba(15,46,34,.4);padding:24px;border-radius:14px;
+    border:1px solid var(--line);position:relative;
+  }
+  .step-n{
+    position:absolute;top:-16px;left:20px;
+    font-family:'Bungee',sans-serif;font-size:20px;color:var(--ink);background:var(--neon-lime);
+    width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  }
+  .step-t{
+    font-family:'Bungee',sans-serif;font-size:13px;color:var(--cream);
+    letter-spacing:.5px;margin:8px 0 8px;
+  }
+  .step-d{font-size:13.5px;color:var(--muted);line-height:1.55;}
+  .step-d code{
+    font-family:'JetBrains Mono',monospace;font-size:12px;
+    background:var(--ink);padding:2px 7px;border-radius:5px;color:var(--neon-cyan);
+  }
+
+  /* ============ footer ============ */
+  footer{
+    padding:60px 24px 40px;text-align:center;border-top:1px solid var(--line);
+    background:rgba(8,19,16,.6);
+  }
+  footer .flinks{display:flex;gap:24px;justify-content:center;margin-bottom:18px;flex-wrap:wrap;}
+  footer .flinks a{color:var(--cream);font-size:13.5px;opacity:.75;transition:opacity .2s,color .2s;}
+  footer .flinks a:hover{opacity:1;color:var(--neon-cyan);}
+  footer .copy{color:var(--muted);font-size:12px;}
+  footer .copy b{color:var(--neon-lime);}
+
+  @media (max-width:600px){
+    .nav-links{gap:6px;}
+    .nav-link{padding:7px 11px;font-size:9.5px;letter-spacing:1px;}
+    .hero{padding-top:100px;}
+    .grid{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<div class="backdrop"></div>
+
+<!-- decorative fireflies -->
+<div class="firefly" style="top:18%;left:8%;animation-delay:0s;"></div>
+<div class="firefly" style="top:32%;right:12%;animation-delay:3s;"></div>
+<div class="firefly" style="top:62%;left:18%;animation-delay:6s;"></div>
+<div class="firefly" style="top:78%;right:24%;animation-delay:9s;"></div>
+
+<!-- nav -->
+<nav>
+  <a class="brand" href="/">
+    <span class="brand-dot"></span>
+    <span>SOPHIE'S <b>SWAMP</b></span>
+  </a>
+  <div class="nav-links">
+    <a class="nav-link" href="/">← back to swamp</a>
+    <a class="nav-link primary" href="https://github.com/sophiejren/sophiesswap" target="_blank" rel="noopener">★ GitHub</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="eyebrow">DESIGN COMPONENTS <span class="dot">●</span> BY <a href="/">SOPHIE'S SWAMP</a> <span class="dot">●</span> V0.1</div>
+
+  <h1 class="title flip" data-final="SWAMP UI">SWAMP UI</h1>
+
+  <div class="tagline">Organic. Mechanical. Weird.</div>
+  <p class="subline">
+    Copy-paste components with personality. For people building websites that don't
+    want to look like every other SaaS in 2026.
+  </p>
+
+  <div class="hero-meta">
+    <div class="chip"><span class="y">✓</span> No npm</div>
+    <div class="chip"><span class="y">✓</span> No React</div>
+    <div class="chip"><span class="y">✓</span> No build step</div>
+    <div class="chip"><span class="x">✗</span> No corporate clean</div>
+  </div>
+
+  <div class="cta-row">
+    <a class="cta primary" href="#components">Browse components ↓</a>
+    <a class="cta ghost" href="https://github.com/sophiejren/sophiesswap" target="_blank" rel="noopener">View on GitHub</a>
+  </div>
+</header>
+
+<!-- PHILOSOPHY -->
+<section class="philosophy">
+  <p class="pquote">
+    Most UI libraries are <em>sterile</em>. They feel like<br/>
+    waiting rooms. Swamp UI is the opposite — <em>alive</em>,<br/>
+    weird, a little overgrown. Built for sites that have <em>a soul.</em>
+  </p>
+  <p class="psign">— Sophie. She's been to museums in <b>60+ countries</b>, and is tired of every website looking like the Apple Store.</p>
+</section>
+
+<!-- CATALOG -->
+<section class="catalog" id="components">
+
+  <div class="section-header">
+    <h2 class="section-title">The Garden</h2>
+    <p class="section-sub">
+      Every component lives on its own page. Click any card to see it live,
+      learn how it works, and copy the code.
+    </p>
+  </div>
+
+  <div class="grid">
+
+    <!-- LIVE: Split-Flap Text -->
+    <article class="card">
+      <a class="cover" href="components/split-flap-text.html" aria-label="Open Split-Flap Text"></a>
+      <div class="card-preview">
+        <div class="preview-flip">FLIP</div>
+      </div>
+      <div class="card-body">
+        <h3 class="card-name">Split-Flap Text</h3>
+        <p class="card-desc">Letters spin through random glyphs and lock into place, like a Solari board.</p>
+        <div class="card-foot">
+          <span class="status live">LIVE</span>
+          <span class="open">OPEN →</span>
+        </div>
+      </div>
+    </article>
+
+    <!-- LIVE: Pond Ripple -->
+    <article class="card">
+      <a class="cover" href="components/pond-ripple.html" aria-label="Open Pond Ripple"></a>
+      <div class="card-preview">
+        <div class="preview-pond">
+          <div class="water"></div>
+          <div class="ripple"></div>
+          <div class="ripple"></div>
+          <div class="ripple"></div>
+        </div>
+      </div>
+      <div class="card-body">
+        <h3 class="card-name">Pond Ripple</h3>
+        <p class="card-desc">Click-anywhere ripples + ambient plop sound. The internet's most relaxing button.</p>
+        <div class="card-foot">
+          <span class="status live">LIVE</span>
+          <span class="open">OPEN →</span>
+        </div>
+      </div>
+    </article>
+
+    <!-- LIVE: Firefly Cursor -->
+    <article class="card">
+      <a class="cover" href="components/firefly-cursor.html" aria-label="Open Firefly Cursor"></a>
+      <div class="card-preview">
+        <div class="preview-firefly">
+          <i></i><i></i><i></i>
+        </div>
+      </div>
+      <div class="card-body">
+        <h3 class="card-name">Firefly Cursor</h3>
+        <p class="card-desc">Mouse leaves a trail of glowing fireflies that drift up and fade. Pure CSS magic.</p>
+        <div class="card-foot">
+          <span class="status live">LIVE</span>
+          <span class="open">OPEN →</span>
+        </div>
+      </div>
+    </article>
+
+    <!-- LIVE: Firefly Tour -->
+    <article class="card">
+      <a class="cover" href="components/firefly-tour.html" aria-label="Open Firefly Tour"></a>
+      <div class="card-preview">
+        <div class="preview-firefly">
+          <i></i><i></i><i></i>
+        </div>
+      </div>
+      <div class="card-body">
+        <h3 class="card-name">Firefly Tour</h3>
+        <p class="card-desc">A wandering firefly that guides first-time visitors through your site.</p>
+        <div class="card-foot">
+          <span class="status live">LIVE</span>
+          <span class="open">OPEN →</span>
+        </div>
+      </div>
+    </article>
+
+    <!-- LIVE: Xylophone Lights -->
+    <article class="card">
+      <a class="cover" href="components/xylophone-lights.html" aria-label="Open Xylophone Lights"></a>
+      <div class="card-preview">
+        <div class="preview-xylo">
+          <span></span><span></span><span></span><span></span><span></span>
+        </div>
+      </div>
+      <div class="card-body">
+        <h3 class="card-name">Xylophone Lights</h3>
+        <p class="card-desc">A string of camp lights that play pentatonic notes when clicked. Always musical.</p>
+        <div class="card-foot">
+          <span class="status live">LIVE</span>
+          <span class="open">OPEN →</span>
+        </div>
+      </div>
+    </article>
+
+    <!-- LIVE: Cat Wanderer -->
+    <article class="card">
+      <a class="cover" href="components/cat-wanderer.html" aria-label="Open Cat Wanderer"></a>
+      <div class="card-preview">
+        <div class="preview-cat">🐈</div>
+      </div>
+      <div class="card-body">
+        <h3 class="card-name">Cat Wanderer</h3>
+        <p class="card-desc">Tiny SVG cats that walk across your page. Click them and they meow.</p>
+        <div class="card-foot">
+          <span class="status live">LIVE</span>
+          <span class="open">OPEN →</span>
+        </div>
+      </div>
+    </article>
+
+    <!-- LIVE: Swamp Name Generator -->
+    <article class="card">
+      <a class="cover" href="components/swamp-name-generator.html" aria-label="Open Swamp Name Generator"></a>
+      <div class="card-preview">
+        <div class="preview-name">
+          <span class="sm">your swamp name:</span>
+          Mossbottom the Frog
+        </div>
+      </div>
+      <div class="card-body">
+        <h3 class="card-name">Swamp Name Generator</h3>
+        <p class="card-desc">Generate a unique fantasy name for each visitor on first load. Remembered via localStorage.</p>
+        <div class="card-foot">
+          <span class="status live">LIVE</span>
+          <span class="open">OPEN →</span>
+        </div>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<!-- HOW TO USE -->
+<section class="howto">
+  <div class="section-header">
+    <h2 class="section-title">How it works</h2>
+    <p class="section-sub">Three steps. No package manager. Works in any HTML file.</p>
+  </div>
+
+  <div class="howto-grid">
+    <div class="howto-step">
+      <div class="step-n">1</div>
+      <div class="step-t">Pick a component</div>
+      <div class="step-d">Click any card above to open its full demo + code.</div>
+    </div>
+    <div class="howto-step">
+      <div class="step-n">2</div>
+      <div class="step-t">Copy the code</div>
+      <div class="step-d">Each component has three blocks: <code>HTML</code>, <code>CSS</code>, <code>JS</code>. One click copies each.</div>
+    </div>
+    <div class="howto-step">
+      <div class="step-n">3</div>
+      <div class="step-t">Paste into your site</div>
+      <div class="step-d">Drop the code into any <code>.html</code> file. No build step. No imports.</div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="flinks">
+    <a href="/">Sophie's Swamp</a>
+    <a href="/cognitive-recipes.html">Cognitive Recipes</a>
+    <a href="https://github.com/sophiejren/sophiesswap" target="_blank" rel="noopener">GitHub</a>
+  </div>
+  <p class="copy">© 2026 Sophie. <b>MIT licensed.</b> Use freely, credit kindly. 🐸</p>
+</footer>
+
+<!-- ============ SCRIPTS ============ -->
+<script>
+  // === Split-flap title animation (same logic that the component sells) ===
+  (function(){
+    const POOL = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#@%&*+=°/';
+    function rand(){return POOL[Math.floor(Math.random()*POOL.length)];}
+    function splitInto(el, finalText){
+      el.innerHTML='';
+      const chars=[...finalText];
+      return chars.map(ch=>{
+        const s=document.createElement('span');
+        s.className='ch';s.dataset.final=ch;
+        s.textContent=(ch===' '||ch===' ')?' ':rand();
+        el.appendChild(s);return s;
+      });
+    }
+    function play(el){
+      const finalText=el.dataset.final||el.textContent.trim();
+      const spans=splitInto(el, finalText);
+      el.classList.add('flipping');
+      const STEP=55, PER_LETTER=9, STAGGER=80;
+      spans.forEach((s,i)=>{
+        const target=s.dataset.final;
+        if(target===' '){s.classList.add('locked');s.textContent=' ';return;}
+        let swaps=0; const start=i*STAGGER;
+        setTimeout(function spin(){
+          if(swaps>=PER_LETTER){
+            s.textContent=target;s.classList.add('locked');
+            if(spans.every(x=>x.classList.contains('locked'))){
+              setTimeout(()=>el.classList.remove('flipping'),400);
+            }
+            return;
+          }
+          s.textContent=rand();swaps++;
+          setTimeout(spin,STEP);
+        }, start);
+      });
+    }
+    function runAll(){document.querySelectorAll('.flip').forEach(el=>play(el));}
+    if(document.fonts&&document.fonts.ready){
+      document.fonts.ready.then(()=>setTimeout(runAll,250));
+    } else { setTimeout(runAll,600); }
+    document.addEventListener('click', e=>{
+      const el=e.target.closest('.flip');
+      if(el&&!el.classList.contains('flipping')) play(el);
+    });
+  })();
+</script>
+
+</body>
+</html>
