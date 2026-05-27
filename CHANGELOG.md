@@ -14,10 +14,65 @@ Each version is preserved as a frozen folder snapshot in this project — you ca
 | V2.1 | `archive/snapshots/v2.1/` | 2026-05-25 | Easter eggs, OG meta, 404, newsletter, N°02 |
 | V2.1.1 | `archive/snapshots/v2.1.1/` | 2026-05-25 | Removed prev/next recipe nav |
 | V2.2 | `archive/snapshots/v2.2/` | 2026-05-25 | Garden + glass treehouse + pond + bookshelf scene |
-| **V3.0** | `archive/snapshots/v3.0/` | 2026-05-26 | **The Mirror version** — Swamp UI v1.0 + /mirror/ channel + cat strip + portal |
+| V3.0 | `archive/snapshots/v3.0/` | 2026-05-26 | The Mirror version — Swamp UI v1.0 + /mirror/ channel + cat strip + portal |
+| **V3.1** | `archive/snapshots/v3.1/` | 2026-05-26 | **Explorable swamp homepage** — SVG scene with 4 clickable portals + animated pool + popups + mobile portal grid |
 | **(working)** | `swamp-club-site/` | rolling | Working copy — edit this for next deploy |
 
 The folder `swamp-club-site/` (no version suffix) is the **working copy** you push to GitHub (which auto-deploys to Netlify).
+
+---
+
+## V3.1 — "Explorable Homepage" (2026-05-26)
+
+The homepage stops being a text page and becomes a scene you wander into. The hero now IS the swamp.
+
+### 🏡 New hero: layered SVG swamp scene
+
+Replaced the old text-heavy hero (big "SOPHIE'S SWAMP" title + tagline + CTA buttons) with an explorable illustration that fills the viewport. The scene contains:
+
+- **Big glass house on stilts** in the centre, with a side door (right side, not centered), a warm wall sconce next to the door casting a yellow halo, glowing windows, mossy roof and reclaiming vines
+- **Animated pool** in front of the house — water shimmers, ripples drift outward, occasional water-lily highlights
+- **3 potted plants** scattered around the house base (snake plant by the side door, fiddle-leaf style on the left, small flowering herb pot)
+- **Modern floor mirror** to the right — slim metal frame, LED strip glow top + bottom, reflecting hint of the swamp
+- **Scattered wildflowers** in the foreground grass (small clusters of pink/coral/yellow blooms)
+- **Randomly walking cats** — the existing trio (Mr. Knife, Ms. Ling, Littlehotpot) wander across the scene with natural pauses
+
+### 🎯 Four scene portals (the new nav)
+
+The old nav bar is hidden on the hero (reveals on scroll). Instead, four objects in the scene ARE the nav:
+
+1. **Cauldron** (left, kitchen scene) → click opens "FROM THE KITCHEN · Cognitive Recipe N°01" modal with "enter the kitchen →" CTA leading to `cognitive-recipes.html`
+2. **Workshop desk** (right side, with iMac showing code) → links to `swamp-ui/index.html`
+3. **Floor mirror** (next to the house) → links to `mirror/index.html` with subtitle "AI IS CHATTING ABOUT ME"
+4. **Mailbox** (far right, pink-flag mailbox) → jumps to `#contact`
+
+Each portal has a small always-visible label so users don't have to guess.
+
+### 🪵 Clickable welcome sign
+
+Standing wooden welcome sign on the left says "welcome to / Sophie's Swamp ✦". Click opens a soft welcome modal: _"SWAMP CLUB · EST. 2026 / Welcome to Sophie's Swamp / A soft, muddy archive of art, memory, unfinished thoughts and intellectual obsessions. If you found this, you belong here."_
+
+### 🅰 Top-left wordmark
+
+Replaced the centered big-text hero with a small top-left wordmark: **SOPHIE'S SWAMP** + handwritten tagline _"if you found this, you belong here."_ A radial vignette behind it keeps it legible against any scene color.
+
+### 📱 Mobile adaptation
+
+The wide SVG scene doesn't make sense on a phone, so under 760px:
+- SVG scene hidden
+- 2×2 portal-card grid replaces it (the kitchen / my design lab / the mirror / leave a letter)
+- Floating "?" pill: "what is this place" → opens the welcome modal
+- CRT TV moved to the **left** side with a 7-second floating animation so it doesn't block the moon/sun on the right
+- Brand wordmark shrunk to 60% width
+
+### 🧩 Modal pattern
+
+A reusable scene-modal CSS+JS pattern handles the welcome sign + cauldron popups. Backdrop blur, scale-in animation, ESC + click-outside to close, focus management.
+
+### ✨ Polish details
+- Custom gradients added to SVG defs: `warmGlow` (sconce halo), `ledGlow` (mirror strip), `screenGlow`, `poolGlow`, `shimmerBand`
+- Pool surface uses ripple-out + shimmer-slide keyframes for living water
+- Hero scroll-cue hidden on mobile to give the portal grid full breathing room
 
 ---
 
