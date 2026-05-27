@@ -15,6 +15,7 @@ Each subdirectory in `snapshots/` is an exact copy of `swamp-club-site/` at the 
 | `v2.1/` | Memorable additions: 6 easter eggs (cat meow, xylophone, keyboard triggers, swamp name, firefly tour) + OG meta + 404 + newsletter + Recipe N°02 + analytics placeholder. |
 | `v2.1.1/` | Polish: removed prev/next recipe nav (mobile layout was overlapping with plating). |
 | `v2.2/` | Major scene redesign: garden courtyard + glass-facade treehouse + pond with ripples + frog jump-in interaction + anchor trees + cantilever wine bar + bookshelf + denser vines. |
+| `v3.0/` | **The Mirror version** (2026-05-26). Launched Swamp UI v1.0 (7 copy-paste components) + new /mirror/ channel (AI's notes on Sophie, office scene with bookshelf + walking cats) + homepage cat strip with 3 wandering cats + small standing mirror portal as the entry to /mirror/. Buy Me a Coffee tip jar integrated across all component pages and homepage. |
 
 For exact feature lists per version, see `/CHANGELOG.md` in the repo root.
 

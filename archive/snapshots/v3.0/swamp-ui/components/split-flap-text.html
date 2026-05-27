@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<!--
+  Swamp UI — Split-Flap Text
+  Letters spin through random glyphs and lock one by one.
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Split-Flap Text — Swamp UI</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%230b2018'/><circle cx='16' cy='17' r='8' fill='%23b6ff5b'/><circle cx='16' cy='17' r='3.4' fill='%23081310'/></svg>" />
+
+<meta name="description" content="Split-Flap Text — a copy-paste component from Swamp UI. Letters spin through random glyphs and lock one by one." />
+<meta property="og:title" content="Split-Flap Text — Swamp UI" />
+<meta property="og:description" content="Letters spin through random glyphs and lock one by one. Copy-paste, no dependencies." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://sophieren.com/swamp-ui/components/split-flap-text.html" />
+<meta property="og:image" content="https://sophieren.com/images/og-image.png" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Caveat:wght@600;700&family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+<style>
+  :root{
+    --ink:#081310;
+    --swamp-deep:#0b2018;
+    --swamp:#0f2e22;
+    --swamp-light:#16412f;
+    --panel:#102a20;
+    --moss:#1f5238;
+    --neon-yellow:#ffd23f;
+    --neon-pink:#ff4d8d;
+    --neon-cyan:#52ffe0;
+    --neon-orange:#ff8a3d;
+    --neon-lime:#b6ff5b;
+    --cream:#f3eedd;
+    --muted:#86a596;
+    --line:rgba(243,238,221,.12);
+    --code-bg:#06110d;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:'Space Grotesk',system-ui,sans-serif;
+    background:var(--ink);color:var(--cream);overflow-x:hidden;line-height:1.65;
+    min-height:100vh;position:relative;
+  }
+  a{color:inherit;text-decoration:none;}
+  ::selection{background:var(--neon-lime);color:var(--ink);}
+
+  body::before{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:9000;
+    background:radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,.6) 100%);
+  }
+  body::after{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:9001;opacity:.04;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  .backdrop{
+    position:fixed;inset:0;z-index:-2;overflow:hidden;
+    background:radial-gradient(ellipse 80% 55% at 50% 20%,#103226 0%,#081814 60%,#040a08 100%);
+  }
+
+  /* nav */
+  nav{
+    position:fixed;top:0;left:0;right:0;z-index:1000;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:14px clamp(16px,4vw,44px);
+    background:linear-gradient(180deg,rgba(7,16,12,.95) 0%,rgba(7,16,12,.55) 60%,rgba(7,16,12,0) 100%);
+  }
+  .brand{display:flex;align-items:center;gap:10px;font-family:'Bungee',sans-serif;font-size:14px;letter-spacing:.5px;color:var(--cream);}
+  .brand b{color:var(--neon-lime);}
+  .brand-dot{width:14px;height:14px;border-radius:50%;background:var(--neon-lime);box-shadow:0 0 12px var(--neon-lime);}
+  .nav-links{display:flex;gap:8px;align-items:center;}
+  .nav-link{
+    font-family:'Bungee',sans-serif;font-size:10.5px;letter-spacing:1.5px;
+    color:var(--neon-cyan);padding:9px 16px;border:1px solid rgba(82,255,224,.35);
+    border-radius:999px;transition:all .2s;
+  }
+  .nav-link:hover{background:rgba(82,255,224,.1);box-shadow:0 0 14px rgba(82,255,224,.3);}
+
+  /* container */
+  .container{max-width:1100px;margin:0 auto;padding:120px clamp(20px,5vw,40px) 100px;}
+
+  /* breadcrumb */
+  .crumb{
+    font-family:'Bungee',sans-serif;font-size:10px;letter-spacing:2px;
+    color:var(--muted);margin-bottom:30px;
+  }
+  .crumb a{color:var(--neon-cyan);transition:color .2s;}
+  .crumb a:hover{color:var(--neon-lime);}
+  .crumb .sep{color:var(--neon-yellow);margin:0 10px;}
+
+  /* hero */
+  header.hero{margin-bottom:60px;}
+  h1.title{
+    font-family:'Bungee',sans-serif;font-size:clamp(40px,7vw,80px);line-height:.98;
+    color:var(--cream);letter-spacing:-1px;margin-bottom:14px;cursor:pointer;
+  }
+  .title .ch{display:inline-block;min-width:.55em;text-align:center;transition:color .15s;}
+  .title.flipping .ch{color:var(--neon-lime);text-shadow:0 0 14px rgba(182,255,91,.55);}
+  .title.flipping .ch.locked{color:var(--cream);text-shadow:0 0 20px rgba(82,255,224,.25);}
+
+  .sub{font-family:'Caveat',cursive;font-size:26px;color:var(--neon-cyan);margin-bottom:16px;font-weight:600;}
+  .lede{font-size:17px;color:var(--cream);opacity:.85;max-width:660px;line-height:1.6;}
+
+  /* meta chips */
+  .meta{display:flex;gap:8px;margin-top:22px;flex-wrap:wrap;}
+  .chip{
+    font-family:'Space Grotesk',sans-serif;font-size:11.5px;letter-spacing:.4px;
+    padding:5px 12px;border:1px solid var(--line);border-radius:999px;
+    color:var(--cream);background:rgba(15,46,34,.5);
+  }
+  .chip b{color:var(--neon-lime);margin-right:5px;}
+
+  /* preview stage */
+  .stage{
+    background:linear-gradient(180deg,var(--swamp) 0%,var(--swamp-deep) 100%);
+    border:1px solid var(--line);border-radius:18px;padding:60px 30px;
+    margin:48px 0;text-align:center;position:relative;overflow:hidden;
+  }
+  .stage::before{
+    content:"";position:absolute;inset:0;
+    background:radial-gradient(ellipse at center,rgba(82,255,224,.06) 0%,transparent 70%);
+    pointer-events:none;
+  }
+  .stage-label{
+    position:absolute;top:14px;left:18px;
+    font-family:'Bungee',sans-serif;font-size:9px;letter-spacing:2px;color:var(--muted);
+  }
+  .stage-hint{
+    position:absolute;bottom:14px;right:18px;
+    font-family:'Caveat',cursive;font-size:15px;color:var(--neon-cyan);
+  }
+  .demo-flip{
+    font-family:'Bungee',sans-serif;font-size:clamp(36px,7vw,72px);
+    letter-spacing:.5px;color:var(--cream);cursor:pointer;
+    text-shadow:0 0 40px rgba(82,255,224,.2);
+  }
+  .demo-flip .ch{display:inline-block;min-width:.55em;text-align:center;transition:color .15s;}
+  .demo-flip.flipping .ch{color:var(--neon-lime);text-shadow:0 0 14px rgba(182,255,91,.55);}
+  .demo-flip.flipping .ch.locked{color:var(--cream);text-shadow:0 0 20px rgba(82,255,224,.25);}
+  .demo-controls{margin-top:30px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+  .demo-input{
+    background:var(--ink);border:1px solid var(--line);color:var(--cream);
+    padding:11px 16px;border-radius:10px;font-family:'Space Grotesk',sans-serif;font-size:14px;
+    width:240px;transition:border-color .2s;
+  }
+  .demo-input:focus{outline:none;border-color:var(--neon-cyan);}
+  .demo-btn{
+    font-family:'Bungee',sans-serif;font-size:11px;letter-spacing:1.5px;
+    padding:11px 18px;border-radius:10px;cursor:pointer;border:none;
+    background:var(--neon-lime);color:var(--ink);transition:all .2s;
+  }
+  .demo-btn:hover{background:var(--cream);transform:translateY(-1px);}
+
+  /* sections */
+  section{margin:64px 0;}
+  h2.shead{
+    font-family:'Bungee',sans-serif;font-size:22px;color:var(--cream);
+    letter-spacing:.3px;margin-bottom:18px;
+    display:flex;align-items:center;gap:12px;
+  }
+  h2.shead::before{
+    content:"";width:8px;height:8px;background:var(--neon-lime);border-radius:50%;
+    box-shadow:0 0 12px var(--neon-lime);
+  }
+  .p{font-size:16px;color:var(--cream);opacity:.88;line-height:1.7;margin-bottom:14px;}
+  .p code{
+    font-family:'JetBrains Mono',monospace;font-size:13.5px;
+    background:var(--code-bg);padding:2px 7px;border-radius:5px;color:var(--neon-cyan);
+  }
+
+  /* code block w/ tabs */
+  .code-wrap{
+    background:var(--code-bg);border:1px solid var(--line);border-radius:14px;overflow:hidden;
+    margin:24px 0;
+  }
+  .code-tabs{
+    display:flex;align-items:center;justify-content:space-between;
+    background:rgba(0,0,0,.4);border-bottom:1px solid var(--line);
+    padding:0 12px 0 0;
+  }
+  .code-tablist{display:flex;}
+  .code-tab{
+    font-family:'Bungee',sans-serif;font-size:10.5px;letter-spacing:1.5px;
+    color:var(--muted);padding:14px 18px;cursor:pointer;border:none;background:transparent;
+    border-bottom:2px solid transparent;transition:all .2s;
+  }
+  .code-tab.active{color:var(--neon-lime);border-bottom-color:var(--neon-lime);}
+  .code-tab:hover:not(.active){color:var(--cream);}
+  .copy-btn{
+    font-family:'Bungee',sans-serif;font-size:10px;letter-spacing:1.5px;
+    color:var(--neon-cyan);background:transparent;border:1px solid rgba(82,255,224,.35);
+    padding:7px 13px;border-radius:7px;cursor:pointer;transition:all .2s;
+  }
+  .copy-btn:hover{background:rgba(82,255,224,.12);}
+  .copy-btn.copied{color:var(--ink);background:var(--neon-lime);border-color:var(--neon-lime);}
+  .code-pane{display:none;}
+  .code-pane.active{display:block;}
+  pre.code{
+    margin:0;padding:22px 24px;overflow-x:auto;
+    font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.6;
+    color:var(--cream);
+  }
+  pre.code .kw{color:var(--neon-pink);}
+  pre.code .tag{color:var(--neon-lime);}
+  pre.code .attr{color:var(--neon-cyan);}
+  pre.code .str{color:var(--neon-yellow);}
+  pre.code .com{color:var(--muted);font-style:italic;}
+  pre.code .num{color:var(--neon-orange);}
+  pre.code .prop{color:var(--neon-cyan);}
+
+  /* params table */
+  table.params{
+    width:100%;border-collapse:collapse;margin:18px 0;
+    background:rgba(15,46,34,.3);border:1px solid var(--line);border-radius:12px;overflow:hidden;
+  }
+  table.params th{
+    text-align:left;padding:14px 16px;
+    font-family:'Bungee',sans-serif;font-size:10px;letter-spacing:1.5px;
+    color:var(--neon-cyan);background:rgba(0,0,0,.3);border-bottom:1px solid var(--line);
+  }
+  table.params td{
+    padding:14px 16px;border-bottom:1px solid var(--line);font-size:14px;color:var(--cream);
+  }
+  table.params tr:last-child td{border-bottom:none;}
+  table.params code{
+    font-family:'JetBrains Mono',monospace;font-size:12.5px;
+    background:var(--code-bg);padding:2px 7px;border-radius:5px;color:var(--neon-cyan);
+  }
+  table.params .def{color:var(--neon-yellow);font-family:'JetBrains Mono',monospace;font-size:12.5px;}
+
+  /* skip-to */
+  .skip-grid{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:24px 0;
+  }
+  .skip-btn{
+    background:rgba(15,46,34,.4);border:1px solid var(--line);border-radius:10px;
+    padding:12px 14px;text-align:left;cursor:pointer;transition:all .2s;
+  }
+  .skip-btn:hover{border-color:var(--neon-cyan);background:rgba(82,255,224,.06);}
+  .skip-btn .n{
+    font-family:'Bungee',sans-serif;font-size:9.5px;letter-spacing:1.5px;color:var(--neon-yellow);
+  }
+  .skip-btn .l{font-size:13px;color:var(--cream);margin-top:4px;}
+
+  /* variants gallery */
+  .variants{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px;margin:18px 0;
+  }
+  .variant{
+    background:linear-gradient(180deg,var(--swamp) 0%,var(--swamp-deep) 100%);
+    border:1px solid var(--line);border-radius:12px;padding:24px;
+    text-align:center;cursor:pointer;transition:all .2s;
+  }
+  .variant:hover{border-color:rgba(82,255,224,.4);transform:translateY(-2px);}
+  .variant-demo{
+    font-family:'Bungee',sans-serif;font-size:22px;color:var(--cream);margin-bottom:10px;
+    min-height:34px;display:flex;align-items:center;justify-content:center;
+  }
+  .variant-demo .ch{display:inline-block;min-width:.55em;text-align:center;transition:color .15s;}
+  .variant-demo.flipping .ch{color:var(--neon-pink);text-shadow:0 0 10px rgba(255,77,141,.6);}
+  .variant-demo.flipping .ch.locked{color:var(--cream);}
+  .variant.cyan .variant-demo.flipping .ch{color:var(--neon-cyan);text-shadow:0 0 10px rgba(82,255,224,.6);}
+  .variant.lime .variant-demo.flipping .ch{color:var(--neon-lime);text-shadow:0 0 10px rgba(182,255,91,.6);}
+  .variant.yellow .variant-demo.flipping .ch{color:var(--neon-yellow);text-shadow:0 0 10px rgba(255,210,63,.6);}
+  .variant-label{font-family:'Caveat',cursive;font-size:17px;color:var(--neon-cyan);}
+
+  /* TIP JAR v2 — mini cat strip + treat button */
+  .tipjar-v2{
+    background:linear-gradient(135deg,rgba(255,210,63,.07) 0%,rgba(82,255,224,.06) 100%);
+    border:1px solid rgba(255,210,63,.28);border-radius:18px;
+    padding:28px 26px 32px;margin:48px 0;text-align:center;
+    position:relative;overflow:hidden;
+  }
+  .tj-headline{
+    font-family:'Space Grotesk',sans-serif;font-size:15.5px;line-height:1.6;
+    color:var(--cream);max-width:440px;margin:0 auto 14px;
+  }
+  .tj-headline b{color:var(--neon-yellow);}
+
+  .tj-strip{
+    position:relative;height:64px;margin:6px 0 24px;overflow:hidden;
+    border-radius:10px;
+    background:radial-gradient(ellipse at center top,rgba(31,82,56,.2) 0%,transparent 80%);
+  }
+  .tj-grass{
+    position:absolute;bottom:0;left:0;right:0;height:8px;
+    background:repeating-linear-gradient(90deg,
+      rgba(31,82,56,.45) 0px,rgba(31,82,56,.45) 4px,
+      transparent 4px,transparent 8px);
+  }
+  .tj-cat{position:absolute;bottom:8px;pointer-events:none;}
+  .tj-cat svg{display:block;animation:tj-bob .35s steps(2) infinite;}
+  @keyframes tj-bob{50%{transform:translateY(-1.5px);}}
+
+  .tj-knife{color:#9bc5d5;animation:tj-walk-a 14s linear infinite;}
+  .tj-ling {color:#e8e0c5;animation:tj-walk-b 17s linear infinite;animation-delay:-6s;}
+  .tj-pot  {color:#ff8a3d;animation:tj-walk-c 11s linear infinite;animation-delay:-3s;}
+  @keyframes tj-walk-a{
+    0%{left:-50px;transform:scaleX(1);} 49%{left:100%;transform:scaleX(1);}
+    50%{left:100%;transform:scaleX(-1);} 99%{left:-50px;transform:scaleX(-1);}
+    100%{left:-50px;transform:scaleX(1);}
+  }
+  @keyframes tj-walk-b{
+    0%{left:30%;transform:scaleX(-1);} 49%{left:-50px;transform:scaleX(-1);}
+    50%{left:-50px;transform:scaleX(1);} 99%{left:100%;transform:scaleX(1);}
+    100%{left:30%;transform:scaleX(-1);}
+  }
+  @keyframes tj-walk-c{
+    0%{left:70%;transform:scaleX(1);} 49%{left:100%;transform:scaleX(1);}
+    50%{left:100%;transform:scaleX(-1);} 99%{left:-50px;transform:scaleX(-1);}
+    100%{left:70%;transform:scaleX(1);}
+  }
+
+  .tj-btn{
+    display:inline-flex;align-items:center;gap:10px;
+    font-family:'Bungee',sans-serif;font-size:12px;letter-spacing:1.5px;
+    color:var(--ink);
+    background:linear-gradient(135deg,var(--neon-yellow) 0%,#ffb83a 100%);
+    padding:15px 26px;border-radius:999px;text-decoration:none;
+    box-shadow:0 8px 22px -8px rgba(255,210,63,.65);
+    transition:transform .2s,box-shadow .2s;
+    animation:tj-pulse 3s ease-in-out infinite;
+  }
+  .tj-btn:hover{
+    transform:translateY(-2px) scale(1.04);
+    box-shadow:0 14px 30px -8px rgba(255,210,63,.95);
+    animation:none;
+  }
+  .tj-btn .emo{font-family:system-ui,sans-serif;font-size:18px;line-height:1;}
+  .tj-btn .arr{margin-left:2px;}
+  @keyframes tj-pulse{
+    0%,100%{box-shadow:0 8px 22px -8px rgba(255,210,63,.65);}
+    50%    {box-shadow:0 10px 30px -4px rgba(255,210,63,1);}
+  }
+
+  /* next-component CTA */
+  .next-cta{
+    display:flex;align-items:center;justify-content:space-between;gap:20px;
+    background:linear-gradient(180deg,var(--swamp) 0%,var(--swamp-deep) 100%);
+    border:1px solid var(--line);border-radius:14px;padding:24px 28px;margin:48px 0;
+    flex-wrap:wrap;
+  }
+  .next-cta .l b{
+    display:block;font-family:'Bungee',sans-serif;font-size:14px;color:var(--cream);
+    letter-spacing:.5px;margin-bottom:4px;
+  }
+  .next-cta .l span{font-size:13.5px;color:var(--muted);}
+  .next-cta a{
+    font-family:'Bungee',sans-serif;font-size:11px;letter-spacing:1.5px;
+    color:var(--ink);background:var(--neon-lime);padding:12px 20px;border-radius:999px;
+    transition:all .2s;
+  }
+  .next-cta a:hover{background:var(--cream);}
+
+  /* footer */
+  footer{
+    padding:50px 24px 40px;text-align:center;border-top:1px solid var(--line);
+    background:rgba(8,19,16,.6);margin-top:80px;
+  }
+  footer .flinks{display:flex;gap:24px;justify-content:center;margin-bottom:14px;flex-wrap:wrap;}
+  footer .flinks a{color:var(--cream);font-size:13px;opacity:.75;}
+  footer .flinks a:hover{color:var(--neon-cyan);opacity:1;}
+  footer .copy{color:var(--muted);font-size:12px;}
+  footer .copy b{color:var(--neon-lime);}
+
+  @media (max-width:600px){
+    .demo-input{width:180px;}
+    .next-cta{flex-direction:column;text-align:center;}
+  }
+</style>
+</head>
+<body>
+
+<div class="backdrop"></div>
+
+<nav>
+  <a class="brand" href="/swamp-ui/">
+    <span class="brand-dot"></span>
+    <span>SWAMP <b>UI</b></span>
+  </a>
+  <div class="nav-links">
+    <a class="nav-link" href="/swamp-ui/">← all components</a>
+    <a class="nav-link" href="https://github.com/sophiejren/sophiesswap" target="_blank" rel="noopener">★ GitHub</a>
+  </div>
+</nav>
+
+<div class="container">
+
+  <div class="crumb">
+    <a href="/swamp-ui/">SWAMP UI</a>
+    <span class="sep">/</span>
+    COMPONENTS
+    <span class="sep">/</span>
+    SPLIT-FLAP TEXT
+  </div>
+
+  <header class="hero">
+    <h1 class="title flip" data-final="Split-Flap Text">Split-Flap Text</h1>
+    <div class="sub">like an old train station board</div>
+    <p class="lede">
+      Letters spin through random glyphs and lock into place, one by one. A small moment
+      of mechanical drama for any heading that wants to feel <em>like it just arrived</em>
+      instead of being there all along.
+    </p>
+    <div class="meta">
+      <div class="chip"><b>★</b> No dependencies</div>
+      <div class="chip"><b>★</b> ~1.5 KB</div>
+      <div class="chip"><b>★</b> Vanilla JS</div>
+      <div class="chip"><b>★</b> Click to replay</div>
+    </div>
+  </header>
+
+  <!-- LIVE PREVIEW -->
+  <div class="stage">
+    <div class="stage-label">LIVE PREVIEW</div>
+    <div class="demo-flip" id="demoFlip" data-final="SWAMP UI">SWAMP UI</div>
+    <div class="demo-controls">
+      <input class="demo-input" id="demoInput" type="text" maxlength="20" placeholder="Type your text..." />
+      <button class="demo-btn" id="demoBtn">Flip it →</button>
+    </div>
+    <div class="stage-hint">click the text to replay ↑</div>
+  </div>
+
+  <section>
+    <h2 class="shead">When to use</h2>
+    <p class="p">
+      Reach for it when you have a hero or title that wants <em>more presence</em>, when the page is
+      otherwise calm and you want one moment of mechanical drama, or when you want a click target
+      that gives delight without a full animation.
+    </p>
+    <p class="p">
+      Skip it when the text is long (more than ~30 chars feels noisy), when the page is already
+      animation-heavy, or when readers need to read fast.
+    </p>
+  </section>
+
+  <section>
+    <h2 class="shead">Skip to</h2>
+    <div class="skip-grid">
+      <a class="skip-btn" href="#html"><div class="n">01</div><div class="l">HTML</div></a>
+      <a class="skip-btn" href="#css"><div class="n">02</div><div class="l">CSS</div></a>
+      <a class="skip-btn" href="#js"><div class="n">03</div><div class="l">JavaScript</div></a>
+      <a class="skip-btn" href="#params"><div class="n">04</div><div class="l">Parameters</div></a>
+      <a class="skip-btn" href="#variants"><div class="n">05</div><div class="l">Variants</div></a>
+    </div>
+  </section>
+
+  <!-- HTML -->
+  <section id="html">
+    <h2 class="shead">1. HTML</h2>
+    <p class="p">Add the class <code>flip</code> to any heading. The <code>data-final</code> attribute holds the text that will lock in.</p>
+    <div class="code-wrap">
+      <div class="code-tabs">
+        <div class="code-tablist"><button class="code-tab active">HTML</button></div>
+        <button class="copy-btn" data-target="code-html">COPY</button>
+      </div>
+      <div class="code-pane active">
+<pre class="code" id="code-html"><span class="tag">&lt;h1</span> <span class="attr">class</span>=<span class="str">"flip"</span> <span class="attr">data-final</span>=<span class="str">"Sophie's Swamp"</span><span class="tag">&gt;</span>Sophie's Swamp<span class="tag">&lt;/h1&gt;</span></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- CSS -->
+  <section id="css">
+    <h2 class="shead">2. CSS</h2>
+    <p class="p">Two states: spinning (lime) and locked (cream). Swap the colors for your palette.</p>
+    <div class="code-wrap">
+      <div class="code-tabs">
+        <div class="code-tablist"><button class="code-tab active">CSS</button></div>
+        <button class="copy-btn" data-target="code-css">COPY</button>
+      </div>
+      <div class="code-pane active">
+<pre class="code" id="code-css"><span class="kw">.flip</span> { <span class="prop">cursor</span>: pointer; }
+
+<span class="kw">.flip .ch</span> {
+  <span class="prop">display</span>: inline-block;
+  <span class="prop">min-width</span>: <span class="num">.55em</span>;
+  <span class="prop">text-align</span>: center;
+  <span class="prop">transition</span>: color <span class="num">.15s</span>;
+}
+
+<span class="kw">.flip.flipping .ch</span> {
+  <span class="prop">color</span>: <span class="str">#b6ff5b</span>;   <span class="com">/* spinning: neon lime */</span>
+  <span class="prop">text-shadow</span>: <span class="num">0 0 14px</span> rgba(<span class="num">182,255,91,.55</span>);
+}
+
+<span class="kw">.flip.flipping .ch.locked</span> {
+  <span class="prop">color</span>: <span class="str">#f3eedd</span>;   <span class="com">/* locked: cream */</span>
+  <span class="prop">text-shadow</span>: <span class="num">0 0 20px</span> rgba(<span class="num">82,255,224,.25</span>);
+}</pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- JS -->
+  <section id="js">
+    <h2 class="shead">3. JavaScript</h2>
+    <p class="p">Drop into a <code>&lt;script&gt;</code> tag at the bottom of your page. Runs once on load. Click any <code>.flip</code> to replay.</p>
+    <div class="code-wrap">
+      <div class="code-tabs">
+        <div class="code-tablist"><button class="code-tab active">JS</button></div>
+        <button class="copy-btn" data-target="code-js">COPY</button>
+      </div>
+      <div class="code-pane active">
+<pre class="code" id="code-js"><span class="com">// Swamp UI — Split-Flap Text</span>
+(<span class="kw">function</span> () {
+  <span class="kw">const</span> <span class="prop">POOL</span> = <span class="str">'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#@%&amp;*+=°/'</span>;
+  <span class="kw">function</span> <span class="prop">rand</span>() { <span class="kw">return</span> POOL[<span class="prop">Math</span>.floor(<span class="prop">Math</span>.random() * POOL.length)]; }
+
+  <span class="kw">function</span> <span class="prop">splitInto</span>(el, finalText) {
+    el.innerHTML = <span class="str">''</span>;
+    <span class="kw">const</span> chars = [...finalText];
+    <span class="kw">return</span> chars.map(ch =&gt; {
+      <span class="kw">const</span> s = document.createElement(<span class="str">'span'</span>);
+      s.className = <span class="str">'ch'</span>;
+      s.dataset.final = ch;
+      s.textContent = (ch === <span class="str">' '</span>) ? <span class="str">' '</span> : rand();
+      el.appendChild(s);
+      <span class="kw">return</span> s;
+    });
+  }
+
+  <span class="kw">function</span> <span class="prop">play</span>(el) {
+    <span class="kw">const</span> finalText = el.dataset.final || el.textContent.trim();
+    <span class="kw">const</span> spans = splitInto(el, finalText);
+    el.classList.add(<span class="str">'flipping'</span>);
+
+    <span class="kw">const</span> STEP = <span class="num">55</span>;        <span class="com">// ms between random swaps</span>
+    <span class="kw">const</span> PER_LETTER = <span class="num">9</span>;   <span class="com">// # of swaps before locking</span>
+    <span class="kw">const</span> STAGGER = <span class="num">70</span>;     <span class="com">// ms offset per letter</span>
+
+    spans.forEach((s, i) =&gt; {
+      <span class="kw">const</span> target = s.dataset.final;
+      <span class="kw">if</span> (target === <span class="str">' '</span>) { s.classList.add(<span class="str">'locked'</span>); <span class="kw">return</span>; }
+      <span class="kw">let</span> swaps = <span class="num">0</span>;
+      setTimeout(<span class="kw">function</span> spin() {
+        <span class="kw">if</span> (swaps &gt;= PER_LETTER) {
+          s.textContent = target;
+          s.classList.add(<span class="str">'locked'</span>);
+          <span class="kw">if</span> (spans.every(x =&gt; x.classList.contains(<span class="str">'locked'</span>))) {
+            setTimeout(() =&gt; el.classList.remove(<span class="str">'flipping'</span>), <span class="num">400</span>);
+          }
+          <span class="kw">return</span>;
+        }
+        s.textContent = rand();
+        swaps++;
+        setTimeout(spin, STEP);
+      }, i * STAGGER);
+    });
+  }
+
+  <span class="com">// Run on font-load (so glyph widths are right)</span>
+  <span class="kw">function</span> <span class="prop">runAll</span>() {
+    document.querySelectorAll(<span class="str">'.flip'</span>).forEach(el =&gt; play(el));
+  }
+  <span class="kw">if</span> (document.fonts &amp;&amp; document.fonts.ready) {
+    document.fonts.ready.then(() =&gt; setTimeout(runAll, <span class="num">250</span>));
+  } <span class="kw">else</span> {
+    setTimeout(runAll, <span class="num">600</span>);
+  }
+
+  <span class="com">// Click to replay</span>
+  document.addEventListener(<span class="str">'click'</span>, e =&gt; {
+    <span class="kw">const</span> el = e.target.closest(<span class="str">'.flip'</span>);
+    <span class="kw">if</span> (el &amp;&amp; !el.classList.contains(<span class="str">'flipping'</span>)) play(el);
+  });
+})();</pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- PARAMETERS -->
+  <section id="params">
+    <h2 class="shead">4. Parameters you can tweak</h2>
+    <table class="params">
+      <thead>
+        <tr><th>Constant</th><th>Default</th><th>Effect</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>POOL</code></td>
+          <td><span class="def">A–Z 0–9 #@%&*+=°/</span></td>
+          <td>Which random glyphs flash before locking. Add emoji for chaos.</td>
+        </tr>
+        <tr>
+          <td><code>STEP</code></td>
+          <td><span class="def">55 ms</span></td>
+          <td>How fast each letter cycles. Lower = faster spin.</td>
+        </tr>
+        <tr>
+          <td><code>PER_LETTER</code></td>
+          <td><span class="def">9</span></td>
+          <td>Random glyphs shown per letter before locking. Higher = longer animation.</td>
+        </tr>
+        <tr>
+          <td><code>STAGGER</code></td>
+          <td><span class="def">70 ms</span></td>
+          <td>Delay between letters starting. Higher = wavier reveal.</td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="p" style="font-size:14px;color:var(--muted);">
+      Total duration ≈ <code>(N_chars × STAGGER) + (PER_LETTER × STEP) + 400</code>.
+      For 14 chars: ~1900 ms.
+    </p>
+  </section>
+
+  <!-- VARIANTS -->
+  <section id="variants">
+    <h2 class="shead">5. Variants</h2>
+    <p class="p">Same logic, different palette. Click any to play.</p>
+    <div class="variants">
+      <div class="variant lime">
+        <div class="variant-demo flip-v" data-final="LIME">LIME</div>
+        <div class="variant-label">neon-lime (default)</div>
+      </div>
+      <div class="variant cyan">
+        <div class="variant-demo flip-v" data-final="CYAN">CYAN</div>
+        <div class="variant-label">neon-cyan</div>
+      </div>
+      <div class="variant" style="">
+        <div class="variant-demo flip-v" data-final="PINK">PINK</div>
+        <div class="variant-label">neon-pink</div>
+      </div>
+      <div class="variant yellow">
+        <div class="variant-demo flip-v" data-final="GOLD">GOLD</div>
+        <div class="variant-label">neon-yellow</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TIP JAR v2 — mini cat strip + treat button -->
+  <div class="tipjar-v2">
+    <div class="tj-headline">Liked this? <b>Feed Mr. Knife &amp; Ms. Ling.</b><br>And buy their owner a milk tea.</div>
+
+    <div class="tj-strip">
+      <div class="tj-grass"></div>
+
+      <!-- Mr. Knife (silver-blue exotic shorthair) -->
+      <div class="tj-cat tj-knife">
+        <svg width="48" height="34" viewBox="0 0 64 44" xmlns="http://www.w3.org/2000/svg">
+          <path d="M5 24 Q-1 16 4 9" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <ellipse cx="24" cy="27" rx="17" ry="10" fill="currentColor"/>
+          <ellipse cx="44" cy="22" rx="11" ry="10" fill="currentColor"/>
+          <path d="M36 16 L37 9 L42 14 Z" fill="currentColor"/>
+          <path d="M52 16 L51 9 L46 14 Z" fill="currentColor"/>
+          <circle cx="41" cy="22" r="1.5" fill="#52a4ff"/>
+          <circle cx="47" cy="22" r="1.5" fill="#52a4ff"/>
+          <circle cx="44" cy="25" r="1" fill="#ff4d8d"/>
+          <rect x="13" y="33" width="2.5" height="6" fill="currentColor" rx="1"/>
+          <rect x="19" y="33" width="2.5" height="6" fill="currentColor" rx="1"/>
+          <rect x="28" y="33" width="2.5" height="6" fill="currentColor" rx="1"/>
+          <rect x="34" y="33" width="2.5" height="6" fill="currentColor" rx="1"/>
+        </svg>
+      </div>
+
+      <!-- Ms. Ling (cream exotic shorthair) -->
+      <div class="tj-cat tj-ling">
+        <svg width="48" height="34" viewBox="0 0 64 44" xmlns="http://www.w3.org/2000/svg">
+          <path d="M5 24 Q-1 16 4 9" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <ellipse cx="24" cy="27" rx="17" ry="10" fill="currentColor"/>
+          <ellipse cx="44" cy="22" rx="11" ry="10" fill="currentColor"/>
+          <path d="M36 16 L37 9 L42 14 Z" fill="currentColor"/>
+          <path d="M52 16 L51 9 L46 14 Z" fill="currentColor"/>
+          <circle cx="41" cy="22" r="1.5" fill="#52a4ff"/>
+          <circle cx="47" cy="22" r="1.5" fill="#52a4ff"/>
+          <circle cx="44" cy="25" r="1" fill="#ff4d8d"/>
+          <rect x="13" y="33" width="2.5" height="6" fill="currentColor" rx="1"/>
+          <rect x="19" y="33" width="2.5" height="6" fill="currentColor" rx="1"/>
+          <rect x="28" y="33" width="2.5" height="6" fill="currentColor" rx="1"/>
+          <rect x="34" y="33" width="2.5" height="6" fill="currentColor" rx="1"/>
+        </svg>
+      </div>
+
+      <!-- Littlehotpot (bengal leopard with spots + yellow eyes) -->
+      <div class="tj-cat tj-pot">
+        <svg width="48" height="34" viewBox="0 0 64 44" xmlns="http://www.w3.org/2000/svg">
+          <path d="M5 24 Q-1 16 4 9" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <ellipse cx="24" cy="27" rx="17" ry="10" fill="currentColor"/>
+          <ellipse cx="44" cy="22" rx="11" ry="10" fill="currentColor"/>
+          <circle cx="18" cy="25" r="1.4" fill="#4a1f10" opacity=".55"/>
+          <circle cx="24" cy="29" r="1.2" fill="#4a1f10" opacity=".55"/>
+          <circle cx="29" cy="24" r="1.3" fill="#4a1f10" opacity=".55"/>
+          <circle cx="33" cy="29" r="1" fill="#4a1f10" opacity=".55"/>
+          <path d="M36 16 L37 9 L42 14 Z" fill="currentColor"/>
+          <path d="M52 16 L51 9 L46 14 Z" fill="currentColor"/>
+          <ellipse cx="41" cy="22" rx="1.5" ry="2" fill="#ffd23f"/>
+          <ellipse cx="47" cy="22" rx="1.5" ry="2" fill="#ffd23f"/>
+          <line x1="41" y1="20" x2="41" y2="24" stroke="#081310" stroke-width=".8"/>
+          <line x1="47" y1="20" x2="47" y2="24" stroke="#081310" stroke-width=".8"/>
+          <circle cx="44" cy="25" r="1" fill="#ff4d8d"/>
+          <rect x="13" y="33" width="2.5" height="6" fill="currentColor" rx="1"/>
+          <rect x="19" y="33" width="2.5" height="6" fill="currentColor" rx="1"/>
+          <rect x="28" y="33" width="2.5" height="6" fill="currentColor" rx="1"/>
+          <rect x="34" y="33" width="2.5" height="6" fill="currentColor" rx="1"/>
+        </svg>
+      </div>
+    </div>
+
+    <a class="tj-btn" href="https://buymeacoffee.com/sophiejr" target="_blank" rel="noopener">
+      <span class="emo">🧋</span>
+      <span>TREAT THE SWAMP</span>
+      <span class="arr">→</span>
+    </a>
+  </div>
+
+  <!-- NEXT -->
+  <div class="next-cta">
+    <div class="l">
+      <b>Want more components?</b>
+      <span>5 more in the garden: Pond Ripple, Firefly Tour, Cat Wanderer, Xylophone Lights, Swamp Name Generator.</span>
+    </div>
+    <a href="/swamp-ui/">Browse all →</a>
+  </div>
+
+</div>
+
+<footer>
+  <div class="flinks">
+    <a href="/swamp-ui/">Swamp UI</a>
+    <a href="/">Sophie's Swamp</a>
+    <a href="https://github.com/sophiejren/sophiesswap" target="_blank" rel="noopener">GitHub</a>
+  </div>
+  <p class="copy">© 2026 Sophie. <b>MIT licensed.</b> Use freely, credit kindly. 🐸</p>
+</footer>
+
+<!-- ============ SCRIPTS ============ -->
+
+<!-- Demo: title flip on load -->
+<script>
+  (function(){
+    const POOL = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#@%&*+=°/';
+    function rand(){return POOL[Math.floor(Math.random()*POOL.length)];}
+
+    function splitInto(el, finalText){
+      el.innerHTML='';
+      return [...finalText].map(ch=>{
+        const s=document.createElement('span');
+        s.className='ch';s.dataset.final=ch;
+        s.textContent=(ch===' ')?' ':rand();
+        el.appendChild(s);return s;
+      });
+    }
+
+    function play(el, opts){
+      const o = Object.assign({STEP:55, PER_LETTER:9, STAGGER:70}, opts||{});
+      const finalText = el.dataset.final || el.textContent.trim();
+      const spans = splitInto(el, finalText);
+      el.classList.add('flipping');
+      spans.forEach((s,i)=>{
+        const target=s.dataset.final;
+        if(target===' '){s.classList.add('locked');return;}
+        let swaps=0;
+        setTimeout(function spin(){
+          if(swaps>=o.PER_LETTER){
+            s.textContent=target;s.classList.add('locked');
+            if(spans.every(x=>x.classList.contains('locked'))){
+              setTimeout(()=>el.classList.remove('flipping'),400);
+            }
+            return;
+          }
+          s.textContent=rand();swaps++;
+          setTimeout(spin,o.STEP);
+        }, i*o.STAGGER);
+      });
+    }
+
+    // Title + main demo
+    function runAll(){
+      document.querySelectorAll('.flip').forEach(el=>play(el));
+      play(document.getElementById('demoFlip'));
+      // Stagger the variants
+      const variants = document.querySelectorAll('.flip-v');
+      variants.forEach((el, i)=>setTimeout(()=>play(el), 400 + i*250));
+    }
+    if(document.fonts&&document.fonts.ready){
+      document.fonts.ready.then(()=>setTimeout(runAll,250));
+    } else { setTimeout(runAll,600); }
+
+    // Click .flip / .flip-v / .demo-flip to replay
+    document.addEventListener('click', e=>{
+      const el = e.target.closest('.flip, .flip-v, .demo-flip');
+      if(el && !el.classList.contains('flipping')) play(el);
+    });
+
+    // Demo input + button — replay with new text
+    const input = document.getElementById('demoInput');
+    const btn   = document.getElementById('demoBtn');
+    const demo  = document.getElementById('demoFlip');
+
+    function applyInput(){
+      const v = input.value.trim();
+      if(!v) return;
+      demo.dataset.final = v;
+      if(!demo.classList.contains('flipping')) play(demo);
+    }
+    btn.addEventListener('click', applyInput);
+    input.addEventListener('keydown', e=>{ if(e.key==='Enter') applyInput(); });
+
+    // Copy buttons
+    document.querySelectorAll('.copy-btn').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const target = document.getElementById(btn.dataset.target);
+        if(!target) return;
+        const text = target.innerText;
+        navigator.clipboard.writeText(text).then(()=>{
+          const original = btn.textContent;
+          btn.textContent = 'COPIED ✓';
+          btn.classList.add('copied');
+          setTimeout(()=>{
+            btn.textContent = original;
+            btn.classList.remove('copied');
+          }, 1600);
+        });
+      });
+    });
+  })();
+</script>
+
+</body>
+</html>

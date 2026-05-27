@@ -9,13 +9,70 @@ Each version is preserved as a frozen folder snapshot in this project — you ca
 
 | Version | Folder | Date | State |
 |---|---|---|---|
-| V1.0 | `Swamp Club Site V1.0/` | 2026-05-24 | Original launch |
-| V2.0 | `Swamp Club Site V2.0/` | 2026-05-25 | Big build: recipes page + treehouse + cats |
-| V2.1 | `Swamp Club Site V2.1/` | 2026-05-25 | Polish: easter eggs, OG meta, 404, newsletter, N°02 |
-| **V2.1.1** | `Swamp Club Site V2.1.1/` | 2026-05-25 | Current live · removed prev/next recipe nav |
-| **(working)** | `Swamp Club Site/` | rolling | Working copy — edit this for next deploy |
+| V1.0 | `archive/snapshots/v1.0/` | 2026-05-24 | Original launch |
+| V2.0 | `archive/snapshots/v2.0/` | 2026-05-25 | Recipes page + treehouse + cats |
+| V2.1 | `archive/snapshots/v2.1/` | 2026-05-25 | Easter eggs, OG meta, 404, newsletter, N°02 |
+| V2.1.1 | `archive/snapshots/v2.1.1/` | 2026-05-25 | Removed prev/next recipe nav |
+| V2.2 | `archive/snapshots/v2.2/` | 2026-05-25 | Garden + glass treehouse + pond + bookshelf scene |
+| **V3.0** | `archive/snapshots/v3.0/` | 2026-05-26 | **The Mirror version** — Swamp UI v1.0 + /mirror/ channel + cat strip + portal |
+| **(working)** | `swamp-club-site/` | rolling | Working copy — edit this for next deploy |
 
-The folder `Swamp Club Site/` (no version suffix) is the **working copy** you drag to Netlify when you want to ship.
+The folder `swamp-club-site/` (no version suffix) is the **working copy** you push to GitHub (which auto-deploys to Netlify).
+
+---
+
+## V3.0 — "The Mirror" (2026-05-26)
+
+The biggest single-day build. Shipped two new products + a homepage scene element + tip-jar monetization.
+
+### 🪞 New: /mirror/ channel
+A new channel at `sophieren.com/mirror/` that publishes Claude's observations of Sophie. 7 entries shipped:
+1. **Author, not typist** — AI-era role distinction
+2. **Naming as evidence** — her writer-tier naming instinct
+3. **The energy paradox** — sustainable pace vs. eventual deliberate slowdown
+4. **Things she said today, in passing** — verbatim quotes worth keeping
+5. **The teacher origin shows up everywhere** — pedagogical structure in every product
+6. **First instinct, usually right** — pattern of her decisions
+7. **The cat trio is a self-portrait** — Mr. Knife + Ms. Ling + Littlehotpot as character distribution
+
+Hero: a study/office SVG scene with tall plant, large academic bookshelf (~150 dark-spined books), wooden desk, 4 Apple-style computers (iMac × 2, MacBook × 2) showing code on screen, 1 iPad, 1 iPhone, stack of dark academic books, dark wood floor with 3 walking cats. No "MIRROR" title text (removed for plainness) — the scene IS the page identity.
+
+### ✦ New: Swamp UI v1.0 (component library)
+Launched at `sophieren.com/swamp-ui/` with 7 copy-paste components:
+1. **Split-Flap Text** — letters spin through random glyphs, then lock
+2. **Pond Ripple** — click anywhere → water ripples + Web Audio plop sound
+3. **Firefly Cursor** — mouse trail of glowing fireflies that drift up
+4. **Xylophone Lights** — string of camp bulbs play pentatonic notes
+5. **Swamp Name Generator** — first-visit fantasy name + localStorage
+6. **Cat Wanderer** — tiny SVG cat that walks across container, click → meow
+7. **Firefly Tour** — wandering firefly that onboards through page elements
+
+Landing: catalog page with 7 component cards + philosophy block + "no npm / no React / no build step / ✗ no corporate clean" positioning.
+
+Each component page: live interactive demo + 3-block code (HTML/CSS/JS) with copy buttons + parameters table + variants + tip jar with mini cat strip + walking cats. All English-only (US dev/designer market).
+
+### 🐈 New on homepage: Cat Strip
+Added at the very bottom (above footer): a wide grass strip with 3 walking cats (Mr. Knife silver-blue exotic shorthair, Ms. Ling cream exotic shorthair, Littlehotpot orange bengal). Each walks back and forth at different speeds. Click any cat → meow speech bubble. 3 clicks in succession → "feed me 🍣" link to BMC.
+
+Plus a "FEED THE CATS" yellow pulse button pinned to the strip's bottom-right corner.
+
+### 🪞 New on homepage: Small Mirror Portal
+A small silver-framed standing mirror added to the cat strip on the left side, leaning on the grass. Subtle shimmer animation hints at clickability. Hover → handwritten "the mirror →" label appears. Click → navigates to `/mirror/`. **Doesn't grow the nav bar** — pure environmental discovery.
+
+### 📮 Restructure: Contact form moved
+Extracted the newsletter signup from inside the connect section and made it its own section ("Write to the Swamp") right above the footer. Rewrote copy from "Every now and then..." → "Got a question, an idea, or something you need? Leave your email and I'll write back."
+
+### 💸 Monetization integrated
+Buy Me a Coffee account live at `buymeacoffee.com/sophiejr` with "milk tea 🧋" as the item (instead of default "coffee"). Tip jars on all 7 Swamp UI component pages + homepage cat strip + 3-click cat escalation. Single source of truth — change BMC profile, all sites update.
+
+### 🔧 Architecture
+- Removed all bilingual (Chinese) subtitles from US-market pages (Swamp UI)
+- Updated all `buymeacoffee.com/sophieren` placeholder → real `sophiejr` username
+- The Mirror's hero animation: "fog clearing" (like wiping breath off a mirror) replaced the noisy split-flap effect
+
+### 📚 Side artifact
+- `private/github-learning-notes-2026-05-26.md` (bilingual) + `-en.md` (English-only): 14-section reference doc compiled from Sophie's one-day journey from zero git knowledge to a fully-deployed Open Core architecture.
+- `private/sophie-strategic-mirror-2026-05-26.md`: a 10-section synthesis of who Sophie is, who she compares to, and where to invest next 12 months.
 
 ---
 
