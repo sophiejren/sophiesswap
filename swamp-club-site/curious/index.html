@@ -129,40 +129,76 @@
   }
   .stage svg{display:block;width:100%;height:auto;overflow:visible;}
 
-  /* === FLOATING COGNITION BUBBLE (absolutely positioned, follows cat with elastic lag) === */
+  /* === COGNITION BUBBLE (kawaii cream pillow, follows cat) === */
   .cat-bubble{
     position:absolute;
-    top:28%;right:6%;
-    width:44%;max-width:420px;
+    top:24%;right:5%;
+    width:46%;max-width:430px;
     --bubble-offset:0px;
     transform:translateX(var(--bubble-offset));
     transition:transform 3s cubic-bezier(.3,.7,.4,1);
-    background:
-      radial-gradient(ellipse at top left, rgba(82,255,224,.08) 0%, transparent 60%),
-      linear-gradient(180deg, rgba(20,40,32,.92) 0%, rgba(10,22,18,.96) 100%);
-    border:1px solid rgba(82,255,224,.28);
-    border-radius:26px;
-    padding:30px 28px 22px;
+    background:linear-gradient(180deg, #fefaf0 0%, #f3eedd 100%);
+    border:2.8px solid #2a1a1a;
+    border-radius:34px;
+    padding:24px 26px 20px;
     box-shadow:
-      0 30px 60px -30px rgba(0,0,0,.7),
-      0 0 0 1px rgba(82,255,224,.08),
-      inset 0 1px 0 rgba(243,238,221,.05);
-    animation:bubble-float 6s ease-in-out infinite;
+      0 18px 42px -16px rgba(0,0,0,.5),
+      0 0 0 6px rgba(255,182,193,.18),
+      inset 0 -3px 0 rgba(255,182,193,.25);
   }
-  @keyframes bubble-float{
+  /* gentle bobbing — wraps content so doesn't fight the translateX --bubble-offset */
+  .bubble-inner{
+    position:relative;
+    animation:bubble-bob 5s ease-in-out infinite;
+  }
+  @keyframes bubble-bob{
     0%,100%{transform:translateY(0);}
-    50%   {transform:translateY(-6px);}
+    50%   {transform:translateY(-4px);}
   }
-  /* speech-bubble tail pointing LEFT toward the cat */
+
+  /* pillowy rounded tail pointing LEFT toward the cat */
   .bubble-tail{
-    position:absolute;left:-14px;top:50%;transform:translateY(-50%);
-    width:0;height:0;
-    border-top:14px solid transparent;
-    border-bottom:14px solid transparent;
-    border-right:16px solid rgba(20,40,32,.96);
-    filter:drop-shadow(-1px 0 0 rgba(82,255,224,.3));
+    position:absolute;left:-15px;top:46%;
+    width:22px;height:22px;
+    background:#fefaf0;
+    border-left:2.8px solid #2a1a1a;
+    border-bottom:2.8px solid #2a1a1a;
+    border-radius:0 0 0 8px;
+    transform:translateY(-50%) rotate(45deg);
+    box-shadow:-3px 3px 0 rgba(255,182,193,.2);
   }
-  .bubble-inner{position:relative;}
+
+  /* === BUBBLE INTERIOR TEXT (dark on light, consistent kawaii palette) === */
+  .cat-bubble .pip-label{color:#3a2a1a;letter-spacing:1.8px;}
+  .cat-bubble .pip-label::before{background:#ff8aa8;box-shadow:0 0 8px #ff8aa8;}
+  .cat-bubble .pip-says,
+  .cat-bubble .msg.kitten{color:#2a1a1a;}
+  .cat-bubble .msg.kitten em{color:#c43b6d;font-style:italic;}
+  .cat-bubble .msg.kitten{
+    background:#fff;border:1.8px solid #2a1a1a;border-radius:18px;
+  }
+  .cat-bubble .msg.user{
+    background:#ffe7b8;border:1.8px solid #2a1a1a;color:#2a1a1a;border-radius:18px;
+  }
+  .cat-bubble .msg.thinking{color:#3a2a1a;opacity:.7;}
+  .cat-bubble .msg.thinking .dot{background:#ff8aa8;}
+  .cat-bubble .msg.error{
+    background:#ffe0e6;border:1.5px solid #c43b6d;color:#c43b6d;
+  }
+  .cat-bubble .chat-input{
+    background:#fff;border:1.8px solid #2a1a1a;border-radius:16px;color:#2a1a1a;
+  }
+  .cat-bubble .chat-input:focus{border-color:#ff8aa8;}
+  .cat-bubble .chat-input::placeholder{color:#3a2a1a;opacity:.45;}
+  .cat-bubble .chat-send{
+    background:#ff8aa8;border:1.8px solid #2a1a1a;color:#2a1a1a;
+    border-radius:50%;width:44px;height:44px;padding:0;
+    font-size:18px;letter-spacing:0;font-weight:700;
+  }
+  .cat-bubble .chat-send:hover{background:#ffb6c1;transform:translateY(-1px) scale(1.05);}
+  .cat-bubble .chat-meta{color:#3a2a1a;opacity:.55;}
+  .cat-bubble .chat-meta a{color:#c43b6d;text-decoration:underline;cursor:pointer;}
+  .cat-bubble .chat-input-row{border-top-color:rgba(42,26,26,.15);}
 
   /* === walker no longer uses CSS keyframe (JS controls movement) === */
   .walker{cursor:default;transition:transform 2.8s cubic-bezier(.4,0,.2,1);}
@@ -631,106 +667,64 @@
     <text class="spark" x="305" y="110" font-family="Caveat, cursive" font-size="20" fill="#52ffe0">?</text>
     <text class="spark" x="328" y="180" font-family="Caveat, cursive" font-size="22" fill="#b6ff5b">!</text>
 
-    <!-- ============ LITTLE SOPHIE (walking + clickable) ============ -->
-    <g class="walker" id="kittenWalker" role="button" aria-label="Click to chat with Little Sophie">
+    <!-- ============ LITTLE SOPHIE (kawaii white kitten) ============ -->
+    <g class="walker" id="kittenWalker" role="button" aria-label="Little Sophie">
     <g class="kitten" id="kitten">
-      <g class="tail">
-        <path d="M30 30 q28 -20 18 32 q-4 14 -10 4" fill="none" stroke="#1a1a1a" stroke-width="10" stroke-linecap="round"/>
-        <path d="M30 30 q28 -20 18 32 q-4 14 -10 4" fill="none" stroke="#2a2a2a" stroke-width="6" stroke-linecap="round"/>
-      </g>
-      <!-- ============ TOTORO-ROUND BODY ============ -->
-      <ellipse cx="0" cy="48" rx="58" ry="50" fill="#1a1a1a"/>
-      <ellipse cx="-4" cy="50" rx="46" ry="40" fill="#262626" opacity=".55"/>
-      <!-- Totoro-style lighter belly patch -->
-      <ellipse cx="0" cy="62" rx="34" ry="30" fill="#3a3a3a" opacity=".75"/>
-      <ellipse cx="0" cy="66" rx="26" ry="22" fill="#4a4a4a" opacity=".45"/>
-      <!-- Totoro chevron belly marks -->
-      <path d="M-12 54 l3 5" stroke="#0a0a0a" stroke-width="1.4" fill="none" opacity=".55" stroke-linecap="round"/>
-      <path d="M-3 57 l3 5"  stroke="#0a0a0a" stroke-width="1.4" fill="none" opacity=".55" stroke-linecap="round"/>
-      <path d="M6 55 l3 5"   stroke="#0a0a0a" stroke-width="1.4" fill="none" opacity=".55" stroke-linecap="round"/>
-      <path d="M-9 67 l2 4"  stroke="#0a0a0a" stroke-width="1.2" fill="none" opacity=".45" stroke-linecap="round"/>
-      <path d="M3 68 l2 4"   stroke="#0a0a0a" stroke-width="1.2" fill="none" opacity=".45" stroke-linecap="round"/>
-      <!-- chest tuft -->
-      <path d="M-7 12 q3 5 7 0 q-3 6 -7 0 Z" fill="#3a3a3a" opacity=".6"/>
-      <path d="M-11 18 q4 5 11 0" stroke="#3a3a3a" stroke-width="1" fill="none" opacity=".5"/>
+      <!-- ============ KAWAII WHITE KITTEN (Sanrio / chibi style) ============ -->
+      <!-- soft shadow under -->
+      <ellipse cx="0" cy="100" rx="48" ry="5" fill="rgba(0,0,0,.32)"/>
 
-      <!-- tiny paws tucked under with toe beans -->
-      <ellipse cx="-26" cy="92" rx="15" ry="7" fill="#1a1a1a"/>
-      <ellipse cx="26"  cy="92" rx="15" ry="7" fill="#1a1a1a"/>
-      <circle cx="-31" cy="93" r="1.8" fill="#ff6b9d" opacity=".85"/>
-      <circle cx="-25" cy="94" r="1.8" fill="#ff6b9d" opacity=".85"/>
-      <circle cx="-21" cy="93" r="1.8" fill="#ff6b9d" opacity=".85"/>
-      <circle cx="21"  cy="93" r="1.8" fill="#ff6b9d" opacity=".85"/>
-      <circle cx="25"  cy="94" r="1.8" fill="#ff6b9d" opacity=".85"/>
-      <circle cx="31"  cy="93" r="1.8" fill="#ff6b9d" opacity=".85"/>
+      <!-- BODY (round white pillow) -->
+      <ellipse cx="0" cy="48" rx="56" ry="44" fill="#fdf6e3" stroke="#2a1a1a" stroke-width="2.8"/>
+      <!-- soft belly tone -->
+      <ellipse cx="0" cy="58" rx="32" ry="22" fill="#fff" opacity=".45"/>
+
+      <!-- PAWS (crossed in front, like the reference) -->
+      <ellipse cx="-14" cy="88" rx="14" ry="7" fill="#fdf6e3" stroke="#2a1a1a" stroke-width="2.3"/>
+      <ellipse cx="14"  cy="88" rx="14" ry="7" fill="#fdf6e3" stroke="#2a1a1a" stroke-width="2.3"/>
+      <!-- paw separation line (cross detail) -->
+      <path d="M0 86 q-3 -3 -8 0" stroke="#2a1a1a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+      <path d="M0 86 q3 -3 8 0" stroke="#2a1a1a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
 
       <!-- ============ BIG ROUND HEAD ============ -->
       <g class="head-grp">
-        <circle cx="0" cy="-12" r="42" fill="#1a1a1a"/>
-        <ellipse cx="-4" cy="-9" rx="34" ry="32" fill="#222222" opacity=".4"/>
+        <!-- EARS first (so they sit behind the head outline) -->
+        <path d="M-34 -42 q-8 -22 -2 -34 q14 4 19 20 Z" fill="#fdf6e3" stroke="#2a1a1a" stroke-width="2.6" stroke-linejoin="round"/>
+        <path d="M34  -42 q8  -22 2  -34 q-14 4 -19 20 Z" fill="#fdf6e3" stroke="#2a1a1a" stroke-width="2.6" stroke-linejoin="round"/>
+        <!-- pink inner ears -->
+        <path d="M-28 -38 q-4 -13 0 -22 q8 3 11 14 Z" fill="#ffb6c1"/>
+        <path d="M28  -38 q4  -13 0 -22 q-8 3 -11 14 Z" fill="#ffb6c1"/>
 
-        <!-- head-top fluff tufts (Totoro/Cheshire vibe) -->
-        <path d="M-4 -52 q2 -7 5 -2 q3 -7 5 -1 q-5 4 -10 3 Z" fill="#0a0a0a"/>
+        <!-- HEAD circle (big and round) -->
+        <circle cx="0" cy="-10" r="48" fill="#fdf6e3" stroke="#2a1a1a" stroke-width="2.8"/>
 
-        <!-- rounder, fluffier ears (Totoro proportions) -->
-        <path d="M-32 -34 q-9 -22 -2 -32 q11 5 15 19 Z" fill="#1a1a1a"/>
-        <path d="M32  -34 q9  -22 2  -32 q-11 5 -15 19 Z" fill="#1a1a1a"/>
-        <!-- inner ears -->
-        <path d="M-27 -32 q-4 -13 -1 -20 q6 3 9 12 Z" fill="#ff8aa8" opacity=".7"/>
-        <path d="M27  -32 q4  -13 1  -20 q-6 3 -9 12 Z" fill="#ff8aa8" opacity=".7"/>
-        <!-- ear fluff -->
-        <path d="M-24 -36 q-3 -4 1 -8" stroke="#f3eedd" stroke-width=".9" fill="none" opacity=".75"/>
-        <path d="M24  -36 q3  -4 -1 -8" stroke="#f3eedd" stroke-width=".9" fill="none" opacity=".75"/>
-
-        <!-- ============ BIG GLOWING EYES (Totoro/GLaDOS hybrid) ============ -->
+        <!-- EYES (simple black dots — chibi kawaii) -->
         <g class="eyes">
-          <circle cx="-15" cy="-15" r="17" fill="url(#eyeGlow)"/>
-          <circle cx="15"  cy="-15" r="17" fill="url(#eyeGlow)"/>
-          <ellipse cx="-15" cy="-15" rx="11" ry="12.5" fill="#0a1a14"/>
-          <ellipse cx="15"  cy="-15" rx="11" ry="12.5" fill="#0a1a14"/>
-          <!-- warm gold outer iris -->
-          <ellipse cx="-15" cy="-15" rx="9.5" ry="11" fill="#ffd23f"/>
-          <ellipse cx="15"  cy="-15" rx="9.5" ry="11" fill="#ffd23f"/>
-          <!-- cyan core -->
-          <ellipse cx="-15" cy="-15" rx="7.5" ry="9" fill="#52ffe0"/>
-          <ellipse cx="15"  cy="-15" rx="7.5" ry="9" fill="#52ffe0"/>
-          <!-- ROUND kawaii pupils (no scary slits) -->
-          <circle cx="-15" cy="-14" r="4" fill="#000"/>
-          <circle cx="15"  cy="-14" r="4" fill="#000"/>
-          <!-- big sparkle highlight -->
-          <circle cx="-12" cy="-19" r="2.8" fill="#f3eedd"/>
-          <circle cx="18"  cy="-19" r="2.8" fill="#f3eedd"/>
-          <!-- secondary tiny sparkle -->
-          <circle cx="-18" cy="-12" r="1.2" fill="#fff" opacity=".95"/>
-          <circle cx="12"  cy="-12" r="1.2" fill="#fff" opacity=".95"/>
+          <ellipse cx="-15" cy="-10" rx="5" ry="6.5" fill="#2a1a1a"/>
+          <ellipse cx="15"  cy="-10" rx="5" ry="6.5" fill="#2a1a1a"/>
+          <!-- tiny eye sparkles -->
+          <circle cx="-13" cy="-13" r="1.6" fill="#fff"/>
+          <circle cx="17"  cy="-13" r="1.6" fill="#fff"/>
         </g>
 
-        <!-- KAWAII PINK CHEEK BLUSH -->
-        <ellipse cx="-28" cy="6" rx="5.5" ry="3" fill="#ff6b9d" opacity=".3"/>
-        <ellipse cx="28"  cy="6" rx="5.5" ry="3" fill="#ff6b9d" opacity=".3"/>
+        <!-- PINK CHEEK BLUSH -->
+        <ellipse cx="-26" cy="4" rx="8" ry="4.5" fill="#ffb6c1" opacity=".75"/>
+        <ellipse cx="26"  cy="4" rx="8" ry="4.5" fill="#ffb6c1" opacity=".75"/>
 
-        <!-- tiny pink nose -->
-        <path d="M-3 -2 l6 0 l-3 4 Z" fill="#ff6b9d"/>
-        <!-- nose-to-mouth crease -->
-        <line x1="0" y1="2" x2="0" y2="7" stroke="#2a1a1a" stroke-width="1" opacity=".6"/>
+        <!-- tiny pink triangular NOSE -->
+        <path d="M-3.5 2 l7 0 l-3.5 4.5 Z" fill="#ff8aa8" stroke="#2a1a1a" stroke-width="1.2" stroke-linejoin="round"/>
 
-        <!-- ============ CHESHIRE GRIN ============ -->
-        <!-- wide curling grin -->
-        <path d="M-17 9 q17 13 34 0" stroke="#1a0a0a" stroke-width="2" fill="rgba(20,8,12,.92)" stroke-linecap="round"/>
-        <!-- subtle pink inner mouth -->
-        <path d="M-14 10 q14 9 28 0 q-14 4 -28 0 Z" fill="#ff6b9d" opacity=".55"/>
-        <!-- two tiny CHESHIRE FANGS -->
-        <path d="M-7 10 l-1.4 4 l-1.4 -4 Z" fill="#f3eedd"/>
-        <path d="M10 10 l-1.4 4 l-1.4 -4 Z" fill="#f3eedd"/>
-        <!-- mischievous mouth-corner curls (the signature Cheshire smirk) -->
-        <path d="M-17 9 q-3 -3 -1 -5" stroke="#1a0a0a" stroke-width="1.3" fill="none" stroke-linecap="round"/>
-        <path d="M17 9  q3 -3 1 -5"   stroke="#1a0a0a" stroke-width="1.3" fill="none" stroke-linecap="round"/>
+        <!-- MOUTH (cute soft "w" under nose) -->
+        <path d="M0 7 q-4 4 -7 1" stroke="#2a1a1a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+        <path d="M0 7 q4 4 7 1"   stroke="#2a1a1a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
 
-        <!-- whiskers (longer, curved) -->
-        <path d="M-17 1 q-10 -2 -20 -5" stroke="#f3eedd" stroke-width="1" fill="none"/>
-        <path d="M-17 5 q-10 2 -20 5"  stroke="#f3eedd" stroke-width="1" fill="none"/>
-        <path d="M17 1  q10 -2 20 -5"  stroke="#f3eedd" stroke-width="1" fill="none"/>
-        <path d="M17 5  q10 2 20 5"   stroke="#f3eedd" stroke-width="1" fill="none"/>
+        <!-- WHISKERS (3 each side, simple straight) -->
+        <line x1="-20" y1="2"  x2="-44" y2="-3" stroke="#2a1a1a" stroke-width="1.6"/>
+        <line x1="-20" y1="6"  x2="-44" y2="6"  stroke="#2a1a1a" stroke-width="1.6"/>
+        <line x1="-20" y1="10" x2="-44" y2="14" stroke="#2a1a1a" stroke-width="1.6"/>
+        <line x1="20"  y1="2"  x2="44"  y2="-3" stroke="#2a1a1a" stroke-width="1.6"/>
+        <line x1="20"  y1="6"  x2="44"  y2="6"  stroke="#2a1a1a" stroke-width="1.6"/>
+        <line x1="20"  y1="10" x2="44"  y2="14" stroke="#2a1a1a" stroke-width="1.6"/>
       </g>
     </g>
     </g><!-- /.walker -->
@@ -1155,8 +1149,168 @@ const chatTurnCount = document.getElementById('chatTurnCount');
 const chatReset = document.getElementById('chatReset');
 let llmHistory = [];
 
+// ===== Little Sophie's random openers (curated by Sophie herself) =====
+const OPENERS = [
+  "what are you obsessing over lately?",
+  "what keeps pulling your attention lately?",
+  "what idea refuses to leave you alone?",
+  "what rabbit hole are we entering today?",
+  "what are we trying to understand?",
+  "what knowledge are we not supposed to touch?",
+  "what are you staring at?",
+  "what thought keeps returning?",
+  "what are you circling around without realizing it?",
+  "what are you secretly trying to solve?",
+  "what feels unfinished in your mind?",
+  "what have you been unable to ignore?",
+  "what keeps interrupting your thoughts lately?",
+  "what are you overthinking right now?",
+  "what are you curious about but afraid to admit?",
+  "what pattern are you noticing everywhere?",
+  "what keeps showing up in your life lately?",
+  "what question follows you around?",
+  "what are you trying to make sense of?",
+  "what topic keeps reopening itself?",
+  "what are you mentally chewing on?",
+  "what feels important but hard to explain?",
+  "what idea has been haunting you?",
+  "what contradiction can&rsquo;t you stop thinking about?",
+  "what are you trying to untangle?",
+  "what keeps distracting you in an interesting way?",
+  "what are you collecting fragments of?",
+  "what are you trying to connect lately?",
+  "what are you hoping to discover?",
+  "what keeps echoing in your head?",
+  "what are you slowly becoming obsessed with?",
+  "what mystery are we dealing with today?",
+  "what feels strangely meaningful lately?",
+  "what&rsquo;s occupying too much space in your brain?",
+  "what keeps resurfacing?",
+  "what are you trying not to think about?",
+  "what are you drawn toward lately?",
+  "what kind of knowledge excites you right now?",
+  "what are you trying to understand about yourself?",
+  "what have you been researching at 2am?",
+  "what&rsquo;s consuming your attention these days?",
+  "what&rsquo;s been living in your tabs lately?",
+  "what&rsquo;s your brain returning to again and again?",
+  "what&rsquo;s your current cognitive spiral?",
+  "what&rsquo;s emotionally unresolved in your mind?",
+  "what&rsquo;s making your curiosity itch?",
+  "what feels weirdly important today?",
+  "what are you trying to decode?",
+  "what are you noticing that others ignore?",
+  "what thought are you feeding lately?",
+  "what idea are you orbiting around?",
+  "what&rsquo;s pulling you deeper?",
+  "what are we investigating today?",
+  "what are we getting lost in today?",
+  "what unfinished thought brought you here?",
+  "what are you trying to articulate?",
+  "what kind of rabbit hole do you need right now?",
+  "what&rsquo;s quietly consuming your mental bandwidth?",
+  "what have you opened too many tabs about?",
+  "what are you emotionally researching?",
+  "what keeps triggering your curiosity?",
+  "what are you trying to build in your head?",
+  "what feels unresolved intellectually?",
+  "what are you trying to map out?",
+  "what tension are you trying to resolve?",
+  "what keeps pulling you back online?",
+  "what are you searching for beneath the surface?",
+  "what are you trying to remember?",
+  "what kind of answer are you hunting for?",
+  "what are you trying to see more clearly?",
+  "what feels cognitively sticky lately?",
+  "what are you drawn to for no obvious reason?",
+  "what are you trying to figure out indirectly?",
+  "what idea keeps mutating in your mind?",
+  "what are you not done thinking about?",
+  "what have you been mentally revisiting?",
+  "what feels incomplete?",
+  "what&rsquo;s your mind pacing around lately?",
+  "what keeps making you pause?",
+  "what&rsquo;s the strange thing you can&rsquo;t stop reading about?",
+  "what are you currently trying to metabolize?",
+  "what&rsquo;s your latest intellectual fixation?",
+  "what&rsquo;s been taking up emotional RAM lately?",
+  "what are you trying to understand before everyone else does?",
+  "what have you been silently researching?",
+  "what signal are you following?",
+  "what hidden pattern are you sensing?",
+  "what are you hoping to uncover today?",
+  // ===== batch 2 (Sophie&rsquo;s curious agent prompt starters) =====
+  "what thought brought you here before you even opened this page?",
+  "what are you trying to understand that nobody around you seems to notice?",
+  "what are you secretly hoping to figure out today?",
+  "what&rsquo;s something you can&rsquo;t stop thinking about, even when you try?",
+  "what&rsquo;s occupying your mental background noise lately?",
+  "what contradiction keeps bothering you lately?",
+  "what&rsquo;s something you&rsquo;ve been mentally circling around for days?",
+  "what are you trying to connect that doesn&rsquo;t quite fit together yet?",
+  "what&rsquo;s a question you wish someone smarter had already answered?",
+  "what knowledge are you dangerously curious about?",
+  "what have you accidentally become emotionally invested in?",
+  "what are you researching that started as &lsquo;just one tab&rsquo;?",
+  "what mystery are we investigating today?",
+  "what are you hoping exists somewhere on the internet?",
+  "what&rsquo;s something you keep reopening in your tabs?",
+  "what are you trying to untangle emotionally or intellectually?",
+  "what strange connection are you beginning to suspect?",
+  "what topic has quietly consumed your attention?",
+  "what&rsquo;s the thing you keep bookmarking but never fully resolve?",
+  "what are you trying not to forget?",
+  "what thought keeps resurfacing when the room gets quiet?",
+  "what&rsquo;s the last thing that genuinely made you curious?",
+  "what&rsquo;s the question underneath your actual question?",
+  "what&rsquo;s a problem you enjoy thinking about too much?",
+  "what&rsquo;s the weirdest thing you&rsquo;ve been thinking about this week?",
+  "what are you pretending not to care about?",
+  "what kind of future are you mentally rehearsing?",
+  "what&rsquo;s the most interesting thing occupying your thoughts lately?",
+  "what&rsquo;s something you know matters, but you don&rsquo;t yet know why?",
+  "what are you staring at for longer than usual?",
+  "what&rsquo;s the thing your attention refuses to abandon?",
+  "what impossible thing are you trying to understand anyway?",
+  "what are you hoping i notice about you?",
+  "what kind of answer would actually change something for you?",
+  "what are you waiting to become clear?",
+  "what&rsquo;s your latest beautiful distraction?",
+  "what have you been thinking about in loops?",
+  "what thought feels heavier than it should?",
+  "what are you trying to hold onto mentally?",
+  "what feels cognitively unfinished?",
+  "what are you trying to solve emotionally through information?",
+  "what are you trying to learn from the internet that life didn&rsquo;t explain well?",
+  "what&rsquo;s a thought you haven&rsquo;t said out loud yet?",
+  "what are you hoping to stumble into today?",
+  "what would feel satisfying to finally understand?",
+  "what&rsquo;s your brain trying to build lately?",
+  "what&rsquo;s a question you don&rsquo;t think has a complete answer?",
+  "what&rsquo;s something your curiosity won&rsquo;t let go of?",
+  "what are you trying to understand before the world changes again?"
+];
+
+const KITTEN_PREFIXES = [
+  "<em>*tiny mew*</em> &mdash; ",
+  "<em>*ears perk up*</em> ",
+  "<em>*small purr*</em> ",
+  "<em>*tilts head*</em> okay so &mdash; ",
+  "<em>*pads over*</em> hi! ",
+  "<em>*flicks tail*</em> ",
+  "<em>*tiny chirp*</em> ooh hi! ",
+  "<em>*sits down*</em> ",
+  "<em>*blinks slowly at you*</em> ",
+  "<em>*bats at the air*</em> ",
+  ""  // sometimes no prefix
+];
+
+function pickRandom(arr){ return arr[Math.floor(Math.random() * arr.length)]; }
+
 function greet(){
-  addMessage('kitten', "<em>*tiny mew*</em> &mdash; oh, hi. what&rsquo;s on your mind right now? or look at something near you and tell me what you see.");
+  const prefix = pickRandom(KITTEN_PREFIXES);
+  const opener = pickRandom(OPENERS);
+  addMessage('kitten', prefix + opener);
 }
 
 function resetChat(){
