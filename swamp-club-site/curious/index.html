@@ -533,15 +533,121 @@
 
   /* === ONE-LINER === */
   .manifesto .oneliner{
-    margin:30px auto 30px;max-width:560px;
+    margin:30px auto 40px;max-width:560px;
     font-family:'Caveat',cursive;
-    font-size:32px;line-height:1.35;
+    font-size:30px;line-height:1.35;
     color:var(--cream);text-align:center;
   }
   .manifesto .oneliner em{color:var(--neon-yellow);font-style:italic;font-weight:700;}
   .manifesto .oneliner .punchline{
-    display:inline-block;margin-top:12px;
-    color:var(--neon-cyan);font-size:26px;opacity:.9;
+    display:inline-block;margin-top:10px;
+    color:var(--neon-cyan);font-size:24px;opacity:.9;
+  }
+
+  /* === STRANGE AGENTS DROP-BOX === */
+  .strange-box{
+    margin:0 auto;max-width:620px;padding:32px 30px 28px;
+    background:
+      radial-gradient(ellipse at top, rgba(255,210,63,.05) 0%, transparent 60%),
+      linear-gradient(180deg, rgba(15,31,26,.7) 0%, rgba(8,19,14,.85) 100%);
+    border:1.6px dashed rgba(255,210,63,.35);
+    border-radius:22px;text-align:center;
+    position:relative;
+  }
+  .box-label{
+    font-family:'Space Grotesk',sans-serif;font-size:10px;letter-spacing:2.5px;
+    color:var(--neon-yellow);font-weight:700;opacity:.85;margin-bottom:10px;
+  }
+  .box-title{
+    font-family:'Caveat',cursive;font-size:26px;color:var(--cream);
+    font-weight:700;margin-bottom:6px;line-height:1.2;
+  }
+  .box-sub{
+    font-size:13px;color:var(--cream);opacity:.55;margin-bottom:22px;
+  }
+
+  /* floating example cards */
+  .examples{
+    display:flex;flex-wrap:wrap;gap:8px;justify-content:center;
+    margin-bottom:22px;padding:6px 4px;
+  }
+  .ex{
+    display:inline-block;
+    background:rgba(82,255,224,.06);
+    border:1px solid rgba(82,255,224,.22);
+    border-radius:16px;padding:7px 13px;
+    font-family:'Caveat',cursive;font-size:16px;line-height:1.2;
+    color:var(--cream);opacity:.78;
+    transition:all .25s;
+    animation:ex-float 6s ease-in-out infinite;
+    cursor:default;
+  }
+  .ex:hover{
+    opacity:1;border-color:rgba(82,255,224,.5);
+    transform:translateY(-2px);
+  }
+  .ex.user{
+    background:rgba(255,210,63,.12);
+    border:1px solid rgba(255,210,63,.45);
+    color:var(--neon-yellow);
+    animation:ex-pop .6s ease;
+  }
+  @keyframes ex-float{
+    0%,100%{transform:translateY(0);}
+    50%{transform:translateY(-3px);}
+  }
+  @keyframes ex-pop{
+    0%{opacity:0;transform:scale(.6);}
+    60%{transform:scale(1.1);}
+    100%{opacity:1;transform:scale(1);}
+  }
+  .ex:nth-child(2){animation-delay:.4s;}
+  .ex:nth-child(3){animation-delay:.8s;}
+  .ex:nth-child(4){animation-delay:1.2s;}
+  .ex:nth-child(5){animation-delay:1.6s;}
+  .ex:nth-child(6){animation-delay:2s;}
+  .ex:nth-child(7){animation-delay:2.4s;}
+
+  /* form */
+  .strange-form{
+    display:flex;flex-direction:column;gap:8px;
+    padding-top:14px;border-top:1px dashed rgba(243,238,221,.12);
+  }
+  .strange-form textarea,.strange-form input[type=text]{
+    background:rgba(0,0,0,.35);
+    border:1.5px solid rgba(243,238,221,.22);
+    border-radius:12px;padding:10px 14px;
+    color:var(--cream);
+    font-family:'Space Grotesk',sans-serif;font-size:14.5px;
+    resize:none;
+  }
+  .strange-form textarea:focus,.strange-form input:focus{
+    outline:none;border-color:var(--neon-yellow);
+  }
+  .strange-form textarea::placeholder,.strange-form input::placeholder{
+    color:var(--cream);opacity:.4;
+  }
+  .strange-form .form-row{
+    display:flex;gap:8px;align-items:stretch;
+  }
+  .strange-form .form-row input{flex:1;}
+  .strange-form button{
+    flex-shrink:0;
+    background:var(--neon-yellow);border:none;color:var(--ink);
+    border-radius:12px;padding:10px 20px;
+    font-family:'Space Grotesk',sans-serif;font-weight:700;
+    letter-spacing:1.2px;font-size:12px;text-transform:uppercase;
+    cursor:pointer;transition:all .2s;white-space:nowrap;
+  }
+  .strange-form button:hover{background:var(--cream);transform:translateY(-1px);}
+  .strange-form button:disabled{opacity:.4;cursor:not-allowed;transform:none;}
+  .strange-thanks{
+    text-align:center;padding:24px 12px;
+    font-family:'Caveat',cursive;font-size:22px;
+    color:var(--neon-lime);
+  }
+  .strange-thanks .small{
+    display:block;font-size:14px;color:var(--cream);opacity:.6;margin-top:6px;
   }
   .manifesto .write-cta{
     display:inline-flex;align-items:center;gap:8px;margin-top:22px;
@@ -852,14 +958,45 @@
   <div class="leaves-row" id="leavesRow"></div>
 </section>
 
-<!-- ============ MANIFESTO ============ -->
+<!-- ============ STRANGE AGENTS DROP-BOX (interactive submission game) ============ -->
 <section class="manifesto">
   <div class="oneliner">
     the most powerful agent has <em>no purpose</em> these days.<br>
     <span class="punchline">ask any cat.</span>
   </div>
-  <a class="write-cta" href="/#contact">if you make creatures, write to me &rarr;</a>
+
+  <div class="strange-box" id="strangeBox">
+    <div class="box-label">&#9871; STRANGE AGENTS COLLECTION BOX</div>
+    <h3 class="box-title">drop in a strange agent you wish existed.</h3>
+    <p class="box-sub">no useful agents allowed. only weird ones.</p>
+
+    <!-- Floating example cards (inspiration) -->
+    <div class="examples" id="strangeExamples">
+      <span class="ex">an agent that&rsquo;s allergic to small talk</span>
+      <span class="ex">an agent that only works between 3 and 5am</span>
+      <span class="ex">an agent that tells you what you forgot to remember</span>
+      <span class="ex">an agent that gets bored halfway through helping you</span>
+      <span class="ex">an agent that asks &lsquo;why&rsquo; until you cry</span>
+      <span class="ex">an agent that only knows things from before 1995</span>
+      <span class="ex">an agent that won&rsquo;t answer until you&rsquo;ve waited a full minute</span>
+    </div>
+
+    <form class="strange-form" id="strangeForm" name="strange-agents" method="POST" data-netlify="true">
+      <input type="hidden" name="form-name" value="strange-agents" />
+      <textarea name="idea" id="strangeIdea" rows="2" placeholder="an agent that..." maxlength="240" required></textarea>
+      <div class="form-row">
+        <input type="text" name="name" placeholder="your name (optional)" maxlength="60" />
+        <button type="submit">drop it in &rarr;</button>
+      </div>
+    </form>
+  </div>
 </section>
+
+<!-- Hidden form for Netlify Forms build-time detection -->
+<form name="strange-agents" data-netlify="true" hidden>
+  <input type="text" name="idea" />
+  <input type="text" name="name" />
+</form>
 
 <footer class="foot">
   <p>brewed in the swamp &middot; <a href="/">sophieren.com</a></p>
@@ -1469,6 +1606,47 @@ chatReset.addEventListener('click', (e) => { e.preventDefault(); resetChat(); })
 
 // Bubble is always visible — seed Little Sophie's greeting on page load
 greet();
+
+/* ---------- STRANGE AGENTS DROP-BOX (interactive submission game) ---------- */
+const strangeForm = document.getElementById('strangeForm');
+const strangeIdea = document.getElementById('strangeIdea');
+const strangeExamples = document.getElementById('strangeExamples');
+const strangeBox = document.getElementById('strangeBox');
+
+if (strangeForm) {
+  strangeForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const idea = strangeIdea.value.trim();
+    if (!idea) return;
+    const submitBtn = strangeForm.querySelector('button[type=submit]');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'dropping...';
+
+    const formData = new FormData(strangeForm);
+    try {
+      await fetch('/', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: new URLSearchParams(formData).toString()
+      });
+
+      // Add their idea as a new floating card (game-y reward)
+      const newCard = document.createElement('span');
+      newCard.className = 'ex user';
+      // Strip "an agent that..." prefix duplication if user wrote it
+      let display = idea.replace(/^an agent that\s+/i, '');
+      newCard.textContent = 'an agent that ' + display;
+      strangeExamples.appendChild(newCard);
+
+      // Replace form with thanks
+      strangeForm.outerHTML = '<div class="strange-thanks">&hearts; dropped in the box.<span class="small">she might be born one day.</span></div>';
+
+    } catch (err) {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'try again';
+    }
+  });
+}
 
 /* ---------- LEAVE A TRACE (optional name/email capture via Netlify Forms) ---------- */
 const traceToggle = document.getElementById('traceToggle');
