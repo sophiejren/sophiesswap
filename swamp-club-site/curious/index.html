@@ -129,7 +129,7 @@
   }
   .stage svg{display:block;width:100%;height:auto;overflow:visible;}
 
-  /* === COGNITION BUBBLE (kawaii cream pillow, follows cat) === */
+  /* === COGNITION BUBBLE (frosted glass — transparent, lets the swamp show through) === */
   .cat-bubble{
     position:absolute;
     top:24%;right:5%;
@@ -137,14 +137,16 @@
     --bubble-offset:0px;
     transform:translateX(var(--bubble-offset));
     transition:transform 3s cubic-bezier(.3,.7,.4,1);
-    background:linear-gradient(180deg, #fefaf0 0%, #f3eedd 100%);
-    border:2.8px solid #2a1a1a;
-    border-radius:34px;
+    background:rgba(8,19,14,.38);
+    backdrop-filter:blur(14px) saturate(120%);
+    -webkit-backdrop-filter:blur(14px) saturate(120%);
+    border:1.8px solid rgba(243,238,221,.32);
+    border-radius:28px;
     padding:24px 26px 20px;
     box-shadow:
-      0 18px 42px -16px rgba(0,0,0,.5),
-      0 0 0 6px rgba(255,182,193,.18),
-      inset 0 -3px 0 rgba(255,182,193,.25);
+      0 24px 50px -18px rgba(0,0,0,.6),
+      0 0 0 6px rgba(255,182,193,.1),
+      inset 0 1px 0 rgba(243,238,221,.1);
   }
   /* gentle bobbing — wraps content so doesn't fight the translateX --bubble-offset */
   .bubble-inner{
@@ -158,47 +160,103 @@
 
   /* pillowy rounded tail pointing LEFT toward the cat */
   .bubble-tail{
-    position:absolute;left:-15px;top:46%;
+    position:absolute;left:-12px;top:46%;
     width:22px;height:22px;
-    background:#fefaf0;
-    border-left:2.8px solid #2a1a1a;
-    border-bottom:2.8px solid #2a1a1a;
+    background:rgba(8,19,14,.38);
+    backdrop-filter:blur(14px) saturate(120%);
+    -webkit-backdrop-filter:blur(14px) saturate(120%);
+    border-left:1.8px solid rgba(243,238,221,.32);
+    border-bottom:1.8px solid rgba(243,238,221,.32);
     border-radius:0 0 0 8px;
     transform:translateY(-50%) rotate(45deg);
-    box-shadow:-3px 3px 0 rgba(255,182,193,.2);
   }
 
-  /* === BUBBLE INTERIOR TEXT (dark on light, consistent kawaii palette) === */
-  .cat-bubble .pip-label{color:#3a2a1a;letter-spacing:1.8px;}
-  .cat-bubble .pip-label::before{background:#ff8aa8;box-shadow:0 0 8px #ff8aa8;}
-  .cat-bubble .pip-says,
-  .cat-bubble .msg.kitten{color:#2a1a1a;}
-  .cat-bubble .msg.kitten em{color:#c43b6d;font-style:italic;}
+  /* === BUBBLE INTERIOR TEXT (light on frosted dark) === */
+  .cat-bubble .pip-label{color:var(--neon-yellow);letter-spacing:1.8px;}
+  .cat-bubble .pip-label::before{background:var(--neon-yellow);box-shadow:0 0 10px var(--neon-yellow);}
+  .cat-bubble .pip-says{color:var(--cream);}
   .cat-bubble .msg.kitten{
-    background:#fff;border:1.8px solid #2a1a1a;border-radius:18px;
+    color:var(--cream);
+    background:rgba(82,255,224,.07);
+    border:1.5px solid rgba(82,255,224,.22);
+    border-radius:18px;
   }
+  .cat-bubble .msg.kitten em{color:var(--neon-cyan);font-style:italic;}
   .cat-bubble .msg.user{
-    background:#ffe7b8;border:1.8px solid #2a1a1a;color:#2a1a1a;border-radius:18px;
+    background:rgba(255,210,63,.1);
+    border:1.5px solid rgba(255,210,63,.3);
+    color:var(--cream);
+    border-radius:18px;
   }
-  .cat-bubble .msg.thinking{color:#3a2a1a;opacity:.7;}
-  .cat-bubble .msg.thinking .dot{background:#ff8aa8;}
+  .cat-bubble .msg.thinking{color:var(--cream);opacity:.55;}
+  .cat-bubble .msg.thinking .dot{background:var(--neon-cyan);}
   .cat-bubble .msg.error{
-    background:#ffe0e6;border:1.5px solid #c43b6d;color:#c43b6d;
+    background:rgba(255,107,157,.12);border:1.5px solid rgba(255,107,157,.4);color:var(--pink);
   }
   .cat-bubble .chat-input{
-    background:#fff;border:1.8px solid #2a1a1a;border-radius:16px;color:#2a1a1a;
+    background:rgba(0,0,0,.35);
+    border:1.5px solid rgba(243,238,221,.22);
+    border-radius:16px;color:var(--cream);
   }
-  .cat-bubble .chat-input:focus{border-color:#ff8aa8;}
-  .cat-bubble .chat-input::placeholder{color:#3a2a1a;opacity:.45;}
+  .cat-bubble .chat-input:focus{border-color:var(--neon-cyan);}
+  .cat-bubble .chat-input::placeholder{color:var(--cream);opacity:.4;}
   .cat-bubble .chat-send{
-    background:#ff8aa8;border:1.8px solid #2a1a1a;color:#2a1a1a;
+    background:var(--pink);border:none;color:var(--ink);
     border-radius:50%;width:44px;height:44px;padding:0;
     font-size:18px;letter-spacing:0;font-weight:700;
   }
   .cat-bubble .chat-send:hover{background:#ffb6c1;transform:translateY(-1px) scale(1.05);}
-  .cat-bubble .chat-meta{color:#3a2a1a;opacity:.55;}
-  .cat-bubble .chat-meta a{color:#c43b6d;text-decoration:underline;cursor:pointer;}
-  .cat-bubble .chat-input-row{border-top-color:rgba(42,26,26,.15);}
+  .cat-bubble .chat-meta{color:var(--cream);opacity:.45;}
+  .cat-bubble .chat-meta a{color:var(--neon-cyan);text-decoration:underline;cursor:pointer;}
+  .cat-bubble .chat-input-row{border-top-color:rgba(243,238,221,.12);}
+
+  /* === LEAVE A TRACE (optional name/email capture) === */
+  .trace-block{
+    margin-top:14px;padding-top:14px;
+    border-top:1px dashed rgba(243,238,221,.15);
+  }
+  .trace-toggle{
+    width:100%;background:transparent;
+    border:1px dashed rgba(255,107,157,.4);border-radius:14px;
+    padding:9px 12px;
+    color:var(--pink);
+    font-family:'Caveat',cursive;font-size:16px;
+    cursor:pointer;transition:all .2s;
+  }
+  .trace-toggle:hover{
+    background:rgba(255,107,157,.08);
+    border-color:rgba(255,107,157,.8);
+  }
+  .trace-form{
+    display:none;flex-direction:column;gap:8px;margin-top:10px;
+  }
+  .trace-form.open{display:flex;}
+  .trace-form input,.trace-form textarea{
+    background:rgba(0,0,0,.35);
+    border:1.5px solid rgba(243,238,221,.22);
+    border-radius:10px;padding:9px 12px;
+    color:var(--cream);
+    font-family:'Space Grotesk',sans-serif;font-size:13.5px;
+    resize:none;
+  }
+  .trace-form input:focus,.trace-form textarea:focus{
+    outline:none;border-color:var(--pink);
+  }
+  .trace-form input::placeholder,.trace-form textarea::placeholder{
+    color:var(--cream);opacity:.4;
+  }
+  .trace-form button{
+    background:var(--pink);border:none;border-radius:10px;
+    padding:9px 14px;color:var(--ink);
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:700;letter-spacing:1.5px;text-transform:uppercase;font-size:11px;
+    cursor:pointer;transition:all .2s;
+  }
+  .trace-form button:hover{background:#ffb6c1;transform:translateY(-1px);}
+  .trace-thanks{
+    margin-top:10px;text-align:center;
+    font-family:'Caveat',cursive;font-size:18px;color:var(--neon-lime);
+  }
 
   /* === walker no longer uses CSS keyframe (JS controls movement) === */
   .walker{cursor:default;transition:transform 2.8s cubic-bezier(.4,0,.2,1);}
@@ -747,11 +805,30 @@
         <a id="chatReset">&times; start fresh</a>
       </div>
     </div>
+    <!-- ===== LEAVE A TRACE — optional name/email capture ===== -->
+    <div class="trace-block">
+      <button class="trace-toggle" id="traceToggle">&hearts; leave a trace &mdash; so she remembers you</button>
+      <form class="trace-form" id="traceForm" name="curious-trace" method="POST" data-netlify="true">
+        <input type="hidden" name="form-name" value="curious-trace" />
+        <input type="text" name="name" placeholder="your name (or what to call you)" required />
+        <input type="email" name="email" placeholder="email — only if you want her to write back" />
+        <textarea name="remember" rows="2" placeholder="anything she should remember about you?"></textarea>
+        <button type="submit">leave it</button>
+      </form>
+    </div>
+
     <!-- legacy scripted nodes (hidden, kept for compatibility) -->
     <div class="pip-says idle" id="pipSays" style="display:none"></div>
     <div class="user-options" id="userOptions" style="display:none"></div>
   </div>
 </aside>
+
+<!-- Hidden form for Netlify Forms detection at build time -->
+<form name="curious-trace" data-netlify="true" hidden>
+  <input type="text" name="name" />
+  <input type="email" name="email" />
+  <textarea name="remember"></textarea>
+</form>
 </section>
 
 <!-- ============ INTRO ============ -->
@@ -1399,6 +1476,36 @@ chatReset.addEventListener('click', (e) => { e.preventDefault(); resetChat(); })
 
 // Bubble is always visible — seed Little Sophie's greeting on page load
 greet();
+
+/* ---------- LEAVE A TRACE (optional name/email capture via Netlify Forms) ---------- */
+const traceToggle = document.getElementById('traceToggle');
+const traceForm = document.getElementById('traceForm');
+const traceBlock = traceToggle && traceToggle.parentElement;
+
+if (traceToggle && traceForm) {
+  traceToggle.addEventListener('click', () => {
+    traceForm.classList.toggle('open');
+  });
+
+  traceForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const formData = new FormData(traceForm);
+    const submitBtn = traceForm.querySelector('button[type=submit]');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'sending...';
+    try {
+      await fetch('/', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: new URLSearchParams(formData).toString()
+      });
+      traceBlock.innerHTML = '<p class="trace-thanks">&hearts; noted. she&rsquo;ll remember.</p>';
+    } catch (err) {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'try again';
+    }
+  });
+}
 
 /* ---------- MEW VISION TOGGLE ---------- */
 const visionBtn = document.getElementById('visionToggle');
