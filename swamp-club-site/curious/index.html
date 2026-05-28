@@ -201,9 +201,7 @@
     border:1px solid var(--line);border-radius:18px;
     padding:34px 34px 28px;
     box-shadow:0 24px 50px -28px rgba(0,0,0,.7);
-    opacity:.5;transition:opacity .8s ease;
   }
-  .talk-card.open{opacity:1;}
   .pip-label{
     display:flex;align-items:center;gap:10px;
     font-family:'Space Grotesk',sans-serif;
@@ -282,8 +280,7 @@
   }
 
   /* ===== LLM CHAT MODE ===== */
-  .chat-mode{display:none;margin-top:10px;}
-  .chat-mode.active{display:block;}
+  .chat-mode{display:block;margin-top:4px;}
   .chat-stream{
     display:flex;flex-direction:column;gap:14px;
     max-height:360px;overflow-y:auto;
@@ -690,11 +687,9 @@
   </svg>
 </section>
 
-<!-- ============ STILLNESS HINT ============ -->
+<!-- ============ STILLNESS HINT (kitten wakes when you're still) ============ -->
 <p class="stillness-hint" id="stillnessHint">
-  <span class="dot"></span> sit still for a few seconds &mdash; she&rsquo;s shy
-  &nbsp;&middot;&nbsp;
-  <a href="#" id="skipRitual" style="color:var(--neon-cyan);opacity:.7;text-decoration:underline;cursor:pointer;">or skip and chat now &rarr;</a>
+  <span class="dot"></span> sit still for a few seconds &mdash; she&rsquo;ll wake up
 </p>
 
 <!-- ============ INTRO ============ -->
@@ -707,10 +702,8 @@
 <section class="talk">
   <div class="talk-card" id="talkCard">
     <div class="pip-label">Little Sophie &middot; curious agent</div>
-    <div class="pip-says idle" id="pipSays"><em>*napping*</em></div>
-    <div class="user-options" id="userOptions"></div>
 
-    <!-- ===== LLM CHAT MODE (revealed on demand) ===== -->
+    <!-- ===== LLM CHAT MODE (always visible) ===== -->
     <div class="chat-mode" id="chatMode">
       <div class="chat-stream" id="chatStream"></div>
       <div class="chat-input-row">
@@ -719,9 +712,13 @@
       </div>
       <div class="chat-meta">
         <span id="chatTurnCount">turn 0</span>
-        <a id="chatExit">&larr; back to her starters</a>
+        <a id="chatReset">&times; start fresh</a>
       </div>
     </div>
+
+    <!-- (scripted dialog tree removed from default view; chat is the primary mode) -->
+    <div class="pip-says idle" id="pipSays" style="display:none"></div>
+    <div class="user-options" id="userOptions" style="display:none"></div>
   </div>
 </section>
 
@@ -788,30 +785,17 @@ function stillnessLoop(){
 requestAnimationFrame(stillnessLoop);
 
 function activate(){
+  // Kitten wakes up + progressive reveal of the scene (chat works regardless).
   if (activated) return;
   activated = true;
   document.getElementById('kitten').classList.remove('sleeping');
   document.getElementById('kitten').classList.add('awake');
   document.getElementById('stillnessHint').classList.add('hide');
-  document.getElementById('talkCard').classList.add('open');
-  document.getElementById('pipSays').classList.remove('idle');
-  // start dialog
-  current = 'start';
-  render();
-  // schedule progressive reveals
   scheduleReveal('layer1', 6000);
   scheduleReveal('layer2', 14000);
   scheduleReveal('layer3', 24000);
   scheduleReveal('layer4', 38000);
 }
-
-// Skip ritual → go straight to free-form chat (for testing / impatient visitors)
-document.getElementById('skipRitual').addEventListener('click', (e) => {
-  e.preventDefault();
-  activate();
-  // small delay so activation finishes, then jump to chat
-  setTimeout(() => enterChatMode(), 100);
-});
 
 function scheduleReveal(id, ms){
   setTimeout(() => {
@@ -1144,31 +1128,24 @@ askSubmit.addEventListener('click', () => {
   });
 });
 
-/* ---------- LLM CHAT MODE ---------- */
+/* ---------- LLM CHAT MODE (primary interaction) ---------- */
 const chatMode = document.getElementById('chatMode');
 const chatStream = document.getElementById('chatStream');
 const chatInput = document.getElementById('chatInput');
 const chatSend = document.getElementById('chatSend');
 const chatTurnCount = document.getElementById('chatTurnCount');
-const chatExit = document.getElementById('chatExit');
+const chatReset = document.getElementById('chatReset');
 let llmHistory = [];
 
-function enterChatMode(){
-  // Hide scripted dialog UI, show chat
-  pipSays.style.display = 'none';
-  userOptions.style.display = 'none';
-  chatMode.classList.add('active');
-  if (llmHistory.length === 0){
-    // First entry: have her greet (using a canned opener, then real LLM after user replies)
-    addMessage('kitten', "<em>*tiny purr*</em> &mdash; okay. say anything. or look at something near you and tell me what you see.");
-  }
-  chatInput.focus();
+function greet(){
+  addMessage('kitten', "<em>*tiny mew*</em> &mdash; oh, hi. what&rsquo;s on your mind right now? or look at something near you and tell me what you see.");
 }
 
-function exitChatMode(){
-  chatMode.classList.remove('active');
-  pipSays.style.display = '';
-  userOptions.style.display = '';
+function resetChat(){
+  llmHistory = [];
+  chatStream.innerHTML = '';
+  chatTurnCount.textContent = 'turn 0';
+  greet();
 }
 
 function addMessage(role, html){
@@ -1246,7 +1223,10 @@ chatSend.addEventListener('click', sendChat);
 chatInput.addEventListener('keydown', (e) => {
   if (e.key === 'Enter' && !e.shiftKey){ e.preventDefault(); sendChat(); }
 });
-chatExit.addEventListener('click', exitChatMode);
+chatReset.addEventListener('click', (e) => { e.preventDefault(); resetChat(); });
+
+// Show greeting on page load — chat is the default view
+greet();
 
 /* ---------- MEW VISION TOGGLE ---------- */
 const visionBtn = document.getElementById('visionToggle');
