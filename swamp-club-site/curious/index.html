@@ -117,27 +117,23 @@
     color:var(--neon-cyan);opacity:.95;
   }
 
-  /* === AGENT STAGE (cat + bubble as one organism — bubble follows cat) === */
+  /* === STRICT TWO-LANE LAYOUT (cat lane + bubble lane — no overlap possible) === */
   .scene-row{
     max-width:1100px;margin:40px auto 30px;padding:0 24px;
-    position:relative;
-    min-height:420px;
+    display:flex;align-items:center;justify-content:center;
+    gap:32px;
   }
   .stage{
-    width:100%;max-width:520px;margin:0 auto;
+    flex:0 0 36%;max-width:360px;min-width:0;
     position:relative;
   }
   .stage svg{display:block;width:100%;height:auto;overflow:visible;}
 
-  /* === COGNITION BUBBLE (frosted glass — transparent, lets the swamp show through) === */
+  /* === COGNITION BUBBLE (frosted glass — in its own lane, never overlaps cat) === */
   .cat-bubble{
-    position:absolute;
-    top:24%;right:5%;
-    width:46%;max-width:430px;
-    --bubble-offset:0px;
-    transform:translateX(var(--bubble-offset));
-    transition:transform 3s cubic-bezier(.3,.7,.4,1);
-    background:rgba(8,19,14,.38);
+    flex:1 1 0;min-width:0;max-width:520px;
+    position:relative;
+    background:rgba(8,19,14,.42);
     backdrop-filter:blur(14px) saturate(120%);
     -webkit-backdrop-filter:blur(14px) saturate(120%);
     border:1.8px solid rgba(243,238,221,.32);
@@ -570,14 +566,11 @@
 
   /* === MOBILE === */
   @media (max-width:760px){
-    .scene-row{min-height:auto;padding:0 18px;}
-    .stage{width:100%;max-width:340px;margin:0 auto;}
-    .cat-bubble{
-      position:static;width:100%;max-width:480px;margin:6px auto 0;right:auto;top:auto;
-      transform:none !important;  /* no follow on mobile */
-    }
+    .scene-row{flex-direction:column;gap:12px;padding:0 18px;}
+    .stage{flex:initial;width:100%;max-width:300px;margin:0 auto;}
+    .cat-bubble{flex:initial;width:100%;max-width:520px;margin:0 auto;}
     .bubble-tail{
-      left:50%;top:-12px;transform:translateX(-50%) rotate(90deg);
+      left:50%;top:-12px;transform:translateX(-50%) rotate(135deg);
     }
   }
   @media (max-width:640px){
@@ -1188,29 +1181,22 @@ const kittenWalker = document.getElementById('kittenWalker');
 document.getElementById('kitten').classList.remove('sleeping');
 document.getElementById('kitten').classList.add('awake');
 
-const NPC_BOUNDS = 110;  // px range she wanders (left/right of center)
+const NPC_BOUNDS = 60;  // px range she wanders within her own lane (left/right of center)
 const NPC_MIN_PAUSE = 1800;
 const NPC_MAX_PAUSE = 5500;
 
-// Cognition bubble follows cat (Agent UI Organism: action layer + cognition layer)
-const catBubble = document.getElementById('catBubble');
-const BUBBLE_FOLLOW = 0.55;  // bubble moves 55% of cat's movement (elastic lag)
-
+// Cat wanders within her own lane (NPC behavior). Bubble no longer follows
+// horizontally — kept in its own column so they never overlap. The "agent
+// organism" feel comes from shared visual language + bubble tail pointing at cat.
 function npcNextMove(){
-  // Random target X within bounds
   const targetX = (Math.random() * NPC_BOUNDS * 2) - NPC_BOUNDS;
   kittenWalker.style.transform = 'translateX(' + targetX.toFixed(1) + 'px)';
-  // Cognition bubble follows cat with elastic lag (different transition speed = trailing feel)
-  if (catBubble) {
-    catBubble.style.setProperty('--bubble-offset', (targetX * BUBBLE_FOLLOW).toFixed(1) + 'px');
-  }
-  // Occasionally sit (visual: a tiny squash)
   if (Math.random() < 0.35) {
     setTimeout(() => kittenWalker.classList.add('sit'), 2900);
     setTimeout(() => kittenWalker.classList.remove('sit'), 2900 + 1500 + Math.random()*2500);
   }
   const pause = NPC_MIN_PAUSE + Math.random() * (NPC_MAX_PAUSE - NPC_MIN_PAUSE);
-  setTimeout(npcNextMove, 2800 + pause);  // 2800 = transition time
+  setTimeout(npcNextMove, 2800 + pause);
 }
 // Kick off
 setTimeout(npcNextMove, 800);
