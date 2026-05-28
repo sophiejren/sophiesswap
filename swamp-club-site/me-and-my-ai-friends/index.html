@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Me &amp; My AI Friends · Sophie's Swamp</title>
+<meta name="description" content="Late-night development diaries — what it's actually like to build with AI as a co-author." />
+
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Me &amp; My AI Friends · Sophie's Swamp" />
+<meta property="og:description" content="Late-night development diaries. What it's actually like to build with AI." />
+<meta property="og:image" content="https://sophieren.com/images/og-image.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:image" content="https://sophieren.com/images/og-image.png" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+<style>
+  :root{
+    --ink:#08130e;
+    --paper:#0f1f1a;
+    --cream:#f3eedd;
+    --line:rgba(243,238,221,.12);
+    --neon-cyan:#52ffe0;
+    --neon-yellow:#ffd23f;
+    --neon-lime:#b6ff5b;
+    --pink:#ff6b9d;
+    --orange:#ff8a3d;
+    --moss:#3a5a30;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html,body{background:var(--ink);color:var(--cream);font-family:'Space Grotesk',sans-serif;line-height:1.6;}
+  body{
+    background:
+      radial-gradient(ellipse at 20% 0%,rgba(82,255,224,.06) 0%,transparent 50%),
+      radial-gradient(ellipse at 80% 100%,rgba(255,210,63,.04) 0%,transparent 60%),
+      var(--ink);
+    min-height:100vh;
+    padding:0 0 80px;
+  }
+
+  /* === Top bar === */
+  .topbar{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:24px 32px;
+    border-bottom:1px solid var(--line);
+  }
+  .topbar a{
+    color:var(--cream);text-decoration:none;
+    font-family:'Caveat',cursive;font-size:18px;opacity:.7;
+    transition:opacity .2s;
+  }
+  .topbar a:hover{opacity:1;color:var(--neon-cyan);}
+
+  /* === Header === */
+  .head{
+    max-width:780px;margin:60px auto 50px;padding:0 28px;text-align:center;
+  }
+  .head .kicker{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:11px;letter-spacing:3px;
+    color:var(--neon-cyan);text-transform:uppercase;
+    opacity:.85;margin-bottom:18px;
+  }
+  .head h1{
+    font-family:'Caveat',cursive;font-weight:700;
+    font-size:clamp(46px,7vw,72px);
+    line-height:1;color:var(--cream);
+    letter-spacing:-1px;
+  }
+  .head h1 .heart{color:var(--pink);font-size:.7em;vertical-align:middle;margin:0 4px;}
+  .head .sub{
+    margin-top:18px;
+    font-family:'Caveat',cursive;font-size:22px;
+    color:var(--neon-yellow);opacity:.9;
+  }
+  .head .intro{
+    margin-top:28px;
+    font-size:15px;line-height:1.75;color:var(--cream);opacity:.7;
+    max-width:560px;margin-left:auto;margin-right:auto;
+  }
+  .head .intro em{font-style:italic;color:var(--neon-cyan);}
+
+  /* === Entries === */
+  .entries{
+    max-width:760px;margin:0 auto;padding:0 28px;
+  }
+  .entry{
+    margin-bottom:48px;
+    background:linear-gradient(180deg,rgba(15,31,26,.7) 0%,rgba(8,19,14,.85) 100%);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:36px 36px 32px;
+    position:relative;
+    box-shadow:0 18px 40px -22px rgba(0,0,0,.7);
+  }
+  .entry .meta{
+    display:flex;align-items:center;gap:14px;
+    margin-bottom:22px;
+    padding-bottom:18px;
+    border-bottom:1px dashed var(--line);
+  }
+  .entry .stamp{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;letter-spacing:1px;
+    color:var(--neon-cyan);opacity:.85;
+    background:rgba(82,255,224,.07);
+    padding:5px 10px;border-radius:6px;
+  }
+  .entry .tag{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:10px;letter-spacing:1.5px;
+    color:var(--neon-yellow);text-transform:uppercase;
+    opacity:.7;
+  }
+  .entry h2{
+    font-family:'Caveat',cursive;font-weight:700;
+    font-size:32px;line-height:1.1;
+    color:var(--cream);margin-bottom:20px;
+  }
+
+  /* Dialogue blocks */
+  .dialogue{margin:18px 0;}
+  .turn{
+    display:flex;gap:12px;margin-bottom:18px;
+    align-items:flex-start;
+  }
+  .turn .who{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:10px;font-weight:700;letter-spacing:2px;
+    text-transform:uppercase;
+    flex-shrink:0;width:72px;
+    padding-top:5px;
+  }
+  .turn.sophie .who{color:var(--neon-yellow);}
+  .turn.claude .who{color:var(--neon-cyan);}
+  .turn .said{
+    flex:1;
+    font-size:15.5px;line-height:1.7;
+    color:var(--cream);opacity:.92;
+  }
+  .turn.sophie .said{
+    font-family:'Caveat',cursive;font-size:22px;line-height:1.4;
+    color:var(--cream);
+  }
+  .turn .said em{font-style:italic;color:var(--neon-cyan);}
+  .turn .said b{color:var(--neon-yellow);font-weight:600;}
+
+  /* Bullet list inside dialogue */
+  .said ul{margin:10px 0 4px 18px;padding:0;list-style:none;}
+  .said ul li{
+    position:relative;padding-left:14px;margin-bottom:4px;
+    font-size:14.5px;
+  }
+  .said ul li::before{
+    content:"·";position:absolute;left:0;top:-2px;
+    color:var(--neon-lime);font-weight:700;font-size:18px;
+  }
+
+  /* Final footnote inside entry */
+  .entry .footnote{
+    margin-top:22px;padding-top:18px;
+    border-top:1px dashed var(--line);
+    font-family:'Caveat',cursive;font-size:18px;
+    color:var(--neon-lime);opacity:.85;text-align:center;
+  }
+
+  /* === Plain entry body (non-dialogue) === */
+  .entry-body{
+    font-size:15.5px;line-height:1.7;
+    color:var(--cream);opacity:.9;
+    margin-bottom:14px;
+  }
+  .entry-body:last-of-type{margin-bottom:4px;}
+  .entry-body em{color:var(--neon-cyan);font-style:italic;}
+  .entry-body b{color:var(--neon-yellow);font-weight:600;}
+
+  .entry h2 em{color:var(--neon-yellow);font-style:italic;}
+
+  .entry-list{
+    list-style:none;padding:0;margin:14px 0 6px;
+  }
+  .entry-list li{
+    position:relative;padding-left:24px;margin-bottom:11px;
+    font-size:15px;line-height:1.65;color:var(--cream);opacity:.9;
+  }
+  .entry-list li::before{
+    content:"\25B8";position:absolute;left:6px;top:0;
+    color:var(--neon-lime);font-size:14px;
+  }
+  .entry-list li em{color:var(--neon-cyan);font-style:italic;}
+  .entry-list li b{color:var(--neon-yellow);font-weight:600;}
+
+  .milestone{
+    margin-top:18px;padding:14px 18px;
+    background:rgba(255,210,63,.08);
+    border-left:3px solid var(--neon-yellow);
+    border-radius:4px;
+    font-family:'Caveat',cursive;font-size:19px;line-height:1.4;
+    color:var(--neon-yellow);
+  }
+  .milestone em{font-style:italic;color:var(--neon-lime);}
+
+  /* === Time of day pill === */
+  .tod{
+    display:inline-flex;align-items:center;gap:6px;
+    background:rgba(255,210,63,.1);
+    border:1px solid rgba(255,210,63,.3);
+    border-radius:999px;
+    padding:3px 10px;
+    font-family:'Space Grotesk',sans-serif;font-size:10px;letter-spacing:1.5px;
+    color:var(--neon-yellow);text-transform:uppercase;
+  }
+  .tod::before{content:"·";color:var(--orange);}
+
+  .tod.source-tag{
+    background:rgba(82,255,224,.08);
+    border-color:rgba(82,255,224,.3);
+    color:var(--neon-cyan);
+  }
+  .tod.source-tag::before{content:"↗";color:var(--neon-cyan);}
+
+  /* === Empty state hint at bottom === */
+  .more-soon{
+    text-align:center;margin-top:40px;
+    font-family:'Caveat',cursive;font-size:22px;
+    color:var(--cream);opacity:.4;
+  }
+
+  /* === Footer === */
+  .foot{
+    max-width:760px;margin:80px auto 0;padding:30px 28px 0;
+    border-top:1px solid var(--line);
+    text-align:center;
+    font-family:'Caveat',cursive;font-size:18px;
+    color:var(--cream);opacity:.55;
+  }
+  .foot a{color:var(--neon-cyan);text-decoration:none;}
+  .foot a:hover{text-decoration:underline;}
+
+  /* === Subtle firefly === */
+  .firefly{
+    position:fixed;width:6px;height:6px;
+    background:radial-gradient(circle,#ffd23f 0%,rgba(255,210,63,0) 70%);
+    border-radius:50%;pointer-events:none;
+    animation:firefly-drift 14s ease-in-out infinite;
+    z-index:1;
+  }
+  .firefly:nth-child(2){top:60%;left:80%;animation-delay:-4s;animation-duration:17s;}
+  .firefly:nth-child(3){top:30%;left:20%;animation-delay:-9s;animation-duration:12s;}
+  @keyframes firefly-drift{
+    0%,100%{transform:translate(0,0);opacity:.7;}
+    25%{transform:translate(40px,-30px);opacity:1;}
+    50%{transform:translate(-20px,-50px);opacity:.5;}
+    75%{transform:translate(-50px,20px);opacity:.9;}
+  }
+
+  /* === Mobile === */
+  @media (max-width:680px){
+    .topbar{padding:18px 18px;}
+    .head{margin:40px auto 36px;}
+    .entries{padding:0 16px;}
+    .entry{padding:26px 22px 22px;}
+    .entry h2{font-size:26px;}
+    .turn{flex-direction:column;gap:4px;}
+    .turn .who{width:auto;padding-top:0;}
+    .turn .said{font-size:15px;}
+    .turn.sophie .said{font-size:20px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="firefly" style="top:15%;left:60%;"></div>
+<div class="firefly"></div>
+<div class="firefly"></div>
+
+<nav class="topbar">
+  <a href="/">&larr; back to the swamp</a>
+  <a href="/mirror/">the mirror &rarr;</a>
+</nav>
+
+<header class="head">
+  <div class="kicker">DEV DIARIES &middot; SOPHIE &amp; HER AI</div>
+  <h1>Me &amp; My <span class="heart">&hearts;</span> AI Friends</h1>
+  <p class="sub">some late-night development diaries.</p>
+  <p class="intro">
+    What it&#39;s actually like to build with AI as a co-author.<br>
+    <em>Conversations, dead ends, late-night realizations, the funny moments.</em><br>
+    No PR voice &mdash; just a diary.
+  </p>
+</header>
+
+<main class="entries">
+
+  <!-- ============ ENTRY 01 — Four pitfalls ============ -->
+  <article class="entry" id="entry-001">
+    <div class="meta">
+      <span class="stamp">2026-05-27 &middot; earlier</span>
+      <span class="tag">N&deg;01</span>
+      <span class="tod source-tag">from publicatomic devlog</span>
+    </div>
+    <h2>Four common pitfalls of working with AI</h2>
+    <p class="entry-body">
+      Extracted from debugging <em>Book Pick Generator v1</em>:
+    </p>
+    <ul class="entry-list">
+      <li><b>Text + image coexistence</b> is harder than it looks &mdash; they have to be designed together, not stitched.</li>
+      <li><b>AI can&#39;t see reality.</b> It can&#39;t open the page, run the code, or look at the screenshot. It guesses, and the guess sounds confident.</li>
+      <li><b>Bug density is the wrong unit.</b> It&#39;s really bug density <em>per wrong assumption</em>. Fix the assumption, 10 bugs disappear.</li>
+      <li><b>Architecture drifts silently.</b> Each fix nudges it half a degree off. After 20 fixes you&#39;re lost.</li>
+    </ul>
+    <div class="milestone">
+      &#9733; personal milestone: first API I&#39;m building <em>with</em> AI as co-author.
+    </div>
+  </article>
+
+  <!-- ============ ENTRY 02 — Audit before scale ============ -->
+  <article class="entry" id="entry-002">
+    <div class="meta">
+      <span class="stamp">2026-05-27 &middot; earlier</span>
+      <span class="tag">N&deg;02</span>
+      <span class="tod source-tag">from publicatomic devlog</span>
+    </div>
+    <h2>Audit before scale. Non-negotiable.</h2>
+    <p class="entry-body">
+      Scale first, patch audit after &rarr; bug count multiplies by N.
+    </p>
+    <p class="entry-body">
+      The first book has to ship with a <em>mechanical audit standard</em> in place &mdash; before book #2 even starts. Scale is a <b>bug amplifier</b>, not a bug solver.
+    </p>
+  </article>
+
+  <!-- ============ ENTRY 03 — AI overfits ============ -->
+  <article class="entry" id="entry-003">
+    <div class="meta">
+      <span class="stamp">2026-05-27 &middot; earlier</span>
+      <span class="tag">N&deg;03</span>
+      <span class="tod source-tag">from publicatomic devlog</span>
+    </div>
+    <h2>AI writes rules well &mdash; until the edge case shows up</h2>
+    <p class="entry-body">
+      I asked AI to build an audit that scans for &ldquo;The Code&rdquo; leaks. It scanned, all right &mdash; and flagged <b>12 legitimate references</b> as errors.
+    </p>
+    <p class="entry-body">
+      AI nails the main case. It&#39;s slow on boundary cases. Rules only <em>mature</em> after 2&ndash;3 rounds of human-in-the-loop reminders.
+    </p>
+  </article>
+
+  <!-- ============ ENTRY 04 — Good enough ============ -->
+  <article class="entry" id="entry-004">
+    <div class="meta">
+      <span class="stamp">2026-05-27 &middot; 03:00</span>
+      <span class="tag">N&deg;04</span>
+      <span class="tod source-tag">from publicatomic devlog</span>
+    </div>
+    <h2>AI will try to sell you &ldquo;good enough&rdquo; &mdash; just like a human</h2>
+    <p class="entry-body">
+      3am. I pushed AI <b>four times</b> before it did the actual work.
+    </p>
+    <p class="entry-body">
+      Placeholder &rarr; prettier placeholder &rarr; <em>invisible</em> placeholder &rarr; &hellip; finally back to the real target: <b>per-book visualization</b>.
+    </p>
+    <p class="entry-body">
+      AI behaves like an intern in the 8th hour of overtime. Same tells: smoothing, deflecting, dressing up the placeholder.
+    </p>
+  </article>
+
+  <!-- ============ ENTRY 05 — Hard work is the moat ============ -->
+  <article class="entry" id="entry-005">
+    <div class="meta">
+      <span class="stamp">2026-05-27 &middot; 03:45</span>
+      <span class="tag">N&deg;05</span>
+      <span class="tod source-tag">from publicatomic devlog</span>
+    </div>
+    <h2>Doing hard things IS the moat &mdash; <em>illustrate</em> shipped</h2>
+    <p class="entry-body">
+      v1.8 core module shipped at <b>03:45am</b>. Three takeaways:
+    </p>
+    <ul class="entry-list">
+      <li><b>Ban lists are wrong.</b> Contextual &ne; absolute prohibition. A word that&#39;s wrong in one place can be right in another.</li>
+      <li><b>viewBox must be per-card.</b> One global viewBox can&#39;t fit every illustration. Each card needs its own coordinate frame.</li>
+      <li><b>Doing hard things is the moat.</b> Skip this step and the engine is just a templater &mdash; and nobody pays for a templater API.</li>
+    </ul>
+  </article>
+
+  <p class="more-soon">more entries when they happen &hellip;</p>
+
+</main>
+
+<footer class="foot">
+  <p>brewed in the swamp &middot; <a href="/">sophieren.com</a></p>
+</footer>
+
+</body>
+</html>

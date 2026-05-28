@@ -1,0 +1,1285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Little Sophie · The Curious Agent · Sophie's Swamp</title>
+<meta name="description" content="Talk to her. The world gets curiouser." />
+
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Little Sophie · The Curious Agent" />
+<meta property="og:description" content="She doesn't know anything. But after you talk to her, the world feels strange again." />
+<meta property="og:image" content="https://sophieren.com/images/og-image.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:image" content="https://sophieren.com/images/og-image.png" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400&family=Bungee&display=swap" rel="stylesheet" />
+
+<style>
+  :root{
+    --ink:#08130e;
+    --paper:#0f1f1a;
+    --cream:#f3eedd;
+    --line:rgba(243,238,221,.12);
+    --neon-cyan:#52ffe0;
+    --neon-yellow:#ffd23f;
+    --neon-lime:#b6ff5b;
+    --pink:#ff6b9d;
+    --orange:#ff8a3d;
+    --moss:#3a5a30;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html,body{background:var(--ink);color:var(--cream);font-family:'Space Grotesk',sans-serif;line-height:1.6;}
+  body{
+    background:
+      radial-gradient(ellipse at 30% 0%,rgba(82,255,224,.06) 0%,transparent 55%),
+      radial-gradient(ellipse at 70% 100%,rgba(255,210,63,.04) 0%,transparent 60%),
+      var(--ink);
+    min-height:100vh;padding-bottom:90px;
+    transition:filter 1.2s ease;
+  }
+  /* === MEW VISION MODE === */
+  body.mew-vision{
+    filter:saturate(1.4) hue-rotate(15deg) contrast(1.05);
+  }
+  body.mew-vision .stage::after{
+    content:"";position:absolute;inset:0;pointer-events:none;
+    background:radial-gradient(ellipse at center,rgba(82,255,224,.15) 0%,transparent 60%);
+    mix-blend-mode:screen;
+  }
+  body.mew-vision .opt-btn,body.mew-vision .reset-btn,body.mew-vision .seed-btn{
+    box-shadow:0 0 24px rgba(82,255,224,.35);
+  }
+  body.mew-vision .stage svg .reveal{filter:drop-shadow(0 0 6px rgba(82,255,224,.6));}
+
+  /* === TOP BAR === */
+  .topbar{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:24px 32px;border-bottom:1px solid var(--line);
+  }
+  .topbar a{
+    color:var(--cream);text-decoration:none;
+    font-family:'Caveat',cursive;font-size:18px;opacity:.7;
+    transition:opacity .2s,color .2s;
+  }
+  .topbar a:hover{opacity:1;color:var(--neon-cyan);}
+
+  /* === MEW VISION TOGGLE BUTTON === */
+  .vision-toggle{
+    position:fixed;top:80px;right:24px;z-index:50;
+    width:54px;height:54px;border-radius:50%;
+    background:rgba(15,31,26,.8);border:1px solid var(--line);
+    backdrop-filter:blur(8px);
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;transition:all .25s;
+    color:var(--cream);
+  }
+  .vision-toggle:hover{
+    background:rgba(82,255,224,.15);border-color:rgba(82,255,224,.5);
+    transform:scale(1.05);
+  }
+  .vision-toggle.active{
+    background:rgba(82,255,224,.25);border-color:var(--neon-cyan);
+    box-shadow:0 0 24px rgba(82,255,224,.5);
+  }
+  .vision-toggle svg{width:24px;height:24px;}
+  .vision-tip{
+    position:absolute;top:60px;right:0;
+    font-family:'Caveat',cursive;font-size:14px;
+    color:var(--neon-cyan);white-space:nowrap;
+    opacity:0;transition:opacity .25s;pointer-events:none;
+  }
+  .vision-toggle:hover .vision-tip{opacity:.85;}
+
+  /* === HEADER === */
+  .head{
+    max-width:780px;margin:50px auto 10px;padding:0 28px;text-align:center;
+  }
+  .head .kicker{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:11px;letter-spacing:3px;
+    color:var(--neon-cyan);text-transform:uppercase;
+    opacity:.85;margin-bottom:16px;
+  }
+  .head h1{
+    font-family:'Bungee',sans-serif;
+    font-size:clamp(34px,5.5vw,56px);
+    line-height:1.05;color:var(--cream);letter-spacing:-1px;
+    margin-bottom:14px;
+  }
+  .head h1 em{color:var(--neon-yellow);font-style:italic;}
+  .head .sub{
+    font-family:'Caveat',cursive;font-size:24px;
+    color:var(--neon-cyan);opacity:.95;
+  }
+
+  /* === STAGE === */
+  .stage{
+    max-width:560px;margin:30px auto 0;padding:0 20px;
+    position:relative;
+  }
+  .stage svg{display:block;width:100%;height:auto;}
+
+  /* All reveal layers start hidden; JS adds .show */
+  .reveal{opacity:0;transition:opacity 1.8s ease;}
+  .reveal.show{opacity:1;}
+
+  /* Sleeping state (shy / pre-stillness) */
+  .kitten.sleeping .eyes{opacity:.4;}
+  .kitten.sleeping{filter:brightness(.7) saturate(.7);transition:all 1s ease;}
+  .kitten{transition:all 1.4s ease;}
+
+  /* breathing */
+  @keyframes breathe{
+    0%,100%{transform:translate(200px,200px) scale(1,1);}
+    50%   {transform:translate(200px,199px) scale(1.02,1.025);}
+  }
+  .kitten{animation:breathe 4.2s ease-in-out infinite;transform-origin:center;}
+
+  /* blink */
+  @keyframes blink{
+    0%,94%,100%{transform:scaleY(1);}
+    96%       {transform:scaleY(.1);}
+    98%       {transform:scaleY(1);}
+  }
+  .kitten.awake .eyes{animation:blink 6s ease-in-out infinite;transform-origin:center;transform-box:fill-box;}
+
+  /* tail swish */
+  @keyframes tail-swish{
+    0%,100%{transform:rotate(0deg);}
+    50%   {transform:rotate(-12deg);}
+  }
+  .kitten .tail{animation:tail-swish 3.8s ease-in-out infinite;transform-origin:30px 30px;}
+
+  /* curiosity sparks (only when awake) */
+  @keyframes spark-float{
+    0%  {transform:translateY(0);opacity:.85;}
+    50% {transform:translateY(-12px);opacity:.4;}
+    100%{transform:translateY(-24px);opacity:0;}
+  }
+  .kitten.awake ~ .spark,.spark{animation:spark-float 3.5s ease-out infinite;}
+  .spark:nth-of-type(2){animation-delay:1.2s;}
+  .spark:nth-of-type(3){animation-delay:2.4s;}
+
+  /* Stillness hint (shows before activation) */
+  .stillness-hint{
+    text-align:center;margin:10px auto 0;max-width:480px;padding:0 24px;
+    font-family:'Caveat',cursive;font-size:20px;
+    color:var(--cream);opacity:.5;
+    transition:opacity .8s ease;
+  }
+  .stillness-hint.hide{opacity:0;pointer-events:none;height:0;margin:0;}
+  .stillness-hint .dot{
+    display:inline-block;width:8px;height:8px;border-radius:50%;
+    background:var(--neon-yellow);margin:0 8px 0 0;
+    animation:hint-pulse 1.5s ease-in-out infinite;
+  }
+  @keyframes hint-pulse{
+    0%,100%{transform:scale(1);opacity:.8;}
+    50%   {transform:scale(1.5);opacity:.3;}
+  }
+
+  /* === INTRO === */
+  .intro{
+    max-width:560px;margin:24px auto 32px;padding:0 28px;text-align:center;
+  }
+  .intro p{
+    font-size:18px;line-height:1.65;color:var(--cream);opacity:.88;
+    margin-bottom:8px;
+  }
+  .intro p em{color:var(--neon-cyan);font-style:italic;}
+  .intro p b{color:var(--neon-yellow);font-weight:600;}
+
+  /* === TALK BOX === */
+  .talk{max-width:580px;margin:0 auto;padding:0 24px;}
+  .talk-card{
+    background:linear-gradient(180deg,rgba(15,31,26,.7) 0%,rgba(8,19,14,.85) 100%);
+    border:1px solid var(--line);border-radius:18px;
+    padding:34px 34px 28px;
+    box-shadow:0 24px 50px -28px rgba(0,0,0,.7);
+    opacity:.5;transition:opacity .8s ease;
+  }
+  .talk-card.open{opacity:1;}
+  .pip-label{
+    display:flex;align-items:center;gap:10px;
+    font-family:'Space Grotesk',sans-serif;
+    font-size:10px;letter-spacing:2px;font-weight:700;
+    color:var(--neon-yellow);text-transform:uppercase;
+    margin-bottom:14px;
+  }
+  .pip-label::before{
+    content:"";width:8px;height:8px;border-radius:50%;
+    background:var(--neon-yellow);
+    box-shadow:0 0 10px var(--neon-yellow);
+    animation:pulse-dot 2s ease-in-out infinite;
+  }
+  @keyframes pulse-dot{
+    0%,100%{transform:scale(1);opacity:1;}
+    50%   {transform:scale(.6);opacity:.5;}
+  }
+  .pip-says{
+    font-family:'Caveat',cursive;font-size:26px;line-height:1.4;
+    color:var(--cream);min-height:90px;
+    transition:opacity .55s ease;
+  }
+  .pip-says em{color:var(--neon-cyan);font-style:italic;}
+  .pip-says.idle{opacity:.4;font-size:20px;}
+
+  .user-options{
+    display:flex;flex-direction:column;gap:9px;
+    margin-top:22px;padding-top:20px;border-top:1px dashed var(--line);
+  }
+  .opt-btn,.reset-btn,.seed-btn{
+    text-align:left;
+    background:rgba(82,255,224,.05);
+    border:1px solid rgba(82,255,224,.18);
+    border-radius:10px;
+    padding:12px 16px;
+    font-family:'Space Grotesk',sans-serif;font-size:14.5px;
+    color:var(--cream);cursor:pointer;
+    transition:all .2s;line-height:1.4;
+  }
+  .opt-btn:hover{
+    background:rgba(82,255,224,.12);
+    border-color:rgba(82,255,224,.5);
+    transform:translateX(4px);
+  }
+  .reset-btn{
+    text-align:center;background:rgba(255,210,63,.06);
+    border-color:rgba(255,210,63,.25);
+    color:var(--neon-yellow);
+    font-family:'Caveat',cursive;font-size:18px;
+  }
+  .reset-btn:hover{
+    background:rgba(255,210,63,.14);
+    border-color:rgba(255,210,63,.55);
+  }
+  .seed-btn{
+    text-align:center;background:rgba(182,255,91,.07);
+    border-color:rgba(182,255,91,.3);
+    color:var(--neon-lime);
+    font-family:'Caveat',cursive;font-size:20px;font-weight:700;
+  }
+  .seed-btn:hover{
+    background:rgba(182,255,91,.16);
+    border-color:rgba(182,255,91,.7);
+    transform:translateY(-2px);
+  }
+  .chat-btn{
+    text-align:center;background:rgba(82,255,224,.07);
+    border-color:rgba(82,255,224,.35);
+    color:var(--neon-cyan);
+    font-family:'Caveat',cursive;font-size:20px;font-weight:700;
+  }
+  .chat-btn:hover{
+    background:rgba(82,255,224,.16);
+    border-color:rgba(82,255,224,.7);
+    transform:translateY(-2px);
+  }
+
+  /* ===== LLM CHAT MODE ===== */
+  .chat-mode{display:none;margin-top:10px;}
+  .chat-mode.active{display:block;}
+  .chat-stream{
+    display:flex;flex-direction:column;gap:14px;
+    max-height:360px;overflow-y:auto;
+    padding:6px 4px;margin-bottom:14px;
+  }
+  .msg{
+    max-width:88%;padding:10px 14px;border-radius:14px;
+    font-size:15px;line-height:1.5;
+    animation:msg-in .35s ease;
+  }
+  @keyframes msg-in{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
+  .msg.user{
+    align-self:flex-end;
+    background:rgba(255,210,63,.1);border:1px solid rgba(255,210,63,.25);
+    color:var(--cream);
+  }
+  .msg.kitten{
+    align-self:flex-start;
+    background:rgba(82,255,224,.06);border:1px solid rgba(82,255,224,.18);
+    font-family:'Caveat',cursive;font-size:22px;line-height:1.35;
+    color:var(--cream);
+  }
+  .msg.kitten em{color:var(--neon-cyan);font-style:italic;}
+  .msg.thinking{
+    align-self:flex-start;
+    background:transparent;
+    font-family:'Caveat',cursive;font-size:18px;
+    color:var(--cream);opacity:.5;
+  }
+  .msg.thinking .dot{
+    display:inline-block;width:6px;height:6px;border-radius:50%;
+    background:var(--neon-cyan);margin:0 2px;opacity:.6;
+    animation:think-bounce 1.2s ease-in-out infinite;
+  }
+  .msg.thinking .dot:nth-child(2){animation-delay:.2s;}
+  .msg.thinking .dot:nth-child(3){animation-delay:.4s;}
+  @keyframes think-bounce{
+    0%,100%{transform:translateY(0);opacity:.3;}
+    50%   {transform:translateY(-3px);opacity:1;}
+  }
+  .msg.error{
+    align-self:flex-start;
+    background:rgba(255,107,157,.1);border:1px solid rgba(255,107,157,.35);
+    color:var(--pink);font-size:13.5px;
+  }
+  .chat-input-row{
+    display:flex;gap:8px;align-items:flex-end;
+    padding-top:12px;border-top:1px dashed var(--line);
+  }
+  .chat-input{
+    flex:1;background:rgba(0,0,0,.3);
+    border:1px solid var(--line);border-radius:10px;
+    padding:11px 13px;color:var(--cream);
+    font-family:'Space Grotesk',sans-serif;font-size:14.5px;
+    resize:none;max-height:120px;
+    transition:border-color .2s;
+  }
+  .chat-input:focus{outline:none;border-color:var(--neon-cyan);}
+  .chat-send{
+    padding:11px 16px;border-radius:10px;
+    background:var(--neon-cyan);border:none;color:var(--ink);
+    font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;
+    letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;
+    transition:all .2s;white-space:nowrap;
+  }
+  .chat-send:hover{background:var(--cream);transform:translateY(-1px);}
+  .chat-send:disabled{opacity:.35;cursor:not-allowed;transform:none;}
+  .chat-meta{
+    margin-top:10px;display:flex;justify-content:space-between;align-items:center;
+    font-size:11px;color:var(--cream);opacity:.45;
+  }
+  .chat-meta a{color:var(--neon-yellow);cursor:pointer;text-decoration:none;}
+  .chat-meta a:hover{opacity:1;}
+
+  /* === ASK THE WORLD === */
+  .ask-section{
+    max-width:580px;margin:60px auto 0;padding:0 24px;
+  }
+  .ask-card{
+    background:linear-gradient(180deg,rgba(15,20,30,.5) 0%,rgba(8,16,24,.7) 100%);
+    border:1px solid rgba(255,210,63,.18);border-radius:18px;
+    padding:30px 30px 26px;
+  }
+  .ask-label{
+    display:flex;align-items:center;gap:10px;
+    font-family:'Space Grotesk',sans-serif;font-size:10px;letter-spacing:2px;font-weight:700;
+    color:var(--neon-cyan);text-transform:uppercase;margin-bottom:8px;
+  }
+  .ask-label::before{content:"\2197";color:var(--neon-cyan);}
+  .ask-title{
+    font-family:'Caveat',cursive;font-size:24px;color:var(--cream);
+    margin-bottom:6px;
+  }
+  .ask-sub{
+    font-size:13.5px;color:var(--cream);opacity:.6;
+    margin-bottom:18px;
+  }
+  .ask-input{
+    width:100%;background:rgba(0,0,0,.3);
+    border:1px solid var(--line);border-radius:10px;
+    padding:14px 16px;
+    color:var(--cream);font-family:'Space Grotesk',sans-serif;font-size:15px;
+    resize:none;
+    transition:border-color .2s;
+  }
+  .ask-input:focus{outline:none;border-color:var(--neon-cyan);}
+  .ask-submit{
+    margin-top:12px;width:100%;
+    padding:12px 20px;border-radius:10px;
+    background:var(--neon-yellow);border:none;color:var(--ink);
+    font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:700;
+    letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;
+    transition:all .2s;
+  }
+  .ask-submit:hover{background:var(--cream);transform:translateY(-1px);}
+  .ask-submit:disabled{opacity:.35;cursor:not-allowed;transform:none;}
+
+  .deeper-list{
+    list-style:none;margin-top:22px;padding-top:18px;
+    border-top:1px dashed var(--line);
+  }
+  .deeper-list li{
+    padding:14px 0;
+    font-family:'Caveat',cursive;font-size:22px;line-height:1.4;
+    color:var(--cream);
+    border-bottom:1px dotted rgba(243,238,221,.08);
+    opacity:0;transform:translateY(6px);
+    transition:opacity .4s ease,transform .4s ease;
+  }
+  .deeper-list li.show{opacity:.95;transform:none;}
+  .deeper-list li::before{
+    content:"\2014\00a0";color:var(--neon-yellow);
+  }
+
+  /* === WONDERS COLLECTED === */
+  .collected{
+    max-width:760px;margin:80px auto 0;padding:0 28px;
+  }
+  .collected h3{
+    font-family:'Caveat',cursive;font-size:24px;color:var(--neon-lime);
+    text-align:center;margin-bottom:6px;
+  }
+  .collected .empty{
+    text-align:center;font-family:'Caveat',cursive;font-size:18px;
+    color:var(--cream);opacity:.45;
+  }
+  .leaves-row{
+    display:flex;flex-wrap:wrap;gap:14px;justify-content:center;
+    margin-top:20px;
+  }
+  .leaf-thumb{
+    width:140px;background:rgba(15,31,26,.5);
+    border:1px solid var(--line);border-radius:12px;
+    padding:14px 12px;text-align:center;
+    transition:transform .25s;
+  }
+  .leaf-thumb:hover{transform:translateY(-3px);border-color:rgba(182,255,91,.4);}
+  .leaf-thumb svg{width:100%;height:auto;}
+  .leaf-thumb .leaf-date{
+    font-family:'JetBrains Mono',monospace;font-size:9px;
+    color:var(--neon-cyan);opacity:.7;letter-spacing:1px;
+    margin-top:6px;
+  }
+
+  /* === MANIFESTO === */
+  .manifesto{
+    max-width:560px;margin:80px auto 0;padding:0 28px;text-align:center;
+  }
+  .manifesto h2{
+    font-family:'Caveat',cursive;font-weight:700;
+    font-size:36px;color:var(--cream);margin-bottom:20px;
+  }
+  .manifesto p{
+    font-size:15.5px;line-height:1.75;
+    color:var(--cream);opacity:.78;margin-bottom:12px;
+  }
+  .manifesto p em{color:var(--neon-yellow);font-style:italic;font-weight:500;}
+  .manifesto p b{color:var(--neon-cyan);font-weight:600;}
+  .manifesto .write-cta{
+    display:inline-flex;align-items:center;gap:8px;margin-top:22px;
+    font-family:'Caveat',cursive;font-size:20px;
+    color:var(--neon-lime);text-decoration:none;
+    padding:10px 22px;border:1px dashed rgba(182,255,91,.4);border-radius:999px;
+    transition:all .2s;
+  }
+  .manifesto .write-cta:hover{
+    background:rgba(182,255,91,.08);border-color:rgba(182,255,91,.8);
+  }
+
+  /* === SOUND TOGGLE === */
+  .sound-toggle{
+    position:fixed;top:80px;right:90px;z-index:50;
+    width:44px;height:44px;border-radius:50%;
+    background:rgba(15,31,26,.8);border:1px solid var(--line);
+    backdrop-filter:blur(8px);
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;transition:all .25s;
+    color:var(--cream);font-size:18px;
+  }
+  .sound-toggle:hover{background:rgba(255,210,63,.15);border-color:rgba(255,210,63,.5);}
+  .sound-toggle.active{background:rgba(255,210,63,.25);border-color:var(--neon-yellow);}
+
+  /* === FOOTER === */
+  .foot{
+    max-width:560px;margin:60px auto 0;padding:24px 28px 0;
+    border-top:1px solid var(--line);text-align:center;
+    font-family:'Caveat',cursive;font-size:17px;
+    color:var(--cream);opacity:.5;
+  }
+  .foot a{color:var(--neon-cyan);text-decoration:none;}
+  .foot a:hover{text-decoration:underline;}
+
+  /* === MOBILE === */
+  @media (max-width:640px){
+    .topbar{padding:18px;}
+    .vision-toggle{top:auto;bottom:24px;right:18px;}
+    .sound-toggle{top:auto;bottom:28px;right:84px;}
+    .head{margin:30px auto 0;}
+    .stage{margin:14px auto 4px;padding:0 12px;}
+    .intro{padding:0 22px;margin-bottom:28px;}
+    .intro p{font-size:16px;}
+    .talk{padding:0 16px;}.talk-card{padding:24px 20px 22px;}
+    .pip-says{font-size:22px;}
+    .ask-section{padding:0 16px;}.ask-card{padding:22px 20px;}
+    .deeper-list li{font-size:19px;}
+    .manifesto{padding:0 22px;}.manifesto h2{font-size:30px;}
+    .leaf-thumb{width:130px;}
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ TOP BAR ============ -->
+<nav class="topbar">
+  <a href="/">&larr; back to the swamp</a>
+  <a href="/me-and-my-ai-friends/">dev diary &rarr;</a>
+</nav>
+
+<!-- ============ MEW VISION TOGGLE ============ -->
+<button class="vision-toggle" id="visionToggle" aria-label="See what Little Sophie sees">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+    <ellipse cx="12" cy="12" rx="9" ry="6"/>
+    <circle cx="12" cy="12" r="3" fill="currentColor"/>
+    <ellipse cx="12" cy="12" rx="1" ry="2.5" fill="#000"/>
+  </svg>
+  <span class="vision-tip">see what she sees</span>
+</button>
+
+<!-- ============ AMBIENT SOUND TOGGLE ============ -->
+<button class="sound-toggle" id="soundToggle" aria-label="Toggle ambient sound" title="ambient cricket / frog">
+  &#9835;
+</button>
+
+<!-- ============ HEADER ============ -->
+<header class="head">
+  <div class="kicker">AGENT N&deg;01 &middot; SOPHIE&#39;S SWAMP</div>
+  <h1>Little <em>Sophie</em></h1>
+  <p class="sub">talk to her. the world gets curiouser.</p>
+</header>
+
+<!-- ============ STAGE ============ -->
+<section class="stage" id="stage">
+  <svg viewBox="0 0 400 320" xmlns="http://www.w3.org/2000/svg" aria-label="Little Sophie the curious kitten">
+    <defs>
+      <radialGradient id="eyeGlow" cx=".5" cy=".5">
+        <stop offset="0" stop-color="#52ffe0" stop-opacity=".6"/>
+        <stop offset="1" stop-color="#52ffe0" stop-opacity="0"/>
+      </radialGradient>
+      <radialGradient id="mossGlow" cx=".5" cy=".5">
+        <stop offset="0" stop-color="#3a5a30" stop-opacity=".55"/>
+        <stop offset="1" stop-color="#3a5a30" stop-opacity="0"/>
+      </radialGradient>
+      <radialGradient id="fireflyGlow" cx=".5" cy=".5">
+        <stop offset="0" stop-color="#ffd23f" stop-opacity=".9"/>
+        <stop offset="1" stop-color="#ffd23f" stop-opacity="0"/>
+      </radialGradient>
+    </defs>
+
+    <!-- soft glow under -->
+    <ellipse cx="200" cy="275" rx="120" ry="22" fill="url(#mossGlow)"/>
+    <!-- ground shadow -->
+    <ellipse cx="200" cy="280" rx="68" ry="6" fill="rgba(0,0,0,.45)"/>
+    <!-- moss patch -->
+    <ellipse cx="200" cy="275" rx="86" ry="14" fill="#1a3a1a" stroke="#0a2a14" stroke-width="1"/>
+    <ellipse cx="200" cy="272" rx="78" ry="10" fill="#2c6e3c" opacity=".55"/>
+    <path d="M140 270 q1 -8 3 -10" stroke="#3a7a45" stroke-width="1.4" fill="none"/>
+    <path d="M155 268 q2 -10 5 -12" stroke="#3a7a45" stroke-width="1.4" fill="none"/>
+    <path d="M250 268 q-2 -10 -5 -12" stroke="#3a7a45" stroke-width="1.4" fill="none"/>
+    <path d="M260 270 q-1 -8 -3 -10" stroke="#3a7a45" stroke-width="1.4" fill="none"/>
+    <circle cx="170" cy="265" r="1.5" fill="#ff6b9d" opacity=".7"/>
+    <circle cx="232" cy="266" r="1.4" fill="#ffd23f" opacity=".7"/>
+
+    <!-- ===== REVEAL LAYER 1: tiny mushrooms ===== -->
+    <g class="reveal" id="layer1">
+      <g transform="translate(110 270)">
+        <ellipse cx="0" cy="0" rx="6" ry="3.5" fill="#c87060"/>
+        <ellipse cx="0" cy="-1" rx="5.5" ry="3" fill="#ff8a8a" opacity=".7"/>
+        <circle cx="-2" cy="-1" r=".7" fill="#fff" opacity=".7"/>
+        <rect x="-1.5" y="2" width="3" height="6" fill="#f3eedd"/>
+      </g>
+      <g transform="translate(295 268)">
+        <ellipse cx="0" cy="0" rx="5" ry="3" fill="#a85048"/>
+        <ellipse cx="0" cy="-1" rx="4.5" ry="2.5" fill="#ff7070" opacity=".7"/>
+        <circle cx="1" cy="-1" r=".5" fill="#fff" opacity=".7"/>
+        <rect x="-1" y="2" width="2.5" height="5" fill="#f3eedd"/>
+      </g>
+      <g transform="translate(125 274)">
+        <ellipse cx="0" cy="0" rx="4" ry="2.5" fill="#b86850"/>
+        <rect x="-1" y="1.5" width="2" height="4" fill="#e6e0c8"/>
+      </g>
+    </g>
+
+    <!-- ===== REVEAL LAYER 2: distant fireflies ===== -->
+    <g class="reveal" id="layer2">
+      <circle cx="60"  cy="80"  r="4" fill="url(#fireflyGlow)"/>
+      <circle cx="60"  cy="80"  r="1.2" fill="#ffd23f"/>
+      <circle cx="345" cy="60"  r="4" fill="url(#fireflyGlow)"/>
+      <circle cx="345" cy="60"  r="1.2" fill="#ffd23f"/>
+      <circle cx="370" cy="140" r="4" fill="url(#fireflyGlow)"/>
+      <circle cx="370" cy="140" r="1.2" fill="#ffd23f"/>
+      <circle cx="40"  cy="160" r="4" fill="url(#fireflyGlow)"/>
+      <circle cx="40"  cy="160" r="1.2" fill="#ffd23f"/>
+    </g>
+
+    <!-- ===== REVEAL LAYER 3: second kitten silhouette far right ===== -->
+    <g class="reveal" id="layer3" transform="translate(360 252)">
+      <ellipse cx="0" cy="14" rx="14" ry="2" fill="rgba(0,0,0,.5)"/>
+      <ellipse cx="0" cy="6" rx="12" ry="10" fill="#0a0a0a"/>
+      <circle cx="0" cy="-4" r="9" fill="#0a0a0a"/>
+      <path d="M-7 -10 l-2 -6 l5 3 Z" fill="#0a0a0a"/>
+      <path d="M7 -10 l2 -6 l-5 3 Z" fill="#0a0a0a"/>
+      <circle cx="-3" cy="-4" r="1.4" fill="#52ffe0"/>
+      <circle cx="3"  cy="-4" r="1.4" fill="#52ffe0"/>
+      <path d="M10 8 q8 -4 5 8" stroke="#0a0a0a" stroke-width="3" fill="none" stroke-linecap="round"/>
+    </g>
+
+    <!-- ===== REVEAL LAYER 4: extra leaves + flowers ===== -->
+    <g class="reveal" id="layer4">
+      <g transform="translate(80 260)">
+        <ellipse cx="0" cy="0" rx="8" ry="2.5" fill="#2c6e3c" opacity=".7"/>
+        <circle cx="-2" cy="-3" r="2" fill="#ff6b9d"/>
+        <circle cx="2" cy="-4" r="2" fill="#ffd23f"/>
+      </g>
+      <g transform="translate(320 252)">
+        <path d="M0 0 q-6 -8 0 -16" stroke="#2c6e3c" stroke-width="1.5" fill="none"/>
+        <ellipse cx="-4" cy="-6" rx="3" ry="1.5" fill="#3a7a45"/>
+        <ellipse cx="4" cy="-12" rx="3" ry="1.5" fill="#2c6e3c"/>
+      </g>
+      <circle cx="200" cy="40" r="3" fill="#52ffe0" opacity=".5"/>
+      <circle cx="200" cy="40" r="1" fill="#fff"/>
+    </g>
+
+    <!-- ===== floating curiosity sparks (always there) ===== -->
+    <text class="spark" x="90"  y="120" font-family="Caveat, cursive" font-size="26" fill="#ffd23f">?</text>
+    <text class="spark" x="305" y="110" font-family="Caveat, cursive" font-size="20" fill="#52ffe0">?</text>
+    <text class="spark" x="328" y="180" font-family="Caveat, cursive" font-size="22" fill="#b6ff5b">!</text>
+
+    <!-- ============ LITTLE SOPHIE ============ -->
+    <g class="kitten sleeping" id="kitten">
+      <g class="tail">
+        <path d="M30 30 q28 -20 18 32 q-4 14 -10 4" fill="none" stroke="#1a1a1a" stroke-width="10" stroke-linecap="round"/>
+        <path d="M30 30 q28 -20 18 32 q-4 14 -10 4" fill="none" stroke="#2a2a2a" stroke-width="6" stroke-linecap="round"/>
+      </g>
+      <!-- body -->
+      <ellipse cx="0" cy="42" rx="42" ry="36" fill="#1a1a1a"/>
+      <ellipse cx="0" cy="44" rx="32" ry="28" fill="#2a2a2a" opacity=".4"/>
+      <ellipse cx="-18" cy="72" rx="11" ry="7" fill="#1a1a1a"/>
+      <ellipse cx="18"  cy="72" rx="11" ry="7" fill="#1a1a1a"/>
+      <circle cx="-21" cy="73" r="1.5" fill="#ff6b9d" opacity=".7"/>
+      <circle cx="-15" cy="74" r="1.5" fill="#ff6b9d" opacity=".7"/>
+      <circle cx="15"  cy="74" r="1.5" fill="#ff6b9d" opacity=".7"/>
+      <circle cx="21"  cy="73" r="1.5" fill="#ff6b9d" opacity=".7"/>
+
+      <g class="head-grp">
+        <circle cx="0" cy="-12" r="38" fill="#1a1a1a"/>
+        <path d="M-28 -38 l-7 -24 l21 10 Z" fill="#1a1a1a"/>
+        <path d="M28  -38 l7  -24 l-21 10 Z" fill="#1a1a1a"/>
+        <path d="M-25 -37 l-4 -14 l13 6 Z" fill="#ff6b9d" opacity=".55"/>
+        <path d="M25  -37 l4  -14 l-13 6 Z" fill="#ff6b9d" opacity=".55"/>
+
+        <g class="eyes">
+          <circle cx="-14" cy="-16" r="14" fill="url(#eyeGlow)"/>
+          <circle cx="14"  cy="-16" r="14" fill="url(#eyeGlow)"/>
+          <ellipse cx="-14" cy="-16" rx="9"   ry="11" fill="#0a1f1a"/>
+          <ellipse cx="14"  cy="-16" rx="9"   ry="11" fill="#0a1f1a"/>
+          <ellipse cx="-14" cy="-16" rx="7.5" ry="9.5" fill="#52ffe0"/>
+          <ellipse cx="14"  cy="-16" rx="7.5" ry="9.5" fill="#52ffe0"/>
+          <ellipse cx="-14" cy="-16" rx="1.6" ry="8" fill="#000"/>
+          <ellipse cx="14"  cy="-16" rx="1.6" ry="8" fill="#000"/>
+          <circle cx="-11" cy="-20" r="2.2" fill="#f3eedd"/>
+          <circle cx="17"  cy="-20" r="2.2" fill="#f3eedd"/>
+        </g>
+
+        <path d="M-3 -1 l6 0 l-3 4 Z" fill="#ff6b9d"/>
+        <path d="M0 3 q-4 4 -7 1" stroke="#3a2a2a" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+        <path d="M0 3 q4 4 7 1" stroke="#3a2a2a" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+
+        <line x1="-16" y1="0" x2="-34" y2="-3" stroke="#f3eedd" stroke-width=".9"/>
+        <line x1="-16" y1="3" x2="-34" y2="5"  stroke="#f3eedd" stroke-width=".9"/>
+        <line x1="16"  y1="0" x2="34"  y2="-3" stroke="#f3eedd" stroke-width=".9"/>
+        <line x1="16"  y1="3" x2="34"  y2="5"  stroke="#f3eedd" stroke-width=".9"/>
+      </g>
+    </g>
+  </svg>
+</section>
+
+<!-- ============ STILLNESS HINT ============ -->
+<p class="stillness-hint" id="stillnessHint">
+  <span class="dot"></span> sit still for a few seconds &mdash; she&rsquo;s shy
+</p>
+
+<!-- ============ INTRO ============ -->
+<section class="intro">
+  <p>She doesn&rsquo;t <em>know</em> anything.</p>
+  <p>But after you talk to her, the world feels <b>strange</b> again.</p>
+</section>
+
+<!-- ============ TALK BOX ============ -->
+<section class="talk">
+  <div class="talk-card" id="talkCard">
+    <div class="pip-label">Little Sophie &middot; curious agent</div>
+    <div class="pip-says idle" id="pipSays"><em>*napping*</em></div>
+    <div class="user-options" id="userOptions"></div>
+
+    <!-- ===== LLM CHAT MODE (revealed on demand) ===== -->
+    <div class="chat-mode" id="chatMode">
+      <div class="chat-stream" id="chatStream"></div>
+      <div class="chat-input-row">
+        <textarea class="chat-input" id="chatInput" rows="2" placeholder="say something to her..."></textarea>
+        <button class="chat-send" id="chatSend">send</button>
+      </div>
+      <div class="chat-meta">
+        <span id="chatTurnCount">turn 0</span>
+        <a id="chatExit">&larr; back to her starters</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ASK THE WORLD ============ -->
+<section class="ask-section">
+  <div class="ask-card">
+    <div class="ask-label">Ask the world</div>
+    <h2 class="ask-title">type a question you have. she won&rsquo;t answer.</h2>
+    <p class="ask-sub">She&rsquo;ll turn it into 3 better ones &mdash; the questions hiding behind your question.</p>
+    <textarea class="ask-input" id="askInput" rows="3" placeholder="e.g. how do I become more productive?"></textarea>
+    <button class="ask-submit" id="askSubmit" disabled>let her dig</button>
+    <ul class="deeper-list" id="deeperList"></ul>
+  </div>
+</section>
+
+<!-- ============ COLLECTED WONDERS ============ -->
+<section class="collected" id="collected">
+  <h3>&hearts; wonders you&rsquo;ve gathered</h3>
+  <p class="empty" id="collectedEmpty">no leaves yet. sit with her, take one home.</p>
+  <div class="leaves-row" id="leavesRow"></div>
+</section>
+
+<!-- ============ MANIFESTO ============ -->
+<section class="manifesto">
+  <h2>about this place</h2>
+  <p>
+    Little Sophie is the first <em>strange agent</em> in the swamp. She does one specific thing &mdash; she changes your <b>state</b> a little. You leave a little more curious than you came.
+  </p>
+  <p>
+    She may not be alone for long. The plan is a small <em>society of strange agents</em>, each designed to shift a different state &mdash; one that makes you slower, one that makes you bolder, one that listens until you finish the thought.
+  </p>
+  <p>
+    If you&rsquo;ve trained one with its own signature &mdash; not a productivity tool, not an assistant, but a <em>character</em> &mdash; come find me.
+  </p>
+  <a class="write-cta" href="/#contact">leave a letter &rarr;</a>
+</section>
+
+<footer class="foot">
+  <p>brewed in the swamp &middot; <a href="/">sophieren.com</a></p>
+</footer>
+
+<script>
+/* =================================================================
+   LITTLE SOPHIE — the curious agent
+   Single-file, no LLM yet (scripted dialog + library-based wonders).
+================================================================= */
+
+/* ---------- STILLNESS DETECTOR ---------- */
+const STILLNESS_THRESHOLD_MS = 4000;
+let lastActivity = Date.now();
+let activated = false;
+
+function noteActivity(){ lastActivity = Date.now(); }
+['mousemove','scroll','touchstart','keydown'].forEach(ev =>
+  window.addEventListener(ev, noteActivity, {passive:true})
+);
+
+function stillnessLoop(){
+  if (!activated && (Date.now() - lastActivity) > STILLNESS_THRESHOLD_MS){
+    activate();
+  }
+  requestAnimationFrame(stillnessLoop);
+}
+requestAnimationFrame(stillnessLoop);
+
+function activate(){
+  if (activated) return;
+  activated = true;
+  document.getElementById('kitten').classList.remove('sleeping');
+  document.getElementById('kitten').classList.add('awake');
+  document.getElementById('stillnessHint').classList.add('hide');
+  document.getElementById('talkCard').classList.add('open');
+  document.getElementById('pipSays').classList.remove('idle');
+  // start dialog
+  current = 'start';
+  render();
+  // schedule progressive reveals
+  scheduleReveal('layer1', 6000);
+  scheduleReveal('layer2', 14000);
+  scheduleReveal('layer3', 24000);
+  scheduleReveal('layer4', 38000);
+}
+
+function scheduleReveal(id, ms){
+  setTimeout(() => {
+    const el = document.getElementById(id);
+    if (el) el.classList.add('show');
+  }, ms);
+}
+
+/* ---------- DIALOG TREE ---------- */
+const tree = {
+  start: {
+    pip: "<em>*tiny mew*</em> &mdash; oh, hi. what&rsquo;s on your mind right now?",
+    options: [
+      {text: "Something I&rsquo;m working on.",       next: "working"},
+      {text: "Something I read this week.",            next: "read"},
+      {text: "Something I keep coming back to.",       next: "coming_back"},
+      {text: "Nothing, really.",                       next: "nothing"}
+    ]
+  },
+  working: {
+    pip: "what does it <em>look</em> like, when it&rsquo;s done? in your head &mdash; what shape is it?",
+    options: [
+      {text: "I&rsquo;m not sure yet.",     next: "end_unsure"},
+      {text: "Pretty clear, actually.",     next: "end_clear"},
+      {text: "Different every day.",        next: "end_different"}
+    ]
+  },
+  read: {
+    pip: "did the part you remember match what the <em>writer</em> wanted you to remember? or did your brain pick its own part?",
+    options: [
+      {text: "I think I picked my own part.", next: "end_own_part"},
+      {text: "Pretty much the main thesis.",  next: "end_thesis"},
+      {text: "Honestly &mdash; just one sentence.", next: "end_one_sentence"}
+    ]
+  },
+  coming_back: {
+    pip: "what does <em>coming back</em> feel like? is it the same thought, or does it bring a tiny new piece each time?",
+    options: [
+      {text: "Same thought.",                    next: "end_same"},
+      {text: "Tiny new piece each time.",        next: "end_new_piece"},
+      {text: "I&rsquo;d never asked myself that.", next: "end_never_asked"}
+    ]
+  },
+  nothing: {
+    pip: "mhm. then &mdash; what&rsquo;s in the room? a sound, a shape, something the light is doing?",
+    options: [
+      {text: "A hum I&rsquo;d stopped noticing.", next: "end_hum"},
+      {text: "How my hand looks.",                next: "end_hand"},
+      {text: "The shadow of something.",          next: "end_shadow"},
+      {text: "I&rsquo;m tired. I want to leave.", next: "end_tired"}
+    ]
+  },
+  end_unsure:       {pip: "good. the <em>not-yet-sure</em> shape is the most interesting one. don&rsquo;t let me rush you out of it.", end:true, theme:"not-yet-sure"},
+  end_clear:        {pip: "interesting. is there a part you don&rsquo;t talk about because it sounds <em>too obvious</em> to say out loud? that part might be the most important one.", end:true, theme:"obvious"},
+  end_different:    {pip: "then maybe it isn&rsquo;t one thing yet. maybe it&rsquo;s a small <em>family of things</em> looking for a name.", end:true, theme:"unnamed"},
+  end_own_part:     {pip: "i&rsquo;d trust the part <em>you</em> picked more than the part the writer chose. your brain knew why.", end:true, theme:"your-part"},
+  end_thesis:       {pip: "okay &mdash; what&rsquo;s one sentence you&rsquo;d add to the thesis that the writer <em>didn&rsquo;t</em>?", end:true, theme:"missing-sentence"},
+  end_one_sentence: {pip: "say the sentence out loud, into the room. then keep going.", end:true, theme:"out-loud"},
+  end_same:         {pip: "is the <em>thought</em> the same &mdash; or are <em>you</em> different each time, returning to it?", end:true, theme:"returning"},
+  end_new_piece:    {pip: "you might be building something without noticing. that&rsquo;s how most real things get built.", end:true, theme:"slow-build"},
+  end_never_asked:  {pip: "good. tonight, that&rsquo;s the question. nothing else.", end:true, theme:"one-question"},
+  end_hum:          {pip: "what made you <em>stop</em> noticing it? and what just made you notice again?", end:true, theme:"hum"},
+  end_hand:         {pip: "look closer. how would you describe your hand to someone who had never seen a hand?", end:true, theme:"hand"},
+  end_shadow:       {pip: "is the shadow more interesting than the thing? sometimes it is.", end:true, theme:"shadow"},
+  end_tired:        {pip: "okay. before you go &mdash; what&rsquo;s one thing today made you wonder, even for a second? you can keep it for yourself. <em>*gentle mew*</em>", end:true, theme:"keep-it"}
+};
+
+const pipSays = document.getElementById('pipSays');
+const userOptions = document.getElementById('userOptions');
+let current = null;
+let lastTheme = null;
+
+function render(){
+  const node = tree[current];
+  pipSays.style.transition = 'opacity .3s';
+  pipSays.style.opacity = 0;
+  setTimeout(() => {
+    pipSays.innerHTML = node.pip;
+    pipSays.style.transition = 'opacity .55s';
+    pipSays.style.opacity = 1;
+  }, 320);
+
+  userOptions.innerHTML = '';
+  if (node.end) {
+    lastTheme = node.theme;
+    setTimeout(() => {
+      const chat = document.createElement('button');
+      chat.className = 'chat-btn';
+      chat.innerHTML = '&#128062; chat with her freely &mdash; for real';
+      chat.onclick = enterChatMode;
+      userOptions.appendChild(chat);
+
+      const seed = document.createElement('button');
+      seed.className = 'seed-btn';
+      seed.innerHTML = '&hearts; take a wonder home';
+      seed.onclick = generateAndOfferLeaf;
+      userOptions.appendChild(seed);
+
+      const reset = document.createElement('button');
+      reset.className = 'reset-btn';
+      reset.innerHTML = '&larr; talk to her again';
+      reset.onclick = () => { current = 'start'; render(); };
+      userOptions.appendChild(reset);
+    }, 360);
+  } else {
+    setTimeout(() => {
+      node.options.forEach((o, i) => {
+        const b = document.createElement('button');
+        b.className = 'opt-btn';
+        b.innerHTML = o.text;
+        b.style.opacity = 0;
+        b.onclick = () => { current = o.next; render(); };
+        userOptions.appendChild(b);
+        setTimeout(() => { b.style.transition='opacity .35s'; b.style.opacity = 1; }, 60 * i);
+      });
+    }, 360);
+  }
+}
+
+/* ---------- WONDER LIBRARY ---------- */
+const WONDERS = [
+  "what was the first thing you noticed today, before you decided what was important?",
+  "what would the corner of your eye see, if you could give it words?",
+  "what is something that has always been there but you only noticed once?",
+  "what does the bottom of your own foot look like, right now?",
+  "what sound is happening in this room that wasn&rsquo;t happening one minute ago?",
+  "what is the most useless thing your hands know how to do?",
+  "what color is the inside of your eyelid?",
+  "when was the last time you watched the moon for longer than 30 seconds?",
+  "what does a thought weigh, before you write it down?",
+  "what is the smallest thing in this room that someone made on purpose?",
+  "if your hand was a stranger&rsquo;s hand, how would you describe it?",
+  "what is one thing in your life that has no name yet?",
+  "when did you last notice yourself blinking?",
+  "what would you be doing right now, if no one had ever invented the word for it?",
+  "what is the most interesting shadow within reach?",
+  "what is the question you keep avoiding by being busy?",
+  "what was the first sound you made today?",
+  "what is the oldest object in this room? where was it before it came to you?",
+  "what is the smallest movement your body is making right now without your permission?",
+  "what would you say to the version of you from three years ago, in one sentence?",
+  "what is something a 5-year-old you would point at right now?",
+  "what is true today that wasn&rsquo;t true yesterday?",
+  "what is the most boring thing in the room, and why is it boring?",
+  "what is the longest you&rsquo;ve ever looked at a single object on purpose?",
+  "what color is the air?",
+  "if you stood up and walked in a straight line for an hour, what would you see?",
+  "what was the last thing you did that no one taught you to do?",
+  "what is the texture of the inside of your mouth right now?",
+  "what is the question you would ask, if you weren&rsquo;t afraid of being thought of as childish?",
+  "what is the smallest thing that has ever made you cry?"
+];
+
+function pickWonder(theme){
+  // For now, ignore theme — pick at random. (When LLM is wired, pass theme.)
+  return WONDERS[Math.floor(Math.random() * WONDERS.length)];
+}
+
+/* ---------- LEAF SVG GENERATOR ---------- */
+function leafSVG(text, dateStr){
+  const escaped = text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  // Word-wrap by hand: split text into ~6-word lines
+  const words = text.split(' ');
+  const lines = [];
+  let line = [];
+  words.forEach(w => {
+    line.push(w);
+    if (line.join(' ').length > 38){ lines.push(line.join(' ')); line = []; }
+  });
+  if (line.length) lines.push(line.join(' '));
+
+  const tspans = lines.map((l,i) =>
+    `<tspan x="200" dy="${i===0 ? 0 : 26}">${l.replace(/&/g,'&amp;').replace(/</g,'&lt;')}</tspan>`
+  ).join('');
+
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 260" width="400" height="260">
+    <defs>
+      <linearGradient id="lf" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#1a3a1a"/>
+        <stop offset="1" stop-color="#0a1f0a"/>
+      </linearGradient>
+      <radialGradient id="lgw" cx=".5" cy=".5">
+        <stop offset="0" stop-color="#52ffe0" stop-opacity=".25"/>
+        <stop offset="1" stop-color="#52ffe0" stop-opacity="0"/>
+      </radialGradient>
+    </defs>
+    <rect width="400" height="260" fill="#08130e"/>
+    <ellipse cx="200" cy="130" rx="180" ry="80" fill="url(#lgw)"/>
+    <!-- leaf shape -->
+    <path d="M40 130 Q60 50 200 40 Q340 50 360 130 Q340 210 200 220 Q60 210 40 130 Z" fill="url(#lf)" stroke="#52ffe0" stroke-width="1.2" opacity=".95"/>
+    <!-- veins -->
+    <path d="M40 130 L360 130" stroke="#3a7a45" stroke-width="1" opacity=".5"/>
+    <path d="M200 40 Q150 130 100 200" stroke="#3a7a45" stroke-width=".8" opacity=".35" fill="none"/>
+    <path d="M200 40 Q250 130 300 200" stroke="#3a7a45" stroke-width=".8" opacity=".35" fill="none"/>
+    <!-- text -->
+    <text x="200" y="110" text-anchor="middle" font-family="Caveat, cursive" font-size="20" font-weight="700" fill="#f3eedd">${tspans}</text>
+    <!-- footer -->
+    <text x="200" y="200" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-size="9" letter-spacing="2" fill="#52ffe0" opacity=".85">&#8212; LITTLE SOPHIE &middot; ${dateStr} &#8212;</text>
+    <text x="200" y="240" text-anchor="middle" font-family="Caveat, cursive" font-size="13" fill="#ffd23f" opacity=".75">sophieren.com / curious</text>
+  </svg>`;
+}
+
+function svgToBlob(svgString){
+  return new Blob([svgString], {type:'image/svg+xml;charset=utf-8'});
+}
+
+function downloadLeaf(svgString, filename){
+  // Convert SVG → PNG via canvas, then download
+  const svgBlob = svgToBlob(svgString);
+  const url = URL.createObjectURL(svgBlob);
+  const img = new Image();
+  img.onload = function(){
+    const canvas = document.createElement('canvas');
+    canvas.width = 800; canvas.height = 520;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#08130e';
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+    canvas.toBlob(blob => {
+      const a = document.createElement('a');
+      a.download = filename;
+      a.href = URL.createObjectURL(blob);
+      a.click();
+      URL.revokeObjectURL(a.href);
+      URL.revokeObjectURL(url);
+    }, 'image/png');
+  };
+  img.src = url;
+}
+
+function generateAndOfferLeaf(){
+  const wonder = pickWonder(lastTheme);
+  const d = new Date();
+  const dateStr = d.getFullYear() + '.' +
+                  String(d.getMonth()+1).padStart(2,'0') + '.' +
+                  String(d.getDate()).padStart(2,'0');
+  const svg = leafSVG(wonder, dateStr);
+  // Save to localStorage
+  saveLeaf({wonder, date: dateStr, svg});
+  // Download PNG
+  downloadLeaf(svg, 'wonder-' + dateStr + '.png');
+  // Render below
+  renderCollected();
+}
+
+/* ---------- LOCAL STORAGE COLLECTION ---------- */
+const STORAGE_KEY = 'mew:wonders';
+
+function loadLeaves(){
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); }
+  catch(e){ return []; }
+}
+function saveLeaf(leaf){
+  const all = loadLeaves();
+  all.unshift(leaf);
+  // Keep latest 12
+  const trimmed = all.slice(0, 12);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(trimmed));
+}
+function renderCollected(){
+  const leaves = loadLeaves();
+  const empty = document.getElementById('collectedEmpty');
+  const row = document.getElementById('leavesRow');
+  if (leaves.length === 0){
+    empty.style.display = 'block';
+    row.innerHTML = '';
+    return;
+  }
+  empty.style.display = 'none';
+  row.innerHTML = '';
+  leaves.forEach(leaf => {
+    const thumb = document.createElement('div');
+    thumb.className = 'leaf-thumb';
+    thumb.innerHTML = leaf.svg + '<div class="leaf-date">' + leaf.date + '</div>';
+    row.appendChild(thumb);
+  });
+}
+renderCollected();
+
+/* ---------- ASK THE WORLD ---------- */
+const TRANSFORMERS = [
+  "what would be lost if you got the answer you&rsquo;re hoping for?",
+  "why did this question come to you now, specifically?",
+  "what is the smaller question hiding behind this one?",
+  "who taught you this question was worth asking?",
+  "if you got the perfect answer &mdash; what would actually change?",
+  "what does the body that&rsquo;s asking this question want?",
+  "is this really the question, or the cover story for another one?",
+  "what would a 7-year-old version of you ask instead?",
+  "what would happen if you didn&rsquo;t answer it today?",
+  "who else in your life is also asking this, without saying so?",
+  "is this a question or a complaint in disguise?",
+  "what would the opposite question be, and would that one matter more?",
+  "if a stranger asked this on your behalf, what would you wish they&rsquo;d also ask?",
+  "what is the smallest, most boring version of the question you&rsquo;re really asking?",
+  "what is the most beautiful version of it?",
+  "what would change if you waited a week before asking?",
+  "what part of you is hoping the answer is yes? what part is hoping for no?",
+  "is the question about a thing, or about how you feel about the thing?",
+  "what other questions have you been avoiding by focusing on this one?",
+  "what would it mean if no one could answer this for you?"
+];
+
+function pickDeeper(n){
+  const pool = TRANSFORMERS.slice();
+  const out = [];
+  while (out.length < n && pool.length){
+    const i = Math.floor(Math.random() * pool.length);
+    out.push(pool.splice(i,1)[0]);
+  }
+  return out;
+}
+
+const askInput = document.getElementById('askInput');
+const askSubmit = document.getElementById('askSubmit');
+const deeperList = document.getElementById('deeperList');
+
+askInput.addEventListener('input', () => {
+  askSubmit.disabled = askInput.value.trim().length < 4;
+});
+
+askSubmit.addEventListener('click', () => {
+  deeperList.innerHTML = '';
+  const three = pickDeeper(3);
+  three.forEach((q, i) => {
+    const li = document.createElement('li');
+    li.innerHTML = q;
+    deeperList.appendChild(li);
+    setTimeout(() => li.classList.add('show'), 120 + i*200);
+  });
+});
+
+/* ---------- LLM CHAT MODE ---------- */
+const chatMode = document.getElementById('chatMode');
+const chatStream = document.getElementById('chatStream');
+const chatInput = document.getElementById('chatInput');
+const chatSend = document.getElementById('chatSend');
+const chatTurnCount = document.getElementById('chatTurnCount');
+const chatExit = document.getElementById('chatExit');
+let llmHistory = [];
+
+function enterChatMode(){
+  // Hide scripted dialog UI, show chat
+  pipSays.style.display = 'none';
+  userOptions.style.display = 'none';
+  chatMode.classList.add('active');
+  if (llmHistory.length === 0){
+    // First entry: have her greet (using a canned opener, then real LLM after user replies)
+    addMessage('kitten', "<em>*tiny purr*</em> &mdash; okay. say anything. or look at something near you and tell me what you see.");
+  }
+  chatInput.focus();
+}
+
+function exitChatMode(){
+  chatMode.classList.remove('active');
+  pipSays.style.display = '';
+  userOptions.style.display = '';
+}
+
+function addMessage(role, html){
+  const div = document.createElement('div');
+  div.className = 'msg ' + role;
+  div.innerHTML = html;
+  chatStream.appendChild(div);
+  chatStream.scrollTop = chatStream.scrollHeight;
+  return div;
+}
+
+function escapeHTML(s){
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// Convert plain text to lightly-formatted HTML for kitten messages:
+// - escape HTML
+// - keep *...* as <em>...</em> (stage directions like *tiny mew*)
+function kittenFormat(text){
+  let s = escapeHTML(text);
+  s = s.replace(/\*([^*\n]+)\*/g, '<em>$1</em>');
+  s = s.replace(/\n/g, '<br>');
+  return s;
+}
+
+async function sendChat(){
+  const userText = chatInput.value.trim();
+  if (!userText) return;
+  if (userText.length > 1500){
+    addMessage('error', "that&#39;s a long thought. try saying it in a few sentences?");
+    return;
+  }
+  if (llmHistory.length >= 28){
+    addMessage('error', "the conversation got long &mdash; start a fresh one with her?");
+    return;
+  }
+
+  addMessage('user', escapeHTML(userText));
+  llmHistory.push({role:'user', content:userText});
+  chatInput.value = '';
+  chatInput.disabled = true;
+  chatSend.disabled = true;
+
+  // thinking indicator
+  const thinking = addMessage('thinking', '<span class="dot"></span><span class="dot"></span><span class="dot"></span>');
+
+  try {
+    const res = await fetch('/api/ask-little-sophie', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({messages: llmHistory})
+    });
+    thinking.remove();
+    if (!res.ok){
+      const errJson = await res.json().catch(() => ({error: 'unknown'}));
+      addMessage('error', escapeHTML(errJson.error || 'something went wrong'));
+    } else {
+      const data = await res.json();
+      const reply = (data.reply || '*tiny mew*').trim();
+      addMessage('kitten', kittenFormat(reply));
+      llmHistory.push({role:'assistant', content:reply});
+      chatTurnCount.textContent = 'turn ' + Math.ceil(llmHistory.length/2);
+    }
+  } catch (e){
+    thinking.remove();
+    addMessage('error', 'she went very quiet. (network error)');
+  } finally {
+    chatInput.disabled = false;
+    chatSend.disabled = false;
+    chatInput.focus();
+  }
+}
+
+chatSend.addEventListener('click', sendChat);
+chatInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && !e.shiftKey){ e.preventDefault(); sendChat(); }
+});
+chatExit.addEventListener('click', exitChatMode);
+
+/* ---------- MEW VISION TOGGLE ---------- */
+const visionBtn = document.getElementById('visionToggle');
+visionBtn.addEventListener('click', () => {
+  document.body.classList.toggle('mew-vision');
+  visionBtn.classList.toggle('active');
+});
+
+/* ---------- AMBIENT SOUND (Web Audio, very simple cricket-like) ---------- */
+const soundBtn = document.getElementById('soundToggle');
+let audioCtx = null;
+let soundOn = false;
+let cricketLoop = null;
+
+function startCricket(){
+  audioCtx = audioCtx || new (window.AudioContext||window.webkitAudioContext)();
+  cricketLoop = setInterval(() => {
+    if (!soundOn) return;
+    // tiny chirp = quick FM-ish blip
+    const o = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    o.frequency.value = 3500 + Math.random()*800;
+    o.type = 'sine';
+    g.gain.value = 0;
+    o.connect(g); g.connect(audioCtx.destination);
+    o.start();
+    const now = audioCtx.currentTime;
+    g.gain.setValueAtTime(0, now);
+    g.gain.linearRampToValueAtTime(0.012, now + 0.01);
+    g.gain.exponentialRampToValueAtTime(0.0001, now + 0.06);
+    o.stop(now + 0.07);
+  }, 700 + Math.random()*900);
+}
+function stopCricket(){
+  if (cricketLoop){ clearInterval(cricketLoop); cricketLoop = null; }
+}
+
+soundBtn.addEventListener('click', () => {
+  soundOn = !soundOn;
+  soundBtn.classList.toggle('active', soundOn);
+  if (soundOn) startCricket();
+  else stopCricket();
+});
+</script>
+</body>
+</html>
