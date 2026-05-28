@@ -693,6 +693,8 @@
 <!-- ============ STILLNESS HINT ============ -->
 <p class="stillness-hint" id="stillnessHint">
   <span class="dot"></span> sit still for a few seconds &mdash; she&rsquo;s shy
+  &nbsp;&middot;&nbsp;
+  <a href="#" id="skipRitual" style="color:var(--neon-cyan);opacity:.7;text-decoration:underline;cursor:pointer;">or skip and chat now &rarr;</a>
 </p>
 
 <!-- ============ INTRO ============ -->
@@ -802,6 +804,14 @@ function activate(){
   scheduleReveal('layer3', 24000);
   scheduleReveal('layer4', 38000);
 }
+
+// Skip ritual → go straight to free-form chat (for testing / impatient visitors)
+document.getElementById('skipRitual').addEventListener('click', (e) => {
+  e.preventDefault();
+  activate();
+  // small delay so activation finishes, then jump to chat
+  setTimeout(() => enterChatMode(), 100);
+});
 
 function scheduleReveal(id, ms){
   setTimeout(() => {
