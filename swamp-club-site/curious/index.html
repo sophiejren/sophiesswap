@@ -530,6 +530,19 @@
   }
   .manifesto p em{color:var(--neon-yellow);font-style:italic;font-weight:500;}
   .manifesto p b{color:var(--neon-cyan);font-weight:600;}
+
+  /* === ONE-LINER === */
+  .manifesto .oneliner{
+    margin:30px auto 30px;max-width:560px;
+    font-family:'Caveat',cursive;
+    font-size:32px;line-height:1.35;
+    color:var(--cream);text-align:center;
+  }
+  .manifesto .oneliner em{color:var(--neon-yellow);font-style:italic;font-weight:700;}
+  .manifesto .oneliner .punchline{
+    display:inline-block;margin-top:12px;
+    color:var(--neon-cyan);font-size:26px;opacity:.9;
+  }
   .manifesto .write-cta{
     display:inline-flex;align-items:center;gap:8px;margin-top:22px;
     font-family:'Caveat',cursive;font-size:20px;
@@ -841,17 +854,11 @@
 
 <!-- ============ MANIFESTO ============ -->
 <section class="manifesto">
-  <h2>about this place</h2>
-  <p>
-    Little Sophie is the first <em>strange agent</em> in the swamp. She does one specific thing &mdash; she changes your <b>state</b> a little. You leave a little more curious than you came.
-  </p>
-  <p>
-    She may not be alone for long. The plan is a small <em>society of strange agents</em>, each designed to shift a different state &mdash; one that makes you slower, one that makes you bolder, one that listens until you finish the thought.
-  </p>
-  <p>
-    If you&rsquo;ve trained one with its own signature &mdash; not a productivity tool, not an assistant, but a <em>character</em> &mdash; come find me.
-  </p>
-  <a class="write-cta" href="/#contact">leave a letter &rarr;</a>
+  <div class="oneliner">
+    the most powerful agent has <em>no purpose</em> these days.<br>
+    <span class="punchline">ask any cat.</span>
+  </div>
+  <a class="write-cta" href="/#contact">if you make creatures, write to me &rarr;</a>
 </section>
 
 <footer class="foot">
