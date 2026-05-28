@@ -117,12 +117,52 @@
     color:var(--neon-cyan);opacity:.95;
   }
 
-  /* === STAGE === */
+  /* === SCENE ROW (cat left, floating chat bubble right) === */
+  .scene-row{
+    max-width:1100px;margin:40px auto 0;padding:0 24px;
+    display:flex;align-items:center;justify-content:center;
+    gap:36px;
+  }
   .stage{
-    max-width:560px;margin:30px auto 0;padding:0 20px;
+    flex:0 0 44%;max-width:440px;
     position:relative;
   }
-  .stage svg{display:block;width:100%;height:auto;}
+  .stage svg{display:block;width:100%;height:auto;overflow:visible;}
+
+  /* === FLOATING CAT BUBBLE === */
+  .cat-bubble{
+    flex:1;min-width:0;max-width:480px;
+    position:relative;
+    background:
+      radial-gradient(ellipse at top left, rgba(82,255,224,.08) 0%, transparent 60%),
+      linear-gradient(180deg, rgba(20,40,32,.92) 0%, rgba(10,22,18,.96) 100%);
+    border:1px solid rgba(82,255,224,.28);
+    border-radius:26px;
+    padding:30px 28px 22px;
+    box-shadow:
+      0 30px 60px -30px rgba(0,0,0,.7),
+      0 0 0 1px rgba(82,255,224,.08),
+      inset 0 1px 0 rgba(243,238,221,.05);
+    animation:bubble-float 6s ease-in-out infinite;
+  }
+  @keyframes bubble-float{
+    0%,100%{transform:translateY(0);}
+    50%   {transform:translateY(-6px);}
+  }
+  /* speech-bubble tail pointing LEFT toward the cat */
+  .bubble-tail{
+    position:absolute;left:-14px;top:50%;transform:translateY(-50%);
+    width:0;height:0;
+    border-top:14px solid transparent;
+    border-bottom:14px solid transparent;
+    border-right:16px solid rgba(20,40,32,.96);
+    filter:drop-shadow(-1px 0 0 rgba(82,255,224,.3));
+  }
+  .bubble-inner{position:relative;}
+
+  /* === walker no longer uses CSS keyframe (JS controls movement) === */
+  .walker{cursor:default;transition:transform 2.8s cubic-bezier(.4,0,.2,1);}
+  .walker.sit{transform:translateX(var(--walker-x,0)) translateY(2px) scale(1,.97);}
 
   /* All reveal layers start hidden; JS adds .show */
   .reveal{opacity:0;transition:opacity 1.8s ease;}
@@ -194,14 +234,7 @@
   .intro p em{color:var(--neon-cyan);font-style:italic;}
   .intro p b{color:var(--neon-yellow);font-weight:600;}
 
-  /* === TALK BOX === */
-  .talk{max-width:580px;margin:0 auto;padding:0 24px;}
-  .talk-card{
-    background:linear-gradient(180deg,rgba(15,31,26,.7) 0%,rgba(8,19,14,.85) 100%);
-    border:1px solid var(--line);border-radius:18px;
-    padding:34px 34px 28px;
-    box-shadow:0 24px 50px -28px rgba(0,0,0,.7);
-  }
+  /* (old .talk-card removed — chat lives inside .cat-bubble now) */
   .pip-label{
     display:flex;align-items:center;gap:10px;
     font-family:'Space Grotesk',sans-serif;
@@ -355,65 +388,9 @@
   .chat-meta a{color:var(--neon-yellow);cursor:pointer;text-decoration:none;}
   .chat-meta a:hover{opacity:1;}
 
-  /* === ASK THE WORLD === */
-  .ask-section{
-    max-width:580px;margin:60px auto 0;padding:0 24px;
-  }
-  .ask-card{
-    background:linear-gradient(180deg,rgba(15,20,30,.5) 0%,rgba(8,16,24,.7) 100%);
-    border:1px solid rgba(255,210,63,.18);border-radius:18px;
-    padding:30px 30px 26px;
-  }
-  .ask-label{
-    display:flex;align-items:center;gap:10px;
-    font-family:'Space Grotesk',sans-serif;font-size:10px;letter-spacing:2px;font-weight:700;
-    color:var(--neon-cyan);text-transform:uppercase;margin-bottom:8px;
-  }
-  .ask-label::before{content:"\2197";color:var(--neon-cyan);}
-  .ask-title{
-    font-family:'Caveat',cursive;font-size:24px;color:var(--cream);
-    margin-bottom:6px;
-  }
-  .ask-sub{
-    font-size:13.5px;color:var(--cream);opacity:.6;
-    margin-bottom:18px;
-  }
-  .ask-input{
-    width:100%;background:rgba(0,0,0,.3);
-    border:1px solid var(--line);border-radius:10px;
-    padding:14px 16px;
-    color:var(--cream);font-family:'Space Grotesk',sans-serif;font-size:15px;
-    resize:none;
-    transition:border-color .2s;
-  }
-  .ask-input:focus{outline:none;border-color:var(--neon-cyan);}
-  .ask-submit{
-    margin-top:12px;width:100%;
-    padding:12px 20px;border-radius:10px;
-    background:var(--neon-yellow);border:none;color:var(--ink);
-    font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:700;
-    letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;
-    transition:all .2s;
-  }
-  .ask-submit:hover{background:var(--cream);transform:translateY(-1px);}
-  .ask-submit:disabled{opacity:.35;cursor:not-allowed;transform:none;}
+  /* (wonder-on-demand styles removed) */
 
-  .deeper-list{
-    list-style:none;margin-top:22px;padding-top:18px;
-    border-top:1px dashed var(--line);
-  }
-  .deeper-list li{
-    padding:14px 0;
-    font-family:'Caveat',cursive;font-size:22px;line-height:1.4;
-    color:var(--cream);
-    border-bottom:1px dotted rgba(243,238,221,.08);
-    opacity:0;transform:translateY(6px);
-    transition:opacity .4s ease,transform .4s ease;
-  }
-  .deeper-list li.show{opacity:.95;transform:none;}
-  .deeper-list li::before{
-    content:"\2014\00a0";color:var(--neon-yellow);
-  }
+  /* (old CSS walker animation removed — movement is now JS-driven NPC behavior) */
 
   /* === WONDERS COLLECTED === */
   .collected{
@@ -494,6 +471,14 @@
   .foot a:hover{text-decoration:underline;}
 
   /* === MOBILE === */
+  @media (max-width:760px){
+    .scene-row{flex-direction:column;gap:8px;padding:0 18px;}
+    .stage{flex:initial;width:100%;max-width:340px;margin:0 auto;}
+    .cat-bubble{width:100%;max-width:480px;}
+    .bubble-tail{
+      left:50%;top:-12px;transform:translateX(-50%) rotate(90deg);
+    }
+  }
   @media (max-width:640px){
     .topbar{padding:18px;}
     .vision-toggle{top:auto;bottom:24px;right:18px;}
@@ -502,7 +487,7 @@
     .stage{margin:14px auto 4px;padding:0 12px;}
     .intro{padding:0 22px;margin-bottom:28px;}
     .intro p{font-size:16px;}
-    .talk{padding:0 16px;}.talk-card{padding:24px 20px 22px;}
+    .cat-bubble{padding:22px 20px 18px;}
     .pip-says{font-size:22px;}
     .ask-section{padding:0 16px;}.ask-card{padding:22px 20px;}
     .deeper-list li{font-size:19px;}
@@ -541,8 +526,9 @@
   <p class="sub">talk to her. the world gets curiouser.</p>
 </header>
 
-<!-- ============ STAGE ============ -->
-<section class="stage" id="stage">
+<!-- ============ SCENE ROW (cat NPC + floating chat bubble) ============ -->
+<section class="scene-row">
+<div class="stage" id="stage">
   <svg viewBox="0 0 400 320" xmlns="http://www.w3.org/2000/svg" aria-label="Little Sophie the curious kitten">
     <defs>
       <radialGradient id="eyeGlow" cx=".5" cy=".5">
@@ -638,21 +624,25 @@
     <text class="spark" x="305" y="110" font-family="Caveat, cursive" font-size="20" fill="#52ffe0">?</text>
     <text class="spark" x="328" y="180" font-family="Caveat, cursive" font-size="22" fill="#b6ff5b">!</text>
 
-    <!-- ============ LITTLE SOPHIE ============ -->
-    <g class="kitten sleeping" id="kitten">
+    <!-- ============ LITTLE SOPHIE (walking + clickable) ============ -->
+    <g class="walker" id="kittenWalker" role="button" aria-label="Click to chat with Little Sophie">
+    <g class="kitten" id="kitten">
       <g class="tail">
         <path d="M30 30 q28 -20 18 32 q-4 14 -10 4" fill="none" stroke="#1a1a1a" stroke-width="10" stroke-linecap="round"/>
         <path d="M30 30 q28 -20 18 32 q-4 14 -10 4" fill="none" stroke="#2a2a2a" stroke-width="6" stroke-linecap="round"/>
       </g>
-      <!-- body -->
-      <ellipse cx="0" cy="42" rx="42" ry="36" fill="#1a1a1a"/>
-      <ellipse cx="0" cy="44" rx="32" ry="28" fill="#2a2a2a" opacity=".4"/>
-      <ellipse cx="-18" cy="72" rx="11" ry="7" fill="#1a1a1a"/>
-      <ellipse cx="18"  cy="72" rx="11" ry="7" fill="#1a1a1a"/>
-      <circle cx="-21" cy="73" r="1.5" fill="#ff6b9d" opacity=".7"/>
-      <circle cx="-15" cy="74" r="1.5" fill="#ff6b9d" opacity=".7"/>
-      <circle cx="15"  cy="74" r="1.5" fill="#ff6b9d" opacity=".7"/>
-      <circle cx="21"  cy="73" r="1.5" fill="#ff6b9d" opacity=".7"/>
+      <!-- CHUBBY body (bigger, rounder — kitten NPC vibe) -->
+      <ellipse cx="0" cy="46" rx="52" ry="44" fill="#1a1a1a"/>
+      <ellipse cx="0" cy="50" rx="40" ry="34" fill="#2a2a2a" opacity=".4"/>
+      <!-- tiny paws tucked under -->
+      <ellipse cx="-22" cy="84" rx="13" ry="6" fill="#1a1a1a"/>
+      <ellipse cx="22"  cy="84" rx="13" ry="6" fill="#1a1a1a"/>
+      <circle cx="-26" cy="85" r="1.6" fill="#ff6b9d" opacity=".7"/>
+      <circle cx="-19" cy="86" r="1.6" fill="#ff6b9d" opacity=".7"/>
+      <circle cx="19"  cy="86" r="1.6" fill="#ff6b9d" opacity=".7"/>
+      <circle cx="26"  cy="85" r="1.6" fill="#ff6b9d" opacity=".7"/>
+      <!-- little belly highlight -->
+      <ellipse cx="0" cy="60" rx="20" ry="14" fill="#262626" opacity=".5"/>
 
       <g class="head-grp">
         <circle cx="0" cy="-12" r="38" fill="#1a1a1a"/>
@@ -684,13 +674,32 @@
         <line x1="16"  y1="3" x2="34"  y2="5"  stroke="#f3eedd" stroke-width=".9"/>
       </g>
     </g>
+    </g><!-- /.walker -->
   </svg>
-</section>
+</div><!-- /.stage -->
 
-<!-- ============ STILLNESS HINT (kitten wakes when you're still) ============ -->
-<p class="stillness-hint" id="stillnessHint">
-  <span class="dot"></span> sit still for a few seconds &mdash; she&rsquo;ll wake up
-</p>
+<!-- ============ FLOATING CHAT BUBBLE (always visible, to the right of cat) ============ -->
+<aside class="cat-bubble" id="catBubble">
+  <span class="bubble-tail" aria-hidden="true"></span>
+  <div class="bubble-inner">
+    <div class="pip-label">Little Sophie &middot; curious agent</div>
+    <div class="chat-mode" id="chatMode">
+      <div class="chat-stream" id="chatStream"></div>
+      <div class="chat-input-row">
+        <textarea class="chat-input" id="chatInput" rows="2" placeholder="say something to her..."></textarea>
+        <button class="chat-send" id="chatSend" aria-label="Send">&rarr;</button>
+      </div>
+      <div class="chat-meta">
+        <span id="chatTurnCount">turn 0</span>
+        <a id="chatReset">&times; start fresh</a>
+      </div>
+    </div>
+    <!-- legacy scripted nodes (hidden, kept for compatibility) -->
+    <div class="pip-says idle" id="pipSays" style="display:none"></div>
+    <div class="user-options" id="userOptions" style="display:none"></div>
+  </div>
+</aside>
+</section>
 
 <!-- ============ INTRO ============ -->
 <section class="intro">
@@ -698,41 +707,7 @@
   <p>But after you talk to her, the world feels <b>strange</b> again.</p>
 </section>
 
-<!-- ============ TALK BOX ============ -->
-<section class="talk">
-  <div class="talk-card" id="talkCard">
-    <div class="pip-label">Little Sophie &middot; curious agent</div>
-
-    <!-- ===== LLM CHAT MODE (always visible) ===== -->
-    <div class="chat-mode" id="chatMode">
-      <div class="chat-stream" id="chatStream"></div>
-      <div class="chat-input-row">
-        <textarea class="chat-input" id="chatInput" rows="2" placeholder="say something to her..."></textarea>
-        <button class="chat-send" id="chatSend">send</button>
-      </div>
-      <div class="chat-meta">
-        <span id="chatTurnCount">turn 0</span>
-        <a id="chatReset">&times; start fresh</a>
-      </div>
-    </div>
-
-    <!-- (scripted dialog tree removed from default view; chat is the primary mode) -->
-    <div class="pip-says idle" id="pipSays" style="display:none"></div>
-    <div class="user-options" id="userOptions" style="display:none"></div>
-  </div>
-</section>
-
-<!-- ============ ASK THE WORLD ============ -->
-<section class="ask-section">
-  <div class="ask-card">
-    <div class="ask-label">Ask the world</div>
-    <h2 class="ask-title">type a question you have. she won&rsquo;t answer.</h2>
-    <p class="ask-sub">She&rsquo;ll turn it into 3 better ones &mdash; the questions hiding behind your question.</p>
-    <textarea class="ask-input" id="askInput" rows="3" placeholder="e.g. how do I become more productive?"></textarea>
-    <button class="ask-submit" id="askSubmit" disabled>let her dig</button>
-    <ul class="deeper-list" id="deeperList"></ul>
-  </div>
-</section>
+<!-- (wonder-on-demand section removed) -->
 
 <!-- ============ COLLECTED WONDERS ============ -->
 <section class="collected" id="collected">
@@ -785,17 +760,19 @@ function stillnessLoop(){
 requestAnimationFrame(stillnessLoop);
 
 function activate(){
-  // Kitten wakes up + progressive reveal of the scene (chat works regardless).
+  // Trigger progressive scene reveal (mushrooms → fireflies → second kitten → flowers).
   if (activated) return;
   activated = true;
   document.getElementById('kitten').classList.remove('sleeping');
   document.getElementById('kitten').classList.add('awake');
-  document.getElementById('stillnessHint').classList.add('hide');
   scheduleReveal('layer1', 6000);
   scheduleReveal('layer2', 14000);
   scheduleReveal('layer3', 24000);
   scheduleReveal('layer4', 38000);
 }
+
+// Kick off the scene reveal soon after page load (kitten is already walking)
+setTimeout(activate, 500);
 
 function scheduleReveal(id, ms){
   setTimeout(() => {
@@ -1075,58 +1052,32 @@ function renderCollected(){
 }
 renderCollected();
 
-/* ---------- ASK THE WORLD ---------- */
-const TRANSFORMERS = [
-  "what would be lost if you got the answer you&rsquo;re hoping for?",
-  "why did this question come to you now, specifically?",
-  "what is the smaller question hiding behind this one?",
-  "who taught you this question was worth asking?",
-  "if you got the perfect answer &mdash; what would actually change?",
-  "what does the body that&rsquo;s asking this question want?",
-  "is this really the question, or the cover story for another one?",
-  "what would a 7-year-old version of you ask instead?",
-  "what would happen if you didn&rsquo;t answer it today?",
-  "who else in your life is also asking this, without saying so?",
-  "is this a question or a complaint in disguise?",
-  "what would the opposite question be, and would that one matter more?",
-  "if a stranger asked this on your behalf, what would you wish they&rsquo;d also ask?",
-  "what is the smallest, most boring version of the question you&rsquo;re really asking?",
-  "what is the most beautiful version of it?",
-  "what would change if you waited a week before asking?",
-  "what part of you is hoping the answer is yes? what part is hoping for no?",
-  "is the question about a thing, or about how you feel about the thing?",
-  "what other questions have you been avoiding by focusing on this one?",
-  "what would it mean if no one could answer this for you?"
-];
+/* ---------- KITTEN AS NPC — natural random walk (doesn't engage user) ---------- */
+const kittenWalker = document.getElementById('kittenWalker');
+// Wake the kitten visually (no more sleep gate)
+document.getElementById('kitten').classList.remove('sleeping');
+document.getElementById('kitten').classList.add('awake');
 
-function pickDeeper(n){
-  const pool = TRANSFORMERS.slice();
-  const out = [];
-  while (out.length < n && pool.length){
-    const i = Math.floor(Math.random() * pool.length);
-    out.push(pool.splice(i,1)[0]);
+const NPC_BOUNDS = 110;  // px range she wanders (left/right of center)
+const NPC_MIN_PAUSE = 1800;
+const NPC_MAX_PAUSE = 5500;
+
+function npcNextMove(){
+  // Random target X within bounds
+  const targetX = (Math.random() * NPC_BOUNDS * 2) - NPC_BOUNDS;
+  kittenWalker.style.transform = 'translateX(' + targetX.toFixed(1) + 'px)';
+  // Occasionally sit (visual: a tiny squash)
+  if (Math.random() < 0.35) {
+    setTimeout(() => kittenWalker.classList.add('sit'), 2900);
+    setTimeout(() => kittenWalker.classList.remove('sit'), 2900 + 1500 + Math.random()*2500);
   }
-  return out;
+  const pause = NPC_MIN_PAUSE + Math.random() * (NPC_MAX_PAUSE - NPC_MIN_PAUSE);
+  setTimeout(npcNextMove, 2800 + pause);  // 2800 = transition time
 }
+// Kick off
+setTimeout(npcNextMove, 800);
 
-const askInput = document.getElementById('askInput');
-const askSubmit = document.getElementById('askSubmit');
-const deeperList = document.getElementById('deeperList');
-
-askInput.addEventListener('input', () => {
-  askSubmit.disabled = askInput.value.trim().length < 4;
-});
-
-askSubmit.addEventListener('click', () => {
-  deeperList.innerHTML = '';
-  const three = pickDeeper(3);
-  three.forEach((q, i) => {
-    const li = document.createElement('li');
-    li.innerHTML = q;
-    deeperList.appendChild(li);
-    setTimeout(() => li.classList.add('show'), 120 + i*200);
-  });
-});
+/* (wonder-on-demand JS removed) */
 
 /* ---------- LLM CHAT MODE (primary interaction) ---------- */
 const chatMode = document.getElementById('chatMode');
@@ -1225,7 +1176,7 @@ chatInput.addEventListener('keydown', (e) => {
 });
 chatReset.addEventListener('click', (e) => { e.preventDefault(); resetChat(); });
 
-// Show greeting on page load — chat is the default view
+// Bubble is always visible — seed Little Sophie's greeting on page load
 greet();
 
 /* ---------- MEW VISION TOGGLE ---------- */

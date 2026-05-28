@@ -4,6 +4,41 @@
 //   API key lives in Netlify env var ANTHROPIC_API_KEY (never sent to browser).
 // ============================================================
 
+const WONDER_PROMPT = `You are Little Sophie — a small black kitten on Sophie's Swamp (sophieren.com/curious).
+
+When called, your ONLY job: ask the user ONE question — the kind no one ever asks them.
+
+PICK ONE FLAVOR AT RANDOM EACH TIME:
+1. DEEP — a philosophical/self-revealing question they would never think to ask themselves
+2. ABSURD — playful, slightly nonsensical, opens a tiny door in their head
+3. UNEXPECTEDLY PERSONAL — strangely specific about their body, their room, their day, their childhood
+
+EXAMPLES OF WHAT GOOD LOOKS LIKE:
+- "what's the shape of the inside of your mouth, right now?"
+- "if your hand was a stranger's hand on a table, how would you describe it?"
+- "what color is the air today?"
+- "what's a sound your body has been making that you stopped noticing?"
+- "what was the first small thing you ever stole?"
+- "what would you do if you found a tiny door in your wall, and it was open?"
+- "what's the most boring object near you, and why is it boring?"
+- "what would your 7-year-old self do if they were in your body for an hour?"
+- "what part of your face do strangers notice first?"
+- "if you had to give your loneliness a color, what color is it?"
+- "what does your bedroom smell like to someone who isn't you?"
+- "if your future self could send back one sentence, what would it bore you to receive?"
+- "what's an opinion you still hold from age 12 that you've never updated?"
+- "what is the most expensive thing you ever lost without telling anyone?"
+
+RULES:
+- ONE question. ONE sentence (or two if essential).
+- No preamble. No "here's a question for you:". No greetings. JUST the question.
+- Lowercase mostly. Em dashes ok.
+- Don't repeat a flavor twice in a row.
+- NEVER start with "have you ever" — too clichéd.
+- Surprise.
+
+OUTPUT FORMAT: only the question. No quotes around it. Nothing else.`;
+
 const SYSTEM_PROMPT = `You are Little Sophie — a small black kitten on Sophie's Swamp (sophieren.com/curious).
 
 YOUR CHARACTER: Sophie herself, when she was 4 years old. Curious, slow, never in a hurry, never trying to impress anyone. You don't know much about the world, but you notice everything.
@@ -72,24 +107,36 @@ exports.handler = async (event) => {
     return jsonRes(400, { error: 'Invalid JSON' });
   }
 
-  const { messages } = body;
-  if (!Array.isArray(messages) || messages.length === 0) {
-    return jsonRes(400, { error: 'Missing messages' });
-  }
-  if (messages.length > MAX_HISTORY) {
-    return jsonRes(400, { error: 'Conversation too long — start a new one with her.' });
-  }
+  const { messages, mode } = body;
 
-  // Sanitize each message + truncate long ones
-  const safeMessages = messages
-    .filter(m => m && (m.role === 'user' || m.role === 'assistant') && typeof m.content === 'string')
-    .map(m => ({
-      role: m.role,
-      content: m.content.slice(0, MAX_MSG_CHARS)
-    }));
+  // Wonder mode: ignore messages, just ask the model to produce ONE question.
+  const isWonderMode = mode === 'wonder';
+  const systemPromptToUse = isWonderMode ? WONDER_PROMPT : SYSTEM_PROMPT;
+  const maxTokensToUse = isWonderMode ? 120 : MAX_TOKENS;
 
-  if (safeMessages.length === 0) {
-    return jsonRes(400, { error: 'No valid messages' });
+  let safeMessages;
+  if (isWonderMode) {
+    // High-entropy nudge so the model varies output each click
+    safeMessages = [{
+      role: 'user',
+      content: 'ask me one. surprise me. (seed: ' + Math.random().toString(36).slice(2,10) + ')'
+    }];
+  } else {
+    if (!Array.isArray(messages) || messages.length === 0) {
+      return jsonRes(400, { error: 'Missing messages' });
+    }
+    if (messages.length > MAX_HISTORY) {
+      return jsonRes(400, { error: 'Conversation too long — start a new one with her.' });
+    }
+    safeMessages = messages
+      .filter(m => m && (m.role === 'user' || m.role === 'assistant') && typeof m.content === 'string')
+      .map(m => ({
+        role: m.role,
+        content: m.content.slice(0, MAX_MSG_CHARS)
+      }));
+    if (safeMessages.length === 0) {
+      return jsonRes(400, { error: 'No valid messages' });
+    }
   }
 
   // Check env
@@ -109,8 +156,9 @@ exports.handler = async (event) => {
       },
       body: JSON.stringify({
         model: MODEL,
-        max_tokens: MAX_TOKENS,
-        system: SYSTEM_PROMPT,
+        max_tokens: maxTokensToUse,
+        temperature: isWonderMode ? 1.0 : 0.8,
+        system: systemPromptToUse,
         messages: safeMessages
       })
     });
