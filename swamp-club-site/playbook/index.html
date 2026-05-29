@@ -790,25 +790,29 @@ function swampConfirm(html, opts){
   function updateStats(){
     const N = nodes.length;
     const E = edges.length;
-    const maxPossible = N * (N-1) / 2;
-    const connectivity = maxPossible > 0 ? E / maxPossible : 0;
-    const value = N * N * connectivity;
+    // Only nodes participating in an edge count toward value (isolated = doesn't exist for Metcalfe)
+    const connectedSet = new Set();
+    edges.forEach(([a,b]) => { connectedSet.add(a); connectedSet.add(b); });
+    const N_eff = connectedSet.size;
+    const maxE_eff = N_eff * (N_eff - 1) / 2;
+    const connectivity = maxE_eff > 0 ? E / maxE_eff : 0;
+    const value = N_eff * N_eff * connectivity;
     // Stats row
-    document.getElementById('netN').textContent = N;
+    document.getElementById('netN').textContent = N + (N_eff < N ? ' (' + (N - N_eff) + ' isolated)' : '');
     document.getElementById('netE').textContent = E;
-    document.getElementById('netMax').textContent = maxPossible;
-    document.getElementById('netVal').textContent = value.toFixed(1);
+    document.getElementById('netMax').textContent = maxE_eff;
+    document.getElementById('netVal').textContent = value.toFixed(0);
     // Meter bars
-    document.getElementById('meterN').textContent = N;
-    document.getElementById('meterEdges').textContent = E + ' / ' + maxPossible;
-    document.getElementById('meterValue').textContent = value.toFixed(1);
-    document.getElementById('meterFillN').style.width = Math.min(100, (N/12)*100) + '%';
+    document.getElementById('meterN').textContent = N_eff + (N_eff < N ? ' / ' + N : '');
+    document.getElementById('meterEdges').textContent = E + ' / ' + maxE_eff;
+    document.getElementById('meterValue').textContent = value.toFixed(0);
+    document.getElementById('meterFillN').style.width = Math.min(100, (N_eff/10)*100) + '%';
     document.getElementById('meterFillEdges').style.width = Math.min(100, connectivity*100) + '%';
     document.getElementById('meterFillValue').style.width = Math.min(100, value) + '%';
     // Win condition
     if (value >= 100 && !won){
       won = true;
-      swampToast('⚡ value 100 reached! <em>' + N + ' nodes, ' + E + ' connections.</em>');
+      swampToast('⚡ value 100 reached! <em>' + N_eff + ' connected nodes, ' + E + ' connections.</em>');
     }
   }
   svg.addEventListener('click', e => {
