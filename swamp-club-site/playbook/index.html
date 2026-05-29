@@ -519,19 +519,20 @@
   <div class="pillar">PILLAR III &middot; MULTI-ARMED BANDIT</div>
   <h2>Mushroom Bog</h2>
   <p class="principle">
-    <b>Your goal:</b> figure out which of the 5 mushrooms has the highest average reward. You have <b>20 kicks</b>. Each kick gives a noisy hint about that mushroom&rsquo;s true average. At kick 20, your last "best guess" (the one with the yellow halo) is your final answer. Get it right &rarr; win.
+    <b>Your goal:</b> find the most generous mushroom in <em>as few kicks as possible</em>. Each kick gives a noisy hint about that mushroom&rsquo;s true average. When you&rsquo;re sure, hit &ldquo;commit&rdquo; &mdash; we&rsquo;ll see if you were right. Stop too early &rarr; wrong guess. Kick forever &rarr; wasted time.
   </p>
   <div class="stage">
-    <div class="bog-goal">&#127812; find the most generous mushroom in 20 kicks.</div>
+    <div class="bog-goal">&#127812; find the most generous mushroom. fewest kicks wins.</div>
     <div class="bog-guess" id="bogGuess">no kicks yet &mdash; every mushroom is equally suspicious.</div>
     <div class="mushrooms" id="mushrooms"></div>
     <div class="bog-result" id="bogResult"></div>
+    <div style="text-align:center;margin-top:14px;">
+      <button class="btn" id="bandCommit" disabled>&#127919; commit my guess</button>
+    </div>
   </div>
   <div class="controls">
-    <span class="stat">kicks left: <b id="bandKicks">20</b></span>
-    <span class="stat" style="opacity:.6;">fireflies: <b id="bandLoot">0</b></span>
-    <span class="stat" style="opacity:.6;">regret: <b id="bandRegret">0</b></span>
-    <button class="btn ghost" id="bandReset">reset</button>
+    <span class="stat">kicks used: <b id="bandKicks">0</b></span>
+    <button class="btn ghost" id="bandReset">new round</button>
   </div>
   <div class="pillar-footer">based on <a href="https://en.wikipedia.org/wiki/Multi-armed_bandit" target="_blank">Multi-Armed Bandit Problem</a> &middot; <a href="https://loomus.ai/distill" target="_blank">Pillar III &rarr;</a></div>
 </section>
@@ -789,27 +790,27 @@ function swampConfirm(html, opts){
   const COLORS = ['#ff6b9d', '#b6ff5b', '#ffd23f', '#52ffe0', '#ff8a3d'];
   const NAMES = ['pink', 'lime', 'gold', 'cyan', 'orange'];
   let mushrooms = [];
-  let kicksLeft, loot, best, trulyBestIdx;
+  let kicksUsed, trulyBestIdx, committed;
 
   function init(){
     mushrooms = COLORS.map((c, i) => ({
-      color: c,
-      name: NAMES[i],
-      mean: 1 + Math.random() * 4,  // 1..5
+      color: c, name: NAMES[i],
+      mean: 1 + Math.random() * 4,
       kicks: 0, total: 0,
       revealed: false
     }));
     trulyBestIdx = mushrooms.reduce((bi, m, i, arr) => m.mean > arr[bi].mean ? i : bi, 0);
-    best = mushrooms[trulyBestIdx].mean * 20;
-    kicksLeft = 20; loot = 0;
+    kicksUsed = 0;
+    committed = false;
     document.getElementById('bogResult').textContent = '';
     document.getElementById('bogResult').className = 'bog-result';
     document.getElementById('bogGuess').innerHTML = 'no kicks yet &mdash; every mushroom is equally suspicious.';
+    document.getElementById('bandCommit').disabled = true;
+    document.getElementById('bandCommit').innerHTML = '&#127919; commit my guess';
     render();
   }
 
   function bestGuessIdx(){
-    // Mushrooms that have been kicked at least once
     const kicked = mushrooms.map((m,i) => ({i, avg: m.kicks ? m.total/m.kicks : -1}));
     const max = kicked.reduce((b, x) => x.avg > b.avg ? x : b, {avg: -1});
     return max.avg >= 0 ? max.i : -1;
@@ -833,10 +834,10 @@ function swampConfirm(html, opts){
       const btn = document.createElement('button');
       let cls = 'mushroom';
       if (m.revealed) cls += ' revealed';
-      if (i === guess && kicksLeft > 0) cls += ' best-guess';
+      if (i === guess && !committed) cls += ' best-guess';
       if (m.revealed && i === trulyBestIdx) cls += ' truly-best';
       btn.className = cls;
-      btn.disabled = kicksLeft <= 0;
+      btn.disabled = committed;
       const avgLabel = m.kicks ? '~' + (m.total/m.kicks).toFixed(1) : '?';
       btn.innerHTML = mushroomSVG(m.color) +
         '<span class="empirical">' + avgLabel + '</span>' +
@@ -844,27 +845,24 @@ function swampConfirm(html, opts){
       btn.addEventListener('click', () => kick(i, btn));
       stage.appendChild(btn);
     });
-    document.getElementById('bandKicks').textContent = kicksLeft;
-    document.getElementById('bandLoot').textContent = loot.toFixed(0);
-    document.getElementById('bandRegret').textContent = Math.max(0, best - loot).toFixed(0);
-    // Best-guess text
-    if (kicksLeft === 20){
-      document.getElementById('bogGuess').innerHTML = 'no kicks yet &mdash; every mushroom is equally suspicious.';
-    } else if (kicksLeft > 0) {
-      if (guess >= 0){
-        document.getElementById('bogGuess').innerHTML = 'best guess so far: <b>' + mushrooms[guess].name + '</b> (avg ~' + (mushrooms[guess].total/mushrooms[guess].kicks).toFixed(1) + ')';
+    document.getElementById('bandKicks').textContent = kicksUsed;
+    if (!committed){
+      if (kicksUsed === 0){
+        document.getElementById('bogGuess').innerHTML = 'no kicks yet &mdash; every mushroom is equally suspicious.';
+      } else if (guess >= 0){
+        document.getElementById('bogGuess').innerHTML = 'best guess so far: <b>' + mushrooms[guess].name + '</b> (avg ~' + (mushrooms[guess].total/mushrooms[guess].kicks).toFixed(1) + ', based on ' + mushrooms[guess].kicks + ' kick' + (mushrooms[guess].kicks===1?'':'s') + ')';
       }
     }
+    document.getElementById('bandCommit').disabled = committed || guess < 0;
   }
 
   function kick(i, btn){
-    if (kicksLeft <= 0) return;
-    kicksLeft--;
+    if (committed) return;
+    kicksUsed++;
     const m = mushrooms[i];
     const reward = Math.max(0, m.mean + (Math.random() - .5) * 3);
-    loot += reward;
     m.kicks++; m.total += reward;
-    // visual: pop fireflies
+    // visual fireflies
     const n = Math.round(reward);
     for (let j = 0; j < n; j++){
       setTimeout(() => {
@@ -877,22 +875,32 @@ function swampConfirm(html, opts){
         setTimeout(() => pop.remove(), 1400);
       }, j * 60);
     }
-    // Reveal + result on last kick
-    if (kicksLeft === 0){
-      mushrooms.forEach(m => m.revealed = true);
-      const finalGuess = bestGuessIdx();
-      const res = document.getElementById('bogResult');
-      if (finalGuess === trulyBestIdx){
-        res.className = 'bog-result win';
-        res.innerHTML = '&#10024; you found it! the <b>' + mushrooms[trulyBestIdx].name + '</b> mushroom was the most generous (true avg ' + mushrooms[trulyBestIdx].mean.toFixed(1) + ').';
-      } else {
-        res.className = 'bog-result lose';
-        res.innerHTML = 'close. you bet on <b>' + mushrooms[finalGuess].name + '</b>, but the truly generous one was <b>' + mushrooms[trulyBestIdx].name + '</b>.';
-      }
-    }
     render();
   }
 
+  function commit(){
+    if (committed) return;
+    committed = true;
+    mushrooms.forEach(m => m.revealed = true);
+    const guess = bestGuessIdx();
+    const res = document.getElementById('bogResult');
+    if (guess === trulyBestIdx){
+      let comment;
+      if (kicksUsed <= 8) comment = 'fast and right. you knew when to stop.';
+      else if (kicksUsed <= 16) comment = 'right. solid evidence gathered.';
+      else comment = 'right, but you took your time.';
+      res.className = 'bog-result win';
+      res.innerHTML = '&#10024; correct! <b>' + mushrooms[trulyBestIdx].name + '</b> was the most generous (true avg ' + mushrooms[trulyBestIdx].mean.toFixed(1) + '). <em>' + kicksUsed + ' kicks &mdash; ' + comment + '</em>';
+    } else {
+      res.className = 'bog-result lose';
+      res.innerHTML = 'wrong. you committed to <b>' + mushrooms[guess].name + '</b> after ' + kicksUsed + ' kicks &mdash; but <b>' + mushrooms[trulyBestIdx].name + '</b> was actually best. <em>' + (kicksUsed < 6 ? 'committed too early.' : 'noise fooled you.') + '</em>';
+    }
+    document.getElementById('bandCommit').innerHTML = 'committed';
+    document.getElementById('bandCommit').disabled = true;
+    render();
+  }
+
+  document.getElementById('bandCommit').addEventListener('click', commit);
   document.getElementById('bandReset').addEventListener('click', init);
   init();
 })();
