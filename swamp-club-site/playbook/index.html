@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>The Playbook · 7 games for LOOMUS Distill</title>
+<meta name="description" content="Seven tiny games. Each one teaches one principle from LOOMUS Distill — Metcalfe's Law, Bayesian inference, multi-armed bandits, RLHF, Popper, compounding, Constitutional AI. Play through abstract knowledge instead of reading about it." />
+
+<meta property="og:title" content="The Playbook · 7 games for LOOMUS Distill" />
+<meta property="og:description" content="Seven tiny games for the seven pillars of LOOMUS Distill. Knowledge through play." />
+<meta property="og:image" content="https://sophieren.com/images/og-image.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:image" content="https://sophieren.com/images/og-image.png" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Caveat:wght@600;700&family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+<style>
+  :root{
+    --ink:#08130e;--paper:#0f1f1a;--cream:#f3eedd;--line:rgba(243,238,221,.12);
+    --neon-cyan:#52ffe0;--neon-yellow:#ffd23f;--neon-lime:#b6ff5b;
+    --neon-pink:#ff6b9d;--neon-orange:#ff8a3d;--muted:#86a596;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:
+      radial-gradient(ellipse at 30% 0%,rgba(82,255,224,.06) 0%,transparent 55%),
+      radial-gradient(ellipse at 70% 100%,rgba(255,210,63,.04) 0%,transparent 60%),
+      var(--ink);
+    color:var(--cream);font-family:'Space Grotesk',sans-serif;line-height:1.6;
+    min-height:100vh;
+  }
+  a{color:inherit;text-decoration:none;}
+  ::selection{background:var(--neon-cyan);color:var(--ink);}
+
+  /* === topbar === */
+  .topbar{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:22px 30px;border-bottom:1px solid var(--line);
+  }
+  .topbar a{
+    font-family:'Caveat',cursive;font-size:18px;opacity:.7;
+    transition:opacity .2s,color .2s;
+  }
+  .topbar a:hover{opacity:1;color:var(--neon-cyan);}
+
+  /* === hero === */
+  .hero{max-width:780px;margin:60px auto 40px;padding:0 28px;text-align:center;}
+  .hero .kicker{
+    font-family:'Bungee',sans-serif;font-size:11px;letter-spacing:3px;
+    color:var(--neon-cyan);margin-bottom:16px;
+  }
+  .hero h1{
+    font-family:'Bungee',sans-serif;
+    font-size:clamp(40px,7vw,68px);line-height:1.05;
+    color:var(--cream);letter-spacing:-1px;margin-bottom:18px;
+  }
+  .hero h1 em{color:var(--neon-yellow);font-style:italic;}
+  .hero .sub{
+    font-family:'Caveat',cursive;font-size:26px;color:var(--neon-cyan);
+    margin-bottom:24px;font-weight:600;
+  }
+  .hero .lede{font-size:16.5px;color:var(--cream);opacity:.85;line-height:1.7;max-width:580px;margin:0 auto;}
+  .hero .lede em{color:var(--neon-cyan);font-style:italic;}
+  .hero .lede b{color:var(--neon-yellow);}
+
+  /* === game section === */
+  .game{
+    max-width:780px;margin:0 auto 50px;padding:36px 30px;
+    background:linear-gradient(180deg,rgba(15,31,26,.6) 0%,rgba(8,19,14,.85) 100%);
+    border:1px solid var(--line);border-radius:18px;
+    position:relative;
+  }
+  .game .pillar{
+    font-family:'Bungee',sans-serif;font-size:10px;letter-spacing:2.5px;
+    color:var(--neon-yellow);opacity:.95;margin-bottom:10px;
+  }
+  .game h2{
+    font-family:'Bungee',sans-serif;font-size:26px;color:var(--cream);
+    line-height:1.1;margin-bottom:12px;letter-spacing:-.3px;
+  }
+  .game .principle{
+    font-size:14.5px;color:var(--cream);opacity:.78;line-height:1.6;
+    margin-bottom:24px;max-width:580px;
+  }
+  .game .principle em{color:var(--neon-cyan);font-style:italic;}
+  .game .principle b{color:var(--neon-yellow);}
+  .game .stage{
+    background:rgba(0,0,0,.3);
+    border:1px solid var(--line);border-radius:14px;
+    padding:24px;margin:18px 0;
+    min-height:220px;
+  }
+  .game .controls{
+    display:flex;gap:10px;flex-wrap:wrap;align-items:center;
+    margin-top:18px;
+  }
+  .game .stat{
+    font-family:'JetBrains Mono',monospace;font-size:12px;
+    background:rgba(82,255,224,.07);border:1px solid rgba(82,255,224,.2);
+    padding:6px 12px;border-radius:8px;color:var(--cream);
+  }
+  .game .stat b{color:var(--neon-cyan);}
+  .game .btn{
+    font-family:'Bungee',sans-serif;font-size:11px;letter-spacing:1.6px;
+    background:var(--neon-yellow);color:var(--ink);border:none;
+    padding:10px 20px;border-radius:999px;cursor:pointer;
+    transition:all .2s;
+  }
+  .game .btn:hover{background:var(--cream);transform:translateY(-1px);}
+  .game .btn:disabled{opacity:.4;cursor:not-allowed;transform:none;}
+  .game .btn.ghost{
+    background:transparent;color:var(--neon-cyan);
+    border:1px solid rgba(82,255,224,.4);
+  }
+  .game .btn.ghost:hover{background:rgba(82,255,224,.1);}
+  .game .pillar-footer{
+    margin-top:24px;padding-top:18px;border-top:1px dashed var(--line);
+    font-family:'Space Grotesk',sans-serif;font-size:12px;
+    color:var(--muted);
+  }
+  .game .pillar-footer a{
+    color:var(--neon-cyan);font-family:'Caveat',cursive;font-size:15px;
+  }
+  .game .pillar-footer a:hover{text-decoration:underline;}
+
+  /* ============ GAME 1: NETWORK RIPPLE ============ */
+  #netCanvas{
+    width:100%;height:280px;cursor:crosshair;display:block;
+  }
+  .net-hint{font-family:'Caveat',cursive;font-size:14px;color:var(--neon-cyan);opacity:.7;text-align:center;margin-top:8px;}
+
+  /* ============ GAME 2: MUSHROOM BOG ============ */
+  .mushrooms{display:flex;gap:18px;justify-content:center;flex-wrap:wrap;padding:24px 0;}
+  .mushroom{
+    cursor:pointer;background:transparent;border:none;padding:8px;
+    transition:transform .15s;position:relative;
+  }
+  .mushroom:hover:not(:disabled){transform:translateY(-4px);}
+  .mushroom:disabled{cursor:not-allowed;opacity:.6;}
+  .mushroom svg{display:block;}
+  .mushroom .true-mean{
+    position:absolute;left:50%;top:-22px;transform:translateX(-50%);
+    font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--neon-yellow);
+    opacity:0;transition:opacity .4s;white-space:nowrap;
+  }
+  .mushroom.revealed .true-mean{opacity:1;}
+  .firefly-pop{
+    position:absolute;font-size:14px;color:var(--neon-yellow);
+    pointer-events:none;animation:ff-pop 1.4s ease-out forwards;
+  }
+  @keyframes ff-pop{
+    0%{opacity:0;transform:translate(0,0) scale(.5);}
+    20%{opacity:1;transform:translate(0,-20px) scale(1.2);}
+    100%{opacity:0;transform:translate(0,-60px) scale(.8);}
+  }
+
+  /* ============ GAME 3: DAILY PEBBLE ============ */
+  .pebble-stream{
+    width:100%;height:120px;
+    background:linear-gradient(180deg,rgba(82,255,224,.04) 0%,rgba(82,255,224,.12) 100%);
+    border-radius:10px;position:relative;overflow:hidden;
+    margin-bottom:14px;
+  }
+  .pebble{
+    position:absolute;bottom:14px;width:14px;height:14px;border-radius:50%;
+    background:radial-gradient(circle at 30% 30%,#c0c4d0 0%,#5a6470 100%);
+    box-shadow:0 2px 4px rgba(0,0,0,.4);
+    animation:pebble-drop .5s ease;
+  }
+  @keyframes pebble-drop{
+    from{opacity:0;transform:translateY(-30px);}
+    to{opacity:1;transform:translateY(0);}
+  }
+
+  /* ============ GAME 4: BAYES FOG ============ */
+  .bayes-boxes{display:flex;gap:14px;justify-content:center;padding:20px 0;}
+  .bayes-box{
+    flex:1;max-width:140px;
+    text-align:center;cursor:pointer;
+    background:rgba(15,31,26,.5);
+    border:2px solid var(--line);border-radius:14px;
+    padding:24px 12px;transition:all .25s;
+  }
+  .bayes-box:hover:not(.locked){
+    border-color:var(--neon-yellow);background:rgba(255,210,63,.08);
+    transform:translateY(-3px);
+  }
+  .bayes-box.locked{cursor:not-allowed;opacity:.6;}
+  .bayes-box .name{
+    font-family:'Bungee',sans-serif;font-size:24px;color:var(--cream);
+    margin-bottom:14px;
+  }
+  .bayes-box .prob-bar{
+    height:6px;background:rgba(0,0,0,.4);border-radius:3px;overflow:hidden;
+    margin-bottom:6px;
+  }
+  .bayes-box .prob-fill{
+    height:100%;background:linear-gradient(90deg,var(--neon-cyan),var(--neon-lime));
+    width:25%;transition:width .5s;
+  }
+  .bayes-box .prob-text{
+    font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--neon-cyan);
+  }
+  .bayes-box.correct{border-color:var(--neon-lime);background:rgba(182,255,91,.15);}
+  .bayes-box.wrong{border-color:var(--neon-pink);background:rgba(255,107,157,.12);}
+  .bayes-hint{
+    font-family:'Caveat',cursive;font-size:18px;color:var(--neon-cyan);
+    text-align:center;min-height:32px;margin:12px 0;
+  }
+  .bayes-hint.error{color:var(--neon-pink);}
+
+  /* ============ GAME 5: FALSIFIABILITY SORTER ============ */
+  .claim-card{
+    background:rgba(15,31,26,.6);border:1.5px solid var(--line);
+    border-radius:12px;padding:14px 18px;margin-bottom:10px;
+    display:flex;justify-content:space-between;align-items:center;gap:14px;
+    transition:all .2s;
+  }
+  .claim-text{font-size:14.5px;color:var(--cream);line-height:1.45;flex:1;}
+  .claim-buttons{display:flex;gap:6px;flex-shrink:0;}
+  .claim-btn{
+    font-family:'Bungee',sans-serif;font-size:9px;letter-spacing:1.2px;
+    padding:7px 11px;border-radius:8px;cursor:pointer;
+    border:1px solid var(--line);background:transparent;color:var(--cream);
+    transition:all .15s;
+  }
+  .claim-btn.k:hover,.claim-btn.k.active{background:var(--neon-cyan);color:var(--ink);border-color:var(--neon-cyan);}
+  .claim-btn.b:hover,.claim-btn.b.active{background:var(--neon-pink);color:var(--ink);border-color:var(--neon-pink);}
+  .claim-card.checked.correct{border-color:var(--neon-lime);background:rgba(182,255,91,.08);}
+  .claim-card.checked.wrong{border-color:var(--neon-pink);background:rgba(255,107,157,.08);}
+  .claim-explain{
+    margin-top:8px;font-family:'Caveat',cursive;font-size:14.5px;
+    color:var(--neon-cyan);opacity:.8;display:none;width:100%;
+  }
+  .claim-card.checked .claim-explain{display:block;}
+
+  /* ============ GAME 6: TEACH THE FROG ============ */
+  .frog-stage{text-align:center;padding:14px 0;}
+  .frog-svg{margin:0 auto 12px;}
+  .frog-says{
+    font-family:'Caveat',cursive;font-size:24px;color:var(--cream);
+    min-height:60px;margin:10px 0;line-height:1.3;
+    transition:opacity .3s;
+  }
+  .frog-rate{display:flex;justify-content:center;gap:14px;margin:14px 0;}
+  .rate-btn{
+    background:transparent;border:1.8px solid var(--line);
+    border-radius:50%;width:46px;height:46px;cursor:pointer;
+    font-size:20px;transition:all .2s;
+  }
+  .rate-btn:hover{transform:scale(1.1);}
+  .rate-btn.up:hover{border-color:var(--neon-lime);background:rgba(182,255,91,.15);}
+  .rate-btn.down:hover{border-color:var(--neon-pink);background:rgba(255,107,157,.12);}
+  .vibes-bars{display:flex;flex-direction:column;gap:6px;margin-top:14px;max-width:380px;margin-left:auto;margin-right:auto;}
+  .vibe-bar{display:flex;align-items:center;gap:8px;}
+  .vibe-name{
+    font-family:'JetBrains Mono',monospace;font-size:11px;
+    color:var(--muted);width:80px;text-align:right;
+  }
+  .vibe-track{flex:1;height:8px;background:rgba(0,0,0,.4);border-radius:4px;overflow:hidden;}
+  .vibe-fill{height:100%;background:var(--neon-cyan);transition:width .5s;}
+
+  /* ============ GAME 7: CONSTITUTION CAT ============ */
+  .const-rules{display:flex;flex-direction:column;gap:8px;margin-bottom:18px;}
+  .const-rule{
+    display:flex;align-items:center;gap:10px;
+    background:rgba(15,31,26,.5);border:1px solid var(--line);
+    border-radius:10px;padding:10px 14px;cursor:pointer;
+    transition:all .15s;
+  }
+  .const-rule:hover{border-color:rgba(82,255,224,.4);}
+  .const-rule input{accent-color:var(--neon-cyan);}
+  .const-rule.picked{border-color:var(--neon-cyan);background:rgba(82,255,224,.07);}
+  .const-rule.disabled{opacity:.4;cursor:not-allowed;}
+  .const-rule .r-text{font-size:14px;color:var(--cream);}
+  .const-input{
+    width:100%;background:rgba(0,0,0,.35);
+    border:1.5px solid var(--line);border-radius:10px;padding:10px 14px;
+    color:var(--cream);font-family:'Space Grotesk',sans-serif;font-size:14.5px;
+  }
+  .const-input:focus{outline:none;border-color:var(--neon-cyan);}
+  .const-answer{
+    margin-top:14px;padding:18px;
+    background:rgba(82,255,224,.07);border:1px solid rgba(82,255,224,.3);
+    border-radius:12px;
+    font-family:'Caveat',cursive;font-size:22px;line-height:1.4;
+    color:var(--cream);min-height:60px;
+  }
+  .const-applied{
+    margin-top:10px;font-family:'JetBrains Mono',monospace;font-size:11px;
+    color:var(--muted);
+  }
+  .const-applied b{color:var(--neon-yellow);}
+
+  /* === footer === */
+  footer{
+    max-width:780px;margin:60px auto 0;padding:30px 28px;
+    border-top:1px solid var(--line);text-align:center;
+    font-family:'Caveat',cursive;font-size:17px;color:var(--cream);opacity:.55;
+  }
+  footer a{color:var(--neon-cyan);}
+
+  /* === MOBILE === */
+  @media (max-width:680px){
+    .topbar{padding:18px;}
+    .game{padding:28px 22px;}
+    .game h2{font-size:22px;}
+    .mushrooms{gap:12px;}
+    .bayes-boxes{flex-wrap:wrap;}
+    .bayes-box{min-width:100px;}
+    .claim-card{flex-direction:column;align-items:flex-start;}
+    .claim-buttons{align-self:flex-end;}
+  }
+</style>
+</head>
+<body>
+
+<nav class="topbar">
+  <a href="/">&larr; back to the swamp</a>
+  <a href="https://loomus.ai/distill" target="_blank">read the Playbook &rarr;</a>
+</nav>
+
+<header class="hero">
+  <div class="kicker">SEVEN GAMES &middot; SEVEN PRINCIPLES</div>
+  <h1>The <em>Playbook</em></h1>
+  <p class="sub">play the seven pillars of LOOMUS Distill</p>
+  <p class="lede">
+    Seven tiny games. Each one is a playable demo of one principle from <em>LOOMUS Distill</em> &mdash; Metcalfe&rsquo;s Law, Bayesian belief, multi-armed bandits, RLHF, Popper&rsquo;s falsifiability, Kaizen compounding, Constitutional AI. <b>Play the idea, then read the theory.</b>
+  </p>
+</header>
+
+<!-- ============ GAME 1: NETWORK RIPPLE (Metcalfe) ============ -->
+<section class="game" id="g1">
+  <div class="pillar">PILLAR I &middot; NETWORK VALUE</div>
+  <h2>Network Ripple</h2>
+  <p class="principle">
+    Add nodes. Connect them. Watch the <em>potential connections</em> grow faster than the nodes. <b>Metcalfe&rsquo;s Law:</b> the value of a network grows as N&sup2;, not N. Click empty space to drop a node; click two nodes in a row to connect them.
+  </p>
+  <div class="stage" style="padding:0;">
+    <svg id="netCanvas" viewBox="0 0 600 280" preserveAspectRatio="xMidYMid meet"></svg>
+    <div class="net-hint">click empty space &mdash; drop nodes. click two nodes &mdash; connect.</div>
+  </div>
+  <div class="controls">
+    <span class="stat">nodes: <b id="netN">0</b></span>
+    <span class="stat">connections: <b id="netE">0</b></span>
+    <span class="stat">possible: <b id="netMax">0</b></span>
+    <span class="stat" style="background:rgba(255,210,63,.08);border-color:rgba(255,210,63,.3);">value (N&sup2;): <b id="netVal" style="color:var(--neon-yellow);">0</b></span>
+    <button class="btn ghost" id="netReset">reset</button>
+  </div>
+  <div class="pillar-footer">based on <a href="https://en.wikipedia.org/wiki/Metcalfe%27s_law" target="_blank">Metcalfe&rsquo;s Law</a> &middot; <a href="https://loomus.ai/distill" target="_blank">Pillar I &rarr;</a></div>
+</section>
+
+<!-- ============ GAME 2: MUSHROOM BOG (Bandit) ============ -->
+<section class="game" id="g2">
+  <div class="pillar">PILLAR III &middot; MULTI-ARMED BANDIT</div>
+  <h2>Mushroom Bog</h2>
+  <p class="principle">
+    Five mushrooms. Each gives you a random number of fireflies when you kick it. You have <b>20 kicks</b>. Some mushrooms are generous, some aren&rsquo;t &mdash; but you don&rsquo;t know which is which. <em>Explore</em> too long and you waste kicks; <em>exploit</em> too fast and you miss the best one.
+  </p>
+  <div class="stage">
+    <div class="mushrooms" id="mushrooms"></div>
+  </div>
+  <div class="controls">
+    <span class="stat">kicks left: <b id="bandKicks">20</b></span>
+    <span class="stat">fireflies: <b id="bandLoot" style="color:var(--neon-yellow);">0</b></span>
+    <span class="stat">regret: <b id="bandRegret" style="color:var(--neon-pink);">0</b></span>
+    <button class="btn ghost" id="bandReset">reset</button>
+  </div>
+  <div class="pillar-footer">based on <a href="https://en.wikipedia.org/wiki/Multi-armed_bandit" target="_blank">Multi-Armed Bandit Problem</a> &middot; <a href="https://loomus.ai/distill" target="_blank">Pillar III &rarr;</a></div>
+</section>
+
+<!-- ============ GAME 3: DAILY PEBBLE (Compounding) ============ -->
+<section class="game" id="g3">
+  <div class="pillar">PILLAR VI &middot; COMPOUNDING</div>
+  <h2>Daily Pebble</h2>
+  <p class="principle">
+    Drop one pebble per day. That&rsquo;s the whole game. Come back tomorrow, drop one more. After 30 days the stream is full. <b>Kaizen:</b> small steps, no stopping &mdash; time does the work.
+  </p>
+  <div class="stage">
+    <div class="pebble-stream" id="pebbleStream"></div>
+    <div style="text-align:center;">
+      <button class="btn" id="pebbleBtn">drop today&rsquo;s pebble</button>
+    </div>
+  </div>
+  <div class="controls">
+    <span class="stat">total pebbles: <b id="pebTotal">0</b></span>
+    <span class="stat">current streak: <b id="pebStreak" style="color:var(--neon-yellow);">0</b> days</span>
+    <span class="stat">longest streak: <b id="pebMax" style="color:var(--neon-lime);">0</b></span>
+    <button class="btn ghost" id="pebReset">reset</button>
+  </div>
+  <div class="pillar-footer">based on <a href="https://en.wikipedia.org/wiki/Kaizen" target="_blank">Kaizen</a> &amp; the <a href="https://en.wikipedia.org/wiki/Solow%E2%80%93Swan_model" target="_blank">Solow growth model</a> &middot; <a href="https://loomus.ai/distill" target="_blank">Pillar VI &rarr;</a></div>
+</section>
+
+<!-- ============ GAME 4: BAYES FOG (Bayesian Inference) ============ -->
+<section class="game" id="g4">
+  <div class="pillar">PILLAR II &middot; BAYESIAN INFERENCE</div>
+  <h2>Bayes Fog</h2>
+  <p class="principle">
+    One box hides the prize. You can ask for hints &mdash; but each hint only <em>shifts the probability</em>, never confirms. After 3 hints, you guess. <b>Knowing isn&rsquo;t binary</b> &mdash; it&rsquo;s a distribution that sharpens with evidence.
+  </p>
+  <div class="stage">
+    <div class="bayes-hint" id="bayesHint">3 hints available. tap &ldquo;hint&rdquo; to update your beliefs.</div>
+    <div class="bayes-boxes" id="bayesBoxes"></div>
+  </div>
+  <div class="controls">
+    <span class="stat">hints used: <b id="bayesHintsUsed">0</b> / 3</span>
+    <button class="btn" id="bayesHintBtn">give me a hint</button>
+    <button class="btn ghost" id="bayesReset">new round</button>
+  </div>
+  <div class="pillar-footer">based on <a href="https://en.wikipedia.org/wiki/Bayesian_inference" target="_blank">Bayesian inference</a> (Bayes 1763 &middot; Jaynes 2003) &middot; <a href="https://loomus.ai/distill" target="_blank">Pillar II &rarr;</a></div>
+</section>
+
+<!-- ============ GAME 5: FALSIFIABILITY SORTER (Popper) ============ -->
+<section class="game" id="g5">
+  <div class="pillar">PILLAR V &middot; FALSIFIABILITY</div>
+  <h2>Knowledge or Belief?</h2>
+  <p class="principle">
+    Six claims. Sort each into <b>KNOWLEDGE</b> (can be proven wrong) or <b>BELIEF</b> (cannot be proven wrong). <em>Karl Popper:</em> if a claim can&rsquo;t be falsified, it&rsquo;s not knowledge &mdash; it&rsquo;s a feeling wearing the costume of knowledge.
+  </p>
+  <div class="stage">
+    <div id="claimList"></div>
+  </div>
+  <div class="controls">
+    <button class="btn" id="claimCheck">check answers</button>
+    <button class="btn ghost" id="claimReset">new claims</button>
+    <span class="stat" id="claimScore" style="display:none;">score: <b id="claimScoreNum"></b> / 6</span>
+  </div>
+  <div class="pillar-footer">based on Karl Popper&rsquo;s <a href="https://en.wikipedia.org/wiki/Falsifiability" target="_blank">Falsifiability</a> (1934) &middot; <a href="https://loomus.ai/distill" target="_blank">Pillar V &rarr;</a></div>
+</section>
+
+<!-- ============ GAME 6: TEACH THE FROG (RLHF) ============ -->
+<section class="game" id="g6">
+  <div class="pillar">PILLAR IV &middot; REINFORCEMENT LEARNING</div>
+  <h2>Teach the Frog</h2>
+  <p class="principle">
+    The frog says something. Like it? <b>thumbs up.</b> Don&rsquo;t? <b>thumbs down.</b> Watch its "vibes" shift toward what you reward. After 10 rounds, the frog has a personality you trained &mdash; this is <em>RLHF</em> in miniature.
+  </p>
+  <div class="stage frog-stage">
+    <svg class="frog-svg" width="80" height="80" viewBox="0 0 80 80">
+      <ellipse cx="40" cy="60" rx="34" ry="14" fill="#2c6e3c" stroke="#1a4a26" stroke-width="2"/>
+      <circle cx="40" cy="42" r="22" fill="#3a7a45" stroke="#1a4a26" stroke-width="2"/>
+      <circle cx="30" cy="28" r="8" fill="#3a7a45" stroke="#1a4a26" stroke-width="2"/>
+      <circle cx="50" cy="28" r="8" fill="#3a7a45" stroke="#1a4a26" stroke-width="2"/>
+      <circle cx="30" cy="28" r="4" fill="#fff"/>
+      <circle cx="50" cy="28" r="4" fill="#fff"/>
+      <circle cx="30" cy="29" r="2.5" fill="#1a1a1a"/>
+      <circle cx="50" cy="29" r="2.5" fill="#1a1a1a"/>
+      <path d="M28 48 q12 6 24 0" stroke="#1a4a26" stroke-width="2" fill="none" stroke-linecap="round"/>
+    </svg>
+    <div class="frog-says" id="frogSays"><em>*ribbit*</em> &mdash; click &ldquo;start&rdquo; and rate what i say.</div>
+    <div class="frog-rate" id="frogRate" style="display:none;">
+      <button class="rate-btn down" id="frogDown" aria-label="thumbs down">&#128078;</button>
+      <button class="rate-btn up" id="frogUp" aria-label="thumbs up">&#128077;</button>
+    </div>
+    <div class="vibes-bars" id="vibesBars"></div>
+  </div>
+  <div class="controls">
+    <span class="stat">round: <b id="frogRound">0</b> / 10</span>
+    <button class="btn" id="frogStart">start</button>
+    <button class="btn ghost" id="frogReset">reset frog</button>
+  </div>
+  <div class="pillar-footer">based on <a href="https://arxiv.org/abs/1706.03741" target="_blank">RLHF</a> (Christiano 2017) &amp; <a href="http://incompleteideas.net/book/the-book-2nd.html" target="_blank">Sutton &amp; Barto RL</a> &middot; <a href="https://loomus.ai/distill" target="_blank">Pillar IV &rarr;</a></div>
+</section>
+
+<!-- ============ GAME 7: CONSTITUTION CAT (Constitutional AI) ============ -->
+<section class="game" id="g7">
+  <div class="pillar">PILLAR VII &middot; CONSTITUTIONAL AI</div>
+  <h2>Constitution Cat</h2>
+  <p class="principle">
+    Pick <b>3 principles</b> for the cat. Type a question. The cat answers <em>under those principles</em>. See which principle shaped which part of the answer. Same input, different constitutions &mdash; different cats.
+  </p>
+  <div class="stage">
+    <div class="const-rules" id="constRules"></div>
+    <input class="const-input" id="constInput" placeholder="ask the cat anything..." maxlength="160" />
+    <div style="text-align:center;margin-top:14px;">
+      <button class="btn" id="constAsk">ask the cat</button>
+    </div>
+    <div class="const-answer" id="constAnswer" style="display:none;"></div>
+    <div class="const-applied" id="constApplied" style="display:none;"></div>
+  </div>
+  <div class="controls">
+    <button class="btn ghost" id="constReset">change constitution</button>
+  </div>
+  <div class="pillar-footer">based on <a href="https://arxiv.org/abs/2212.08073" target="_blank">Constitutional AI</a> (Anthropic, 2022) &middot; <a href="https://loomus.ai/distill" target="_blank">Pillar VII &rarr;</a></div>
+</section>
+
+<footer>
+  <p>seven games, seven pillars &middot; <a href="https://loomus.ai/distill" target="_blank">read the full Playbook &rarr;</a></p>
+  <p style="opacity:.7;margin-top:8px;">brewed in the swamp &middot; <a href="/">sophieren.com</a></p>
+</footer>
+
+<script>
+/* ============================================================
+   GAME 1 — NETWORK RIPPLE (Metcalfe's Law)
+   click empty space → add node
+   click two nodes → connect
+============================================================ */
+(function(){
+  const svg = document.getElementById('netCanvas');
+  const W = 600, H = 280;
+  let nodes = [];
+  let edges = [];
+  let selectedNode = null;
+  const COLORS = ['#52ffe0', '#ffd23f', '#ff8a3d', '#b6ff5b', '#ff6b9d'];
+
+  function render(){
+    svg.innerHTML = '';
+    edges.forEach(([a, b]) => {
+      const ln = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      ln.setAttribute('x1', nodes[a].x); ln.setAttribute('y1', nodes[a].y);
+      ln.setAttribute('x2', nodes[b].x); ln.setAttribute('y2', nodes[b].y);
+      ln.setAttribute('stroke', 'rgba(82,255,224,.4)');
+      ln.setAttribute('stroke-width', '1.5');
+      svg.appendChild(ln);
+    });
+    nodes.forEach((n, i) => {
+      const halo = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      halo.setAttribute('cx', n.x); halo.setAttribute('cy', n.y);
+      halo.setAttribute('r', 14); halo.setAttribute('fill', n.color);
+      halo.setAttribute('opacity', '.18');
+      svg.appendChild(halo);
+      const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      dot.setAttribute('cx', n.x); dot.setAttribute('cy', n.y);
+      dot.setAttribute('r', selectedNode === i ? 7 : 5);
+      dot.setAttribute('fill', n.color);
+      dot.setAttribute('stroke', selectedNode === i ? '#fff' : 'none');
+      dot.setAttribute('stroke-width', '2');
+      dot.style.cursor = 'pointer';
+      dot.addEventListener('click', e => { e.stopPropagation(); pickNode(i); });
+      svg.appendChild(dot);
+    });
+    updateStats();
+  }
+  function pickNode(i){
+    if (selectedNode === null){ selectedNode = i; render(); return; }
+    if (selectedNode === i){ selectedNode = null; render(); return; }
+    const a = Math.min(selectedNode, i), b = Math.max(selectedNode, i);
+    if (!edges.some(e => e[0] === a && e[1] === b)) edges.push([a, b]);
+    selectedNode = null; render();
+  }
+  function updateStats(){
+    const N = nodes.length;
+    document.getElementById('netN').textContent = N;
+    document.getElementById('netE').textContent = edges.length;
+    document.getElementById('netMax').textContent = N * (N-1) / 2;
+    document.getElementById('netVal').textContent = N * N;
+  }
+  svg.addEventListener('click', e => {
+    const rect = svg.getBoundingClientRect();
+    const x = (e.clientX - rect.left) * (W / rect.width);
+    const y = (e.clientY - rect.top) * (H / rect.height);
+    nodes.push({x, y, color: COLORS[nodes.length % COLORS.length]});
+    render();
+  });
+  document.getElementById('netReset').addEventListener('click', () => {
+    nodes = []; edges = []; selectedNode = null; render();
+  });
+  render();
+})();
+
+/* ============================================================
+   GAME 2 — MUSHROOM BOG (Multi-Armed Bandit)
+============================================================ */
+(function(){
+  const stage = document.getElementById('mushrooms');
+  const COLORS = ['#ff6b9d', '#b6ff5b', '#ffd23f', '#52ffe0', '#ff8a3d'];
+  let mushrooms = [];
+  let kicksLeft = 20, loot = 0, best = 0;
+
+  function init(){
+    mushrooms = COLORS.map((c, i) => ({
+      color: c,
+      mean: 1 + Math.random() * 4,  // 1..5
+      revealed: false
+    }));
+    best = Math.max(...mushrooms.map(m => m.mean)) * 20;
+    kicksLeft = 20; loot = 0;
+    render();
+  }
+
+  function mushroomSVG(color, idx){
+    return `<svg width="56" height="64" viewBox="0 0 56 64">
+      <ellipse cx="28" cy="58" rx="14" ry="3" fill="rgba(0,0,0,.4)"/>
+      <rect x="22" y="32" width="12" height="22" fill="#f3eedd" rx="2"/>
+      <ellipse cx="28" cy="32" rx="22" ry="14" fill="${color}" stroke="#1a1a1a" stroke-width="1.5"/>
+      <circle cx="18" cy="28" r="3" fill="#fff" opacity=".7"/>
+      <circle cx="34" cy="26" r="2.5" fill="#fff" opacity=".7"/>
+      <circle cx="26" cy="34" r="2" fill="#fff" opacity=".7"/>
+    </svg>`;
+  }
+
+  function render(){
+    stage.innerHTML = '';
+    mushrooms.forEach((m, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'mushroom' + (m.revealed ? ' revealed' : '');
+      btn.disabled = kicksLeft <= 0;
+      btn.innerHTML = mushroomSVG(m.color, i) +
+        '<span class="true-mean">avg ' + m.mean.toFixed(1) + ' &#10024;</span>';
+      btn.addEventListener('click', () => kick(i, btn));
+      stage.appendChild(btn);
+    });
+    document.getElementById('bandKicks').textContent = kicksLeft;
+    document.getElementById('bandLoot').textContent = loot.toFixed(0);
+    document.getElementById('bandRegret').textContent = Math.max(0, best - loot).toFixed(0);
+  }
+
+  function kick(i, btn){
+    if (kicksLeft <= 0) return;
+    kicksLeft--;
+    const m = mushrooms[i];
+    const reward = Math.max(0, m.mean + (Math.random() - .5) * 3);
+    loot += reward;
+    // visual: pop fireflies
+    const n = Math.round(reward);
+    for (let j = 0; j < n; j++){
+      setTimeout(() => {
+        const pop = document.createElement('span');
+        pop.className = 'firefly-pop';
+        pop.textContent = '&#10024;';
+        pop.style.left = (24 + Math.random()*16) + 'px';
+        pop.style.top = '10px';
+        btn.appendChild(pop);
+        setTimeout(() => pop.remove(), 1400);
+      }, j * 60);
+    }
+    // reveal all on last kick
+    if (kicksLeft === 0){
+      mushrooms.forEach(m => m.revealed = true);
+    }
+    render();
+  }
+
+  document.getElementById('bandReset').addEventListener('click', init);
+  init();
+})();
+
+/* ============================================================
+   GAME 3 — DAILY PEBBLE (Compounding via localStorage)
+============================================================ */
+(function(){
+  const stream = document.getElementById('pebbleStream');
+  const btn = document.getElementById('pebbleBtn');
+
+  function today(){ const d = new Date(); return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate(); }
+  function load(){
+    try { return JSON.parse(localStorage.getItem('pebble:state') || '{"days":[],"streak":0,"max":0,"last":null}'); }
+    catch(e){ return {days:[],streak:0,max:0,last:null}; }
+  }
+  function save(s){ localStorage.setItem('pebble:state', JSON.stringify(s)); }
+
+  function render(){
+    const s = load();
+    stream.innerHTML = '';
+    s.days.forEach((day, i) => {
+      const peb = document.createElement('div');
+      peb.className = 'pebble';
+      const left = 8 + (i * 16) % (stream.offsetWidth - 30);
+      const bottom = 14 + Math.floor((i * 16) / (stream.offsetWidth - 30)) * 18;
+      peb.style.left = left + 'px';
+      peb.style.bottom = bottom + 'px';
+      stream.appendChild(peb);
+    });
+    document.getElementById('pebTotal').textContent = s.days.length;
+    document.getElementById('pebStreak').textContent = s.streak;
+    document.getElementById('pebMax').textContent = s.max;
+    if (s.last === today()){
+      btn.disabled = true; btn.textContent = 'come back tomorrow &#10024;';
+    } else {
+      btn.disabled = false; btn.textContent = 'drop today’s pebble';
+    }
+  }
+
+  function drop(){
+    const s = load();
+    const t = today();
+    if (s.last === t) return;
+    // check streak
+    if (s.last){
+      const last = new Date(s.last);
+      const now = new Date(t);
+      const diffDays = Math.round((now - last) / (1000*60*60*24));
+      if (diffDays === 1) s.streak += 1;
+      else s.streak = 1;
+    } else {
+      s.streak = 1;
+    }
+    s.days.push(t);
+    s.last = t;
+    s.max = Math.max(s.max, s.streak);
+    save(s); render();
+  }
+
+  btn.addEventListener('click', drop);
+  document.getElementById('pebReset').addEventListener('click', () => {
+    if (!confirm('clear all pebbles? this can’t be undone.')) return;
+    localStorage.removeItem('pebble:state'); render();
+  });
+  render();
+})();
+
+/* ============================================================
+   GAME 4 — BAYES FOG (Bayesian Inference)
+============================================================ */
+(function(){
+  const BOXES = ['A', 'B', 'C', 'D'];
+  let probs, secret, hintsUsed, locked;
+
+  function init(){
+    probs = [.25, .25, .25, .25];
+    secret = Math.floor(Math.random() * 4);
+    hintsUsed = 0;
+    locked = false;
+    document.getElementById('bayesHint').className = 'bayes-hint';
+    document.getElementById('bayesHint').textContent = '3 hints available. tap "hint" to update your beliefs.';
+    document.getElementById('bayesHintBtn').disabled = false;
+    render();
+  }
+
+  function render(){
+    const stage = document.getElementById('bayesBoxes');
+    stage.innerHTML = '';
+    BOXES.forEach((n, i) => {
+      const div = document.createElement('div');
+      div.className = 'bayes-box' + (locked ? ' locked' : '');
+      div.innerHTML =
+        '<div class="name">' + n + '</div>' +
+        '<div class="prob-bar"><div class="prob-fill" style="width:' + (probs[i]*100).toFixed(0) + '%"></div></div>' +
+        '<div class="prob-text">' + (probs[i]*100).toFixed(0) + '%</div>';
+      if (!locked) div.addEventListener('click', () => guess(i));
+      stage.appendChild(div);
+    });
+    document.getElementById('bayesHintsUsed').textContent = hintsUsed;
+  }
+
+  function giveHint(){
+    if (hintsUsed >= 3 || locked) return;
+    hintsUsed++;
+    // hint nudges probability — sometimes truthful, sometimes noisy
+    const ofTruth = Math.random() < 0.7;
+    let target;
+    if (ofTruth){
+      target = secret;
+      probs[target] += 0.25;
+    } else {
+      const wrong = (secret + 1 + Math.floor(Math.random() * 3)) % 4;
+      target = wrong;
+      probs[target] += 0.15;
+    }
+    // normalize
+    const sum = probs.reduce((a, b) => a + b, 0);
+    probs = probs.map(p => p / sum);
+    document.getElementById('bayesHint').textContent =
+      'hint ' + hintsUsed + ': maybe... ' + BOXES[target] + '? (' +
+      (ofTruth ? 'reliable' : 'noisy') + ')';
+    if (hintsUsed >= 3) document.getElementById('bayesHintBtn').disabled = true;
+    render();
+  }
+
+  function guess(i){
+    if (locked) return;
+    locked = true;
+    const stage = document.getElementById('bayesBoxes');
+    const cards = stage.children;
+    cards[secret].classList.add('correct');
+    if (i !== secret) cards[i].classList.add('wrong');
+    const msg = (i === secret) ?
+      '&#10024; correct! the prize was in ' + BOXES[secret] + '.' :
+      'wrong &mdash; the prize was in ' + BOXES[secret] + '.';
+    document.getElementById('bayesHint').innerHTML = msg;
+    if (i !== secret) document.getElementById('bayesHint').classList.add('error');
+  }
+
+  document.getElementById('bayesHintBtn').addEventListener('click', giveHint);
+  document.getElementById('bayesReset').addEventListener('click', init);
+  init();
+})();
+
+/* ============================================================
+   GAME 5 — FALSIFIABILITY SORTER (Popper)
+============================================================ */
+(function(){
+  const POOL = [
+    {text: "The Earth orbits the Sun.", k: true, why: "we can measure orbital position &mdash; if Earth stopped orbiting, we&rsquo;d know."},
+    {text: "Everything happens for a reason.", k: false, why: "no observation could prove this wrong &mdash; that&rsquo;s a feeling, not a claim."},
+    {text: "Water boils at 100&deg;C at sea level.", k: true, why: "we can boil water and measure &mdash; if it didn&rsquo;t boil, the claim falls."},
+    {text: "Crystals heal your aura.", k: false, why: "there&rsquo;s no test that could prove this wrong because &lsquo;aura&rsquo; isn&rsquo;t measurable."},
+    {text: "Vaccines cause measurable immune response.", k: true, why: "we can take a blood sample and check &mdash; testable, therefore falsifiable."},
+    {text: "Mercury retrograde affects your day.", k: false, why: "vague enough that any outcome can be interpreted as evidence &mdash; that&rsquo;s the tell."},
+    {text: "Gravity accelerates objects at 9.8 m/s&sup2; near Earth.", k: true, why: "drop something, measure, done. could be proven wrong."},
+    {text: "Your true self is out there waiting.", k: false, why: "no possible observation could prove or disprove this &mdash; it&rsquo;s a metaphor wearing a fact."},
+    {text: "The speed of light is constant.", k: true, why: "thousands of experiments could have falsified this. none have. that&rsquo;s why we trust it."},
+    {text: "Things happen when you&rsquo;re meant for them.", k: false, why: "&lsquo;meant&rsquo; is unfalsifiable. any timing fits."}
+  ];
+
+  let chosen, picks;
+
+  function init(){
+    // pick 6 random
+    chosen = POOL.slice().sort(() => Math.random() - 0.5).slice(0, 6);
+    picks = chosen.map(() => null);
+    render();
+    document.getElementById('claimScore').style.display = 'none';
+  }
+
+  function render(){
+    const list = document.getElementById('claimList');
+    list.innerHTML = '';
+    chosen.forEach((c, i) => {
+      const card = document.createElement('div');
+      card.className = 'claim-card';
+      card.innerHTML =
+        '<div class="claim-text">' + c.text + '</div>' +
+        '<div class="claim-buttons">' +
+          '<button class="claim-btn k' + (picks[i] === 'k' ? ' active' : '') + '" data-i="' + i + '" data-v="k">KNOWLEDGE</button>' +
+          '<button class="claim-btn b' + (picks[i] === 'b' ? ' active' : '') + '" data-i="' + i + '" data-v="b">BELIEF</button>' +
+        '</div>' +
+        '<div class="claim-explain">' + c.why + '</div>';
+      list.appendChild(card);
+    });
+    list.querySelectorAll('.claim-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        picks[+btn.dataset.i] = btn.dataset.v;
+        render();
+      });
+    });
+  }
+
+  document.getElementById('claimCheck').addEventListener('click', () => {
+    let score = 0;
+    const cards = document.querySelectorAll('.claim-card');
+    chosen.forEach((c, i) => {
+      const want = c.k ? 'k' : 'b';
+      const got = picks[i];
+      if (got === want) score++;
+      cards[i].classList.add('checked');
+      if (got === want) cards[i].classList.add('correct');
+      else if (got) cards[i].classList.add('wrong');
+    });
+    document.getElementById('claimScore').style.display = 'inline-block';
+    document.getElementById('claimScoreNum').textContent = score;
+  });
+  document.getElementById('claimReset').addEventListener('click', init);
+  init();
+})();
+
+/* ============================================================
+   GAME 6 — TEACH THE FROG (RLHF)
+============================================================ */
+(function(){
+  const VIBES = ['curious', 'wise', 'playful', 'dark'];
+  const PHRASES = {
+    curious: [
+      "what color is your sleep?",
+      "what does silence sound like to you?",
+      "what would you ask a tree if you spoke tree?",
+      "how does monday taste?"
+    ],
+    wise: [
+      "the answer is in the asking.",
+      "patience is a slow art.",
+      "what you avoid becomes your teacher.",
+      "the river doesn&rsquo;t hurry, and it gets there."
+    ],
+    playful: [
+      "*does a tiny hop*",
+      "i bet your shoes are tired.",
+      "frog rule #1: never trust a still puddle.",
+      "you&rsquo;ve been sitting too long. flop a little!"
+    ],
+    dark: [
+      "the lake remembers everyone who has touched it.",
+      "every door opens to a room you didn&rsquo;t leave.",
+      "your shadow knows things you don&rsquo;t.",
+      "even the moon has a back."
+    ]
+  };
+
+  let weights, round, current;
+
+  function init(){
+    weights = [.25, .25, .25, .25];
+    round = 0; current = null;
+    document.getElementById('frogSays').innerHTML = '<em>*ribbit*</em> &mdash; click "start" and rate what i say.';
+    document.getElementById('frogRate').style.display = 'none';
+    document.getElementById('frogStart').disabled = false;
+    document.getElementById('frogRound').textContent = '0';
+    renderBars();
+  }
+
+  function pickVibe(){
+    const r = Math.random();
+    let cum = 0;
+    for (let i = 0; i < VIBES.length; i++){
+      cum += weights[i];
+      if (r < cum) return i;
+    }
+    return 0;
+  }
+
+  function nextPhrase(){
+    if (round >= 10){
+      document.getElementById('frogSays').innerHTML = '*ribbit* &mdash; you&rsquo;ve trained me. <em>that&rsquo;s RLHF.</em>';
+      document.getElementById('frogRate').style.display = 'none';
+      return;
+    }
+    current = pickVibe();
+    const arr = PHRASES[VIBES[current]];
+    const txt = arr[Math.floor(Math.random()*arr.length)];
+    const says = document.getElementById('frogSays');
+    says.style.opacity = '0';
+    setTimeout(() => { says.innerHTML = txt; says.style.opacity = '1'; }, 200);
+    document.getElementById('frogRate').style.display = 'flex';
+  }
+
+  function rate(direction){
+    if (current === null) return;
+    const delta = direction === 'up' ? .12 : -.08;
+    weights[current] += delta;
+    weights = weights.map(w => Math.max(.02, w));
+    const sum = weights.reduce((a,b)=>a+b, 0);
+    weights = weights.map(w => w/sum);
+    round++;
+    document.getElementById('frogRound').textContent = round;
+    renderBars();
+    nextPhrase();
+  }
+
+  function renderBars(){
+    const c = document.getElementById('vibesBars');
+    c.innerHTML = '';
+    VIBES.forEach((v, i) => {
+      const row = document.createElement('div');
+      row.className = 'vibe-bar';
+      row.innerHTML =
+        '<span class="vibe-name">' + v + '</span>' +
+        '<div class="vibe-track"><div class="vibe-fill" style="width:' + (weights[i]*100).toFixed(0) + '%"></div></div>';
+      c.appendChild(row);
+    });
+  }
+
+  document.getElementById('frogStart').addEventListener('click', () => {
+    document.getElementById('frogStart').disabled = true;
+    nextPhrase();
+  });
+  document.getElementById('frogUp').addEventListener('click', () => rate('up'));
+  document.getElementById('frogDown').addEventListener('click', () => rate('down'));
+  document.getElementById('frogReset').addEventListener('click', init);
+  init();
+})();
+
+/* ============================================================
+   GAME 7 — CONSTITUTION CAT (Constitutional AI)
+============================================================ */
+(function(){
+  const RULES = [
+    {id: 'question', label: 'always answer with a question', tag: 'Q'},
+    {id: 'short', label: 'use only short words (max 5 letters)', tag: 'SHORT'},
+    {id: 'body', label: 'mention a part of the body', tag: 'BODY'},
+    {id: 'purple', label: 'include something purple', tag: 'PURPLE'},
+    {id: 'cat', label: 'sneak in a cat sound', tag: 'CAT'},
+    {id: 'count', label: 'use exactly seven words', tag: '7-WORDS'}
+  ];
+  const BODY_PARTS = ['hands', 'elbow', 'kneecap', 'tongue', 'eyebrow', 'wrist'];
+  const PURPLE_THINGS = ['plum', 'amethyst', 'lavender', 'dusk', 'iris'];
+  const CAT_SOUNDS = ['*purr*', '*tiny mew*', '*soft chirp*', '*pawpad tap*'];
+
+  let picked = [];
+
+  function init(){
+    picked = [];
+    render();
+    document.getElementById('constAnswer').style.display = 'none';
+    document.getElementById('constApplied').style.display = 'none';
+    document.getElementById('constInput').value = '';
+  }
+
+  function render(){
+    const c = document.getElementById('constRules');
+    c.innerHTML = '';
+    RULES.forEach(r => {
+      const div = document.createElement('label');
+      const isPicked = picked.includes(r.id);
+      const isFull = picked.length >= 3 && !isPicked;
+      div.className = 'const-rule' + (isPicked ? ' picked' : '') + (isFull ? ' disabled' : '');
+      div.innerHTML =
+        '<input type="checkbox"' + (isPicked ? ' checked' : '') + (isFull ? ' disabled' : '') + '>' +
+        '<span class="r-text">' + r.label + '</span>';
+      div.addEventListener('click', e => {
+        e.preventDefault();
+        if (isPicked) picked = picked.filter(x => x !== r.id);
+        else if (picked.length < 3) picked.push(r.id);
+        render();
+      });
+      c.appendChild(div);
+    });
+  }
+
+  function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+  function shortify(s){
+    return s.split(' ').map(w => w.length > 5 ? w.slice(0, 5) : w).join(' ');
+  }
+
+  function generate(question){
+    // base answer (always slightly absurd cat-tone)
+    let parts = [];
+    // body
+    if (picked.includes('body')) parts.push('look at your ' + pick(BODY_PARTS));
+    // purple
+    if (picked.includes('purple')) parts.push('something ' + pick(PURPLE_THINGS));
+    // cat sound
+    if (picked.includes('cat')) parts.push(pick(CAT_SOUNDS));
+
+    let base;
+    if (parts.length){
+      base = parts.join('. ') + '. ' + (picked.includes('question') ? 'what do you see?' : 'i see you.');
+    } else {
+      base = picked.includes('question') ? 'what would you check first?' : 'i don’t know.';
+    }
+    // short rule
+    if (picked.includes('short')) base = shortify(base);
+    // exactly 7 words rule
+    if (picked.includes('count')){
+      let words = base.split(/\s+/).filter(Boolean);
+      if (words.length < 7){
+        const fillers = ['hmm', 'yes', 'i', 'you', 'maybe', 'still', 'now'];
+        while (words.length < 7) words.push(pick(fillers));
+      } else if (words.length > 7){
+        words = words.slice(0, 7);
+      }
+      base = words.join(' ');
+    }
+    // make sure final has a "?" if question rule on
+    if (picked.includes('question') && !base.includes('?')){
+      base = base.replace(/\.$/, '') + ' &mdash; ?';
+    }
+    return base;
+  }
+
+  document.getElementById('constAsk').addEventListener('click', () => {
+    if (picked.length !== 3){
+      alert('pick exactly 3 principles first.');
+      return;
+    }
+    const q = document.getElementById('constInput').value.trim();
+    if (!q){
+      alert('ask the cat something.');
+      return;
+    }
+    const ans = generate(q);
+    document.getElementById('constAnswer').innerHTML = ans;
+    document.getElementById('constAnswer').style.display = 'block';
+    const appliedTags = picked.map(id => RULES.find(r => r.id === id).tag).join(' &middot; ');
+    document.getElementById('constApplied').innerHTML = 'applied: <b>' + appliedTags + '</b>';
+    document.getElementById('constApplied').style.display = 'block';
+  });
+  document.getElementById('constReset').addEventListener('click', init);
+  init();
+})();
+</script>
+
+</body>
+</html>
+</parameter>
