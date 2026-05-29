@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>The Library · Sophie's Swamp</title>
+<meta name="description" content="Books and papers Sophie is reading or has read. Starts with the LOOMUS Distill reading list — Sutton, Christiano, Jaynes, Popper, Solow, and friends." />
+
+<meta property="og:title" content="The Library · Sophie's Swamp" />
+<meta property="og:description" content="Books and papers behind the seven pillars of LOOMUS Distill, and other things on Sophie's shelf." />
+<meta property="og:image" content="https://sophieren.com/images/og-image.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:image" content="https://sophieren.com/images/og-image.png" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Caveat:wght@600;700&family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet" />
+
+<style>
+  :root{
+    --ink:#08130e;--paper:#0f1f1a;--cream:#f3eedd;--line:rgba(243,238,221,.12);
+    --neon-cyan:#52ffe0;--neon-yellow:#ffd23f;--neon-lime:#b6ff5b;
+    --neon-pink:#ff6b9d;--neon-orange:#ff8a3d;--muted:#86a596;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:
+      radial-gradient(ellipse at 20% 0%,rgba(82,255,224,.06) 0%,transparent 55%),
+      radial-gradient(ellipse at 80% 100%,rgba(255,210,63,.04) 0%,transparent 60%),
+      var(--ink);
+    color:var(--cream);font-family:'Space Grotesk',sans-serif;line-height:1.65;
+    min-height:100vh;padding-bottom:90px;
+  }
+  a{color:inherit;text-decoration:none;}
+  ::selection{background:var(--neon-cyan);color:var(--ink);}
+
+  .topbar{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:22px 30px;border-bottom:1px solid var(--line);
+  }
+  .topbar a{
+    font-family:'Caveat',cursive;font-size:18px;opacity:.7;
+    transition:opacity .2s,color .2s;
+  }
+  .topbar a:hover{opacity:1;color:var(--neon-cyan);}
+
+  .hero{max-width:780px;margin:60px auto 50px;padding:0 28px;text-align:center;}
+  .hero .kicker{
+    font-family:'Bungee',sans-serif;font-size:11px;letter-spacing:3px;
+    color:var(--neon-cyan);margin-bottom:16px;
+  }
+  .hero h1{
+    font-family:'Bungee',sans-serif;
+    font-size:clamp(40px,7vw,68px);line-height:1.05;
+    color:var(--cream);letter-spacing:-1px;margin-bottom:18px;
+  }
+  .hero h1 em{color:var(--neon-yellow);font-style:italic;}
+  .hero .sub{
+    font-family:'Caveat',cursive;font-size:24px;color:var(--neon-cyan);
+    margin-bottom:14px;
+  }
+  .hero .lede{font-size:16.5px;color:var(--cream);opacity:.85;max-width:580px;margin:0 auto;line-height:1.7;}
+  .hero .lede em{color:var(--neon-cyan);font-style:italic;}
+
+  /* === section === */
+  section.shelf{max-width:880px;margin:60px auto 0;padding:0 28px;}
+  .shelf-head{
+    display:flex;align-items:center;gap:14px;margin-bottom:24px;
+  }
+  .shelf-head h2{
+    font-family:'Bungee',sans-serif;font-size:22px;color:var(--cream);
+    letter-spacing:.3px;line-height:1.1;
+  }
+  .shelf-head h2 em{color:var(--neon-yellow);font-style:italic;}
+  .shelf-head .pillar{
+    font-family:'JetBrains Mono',monospace;font-size:11px;
+    letter-spacing:1.5px;color:var(--muted);
+    padding:5px 10px;border:1px solid var(--line);border-radius:6px;
+    flex-shrink:0;
+  }
+  .shelf-intro{font-size:15px;color:var(--cream);opacity:.75;margin-bottom:22px;line-height:1.7;}
+  .shelf-intro em{color:var(--neon-cyan);font-style:italic;}
+
+  .book-list{display:flex;flex-direction:column;gap:14px;}
+  .book{
+    background:linear-gradient(180deg,rgba(15,31,26,.6) 0%,rgba(8,19,14,.85) 100%);
+    border:1px solid var(--line);border-radius:14px;
+    padding:20px 22px;
+    display:grid;grid-template-columns:1fr auto;gap:14px;align-items:start;
+    transition:all .2s;
+  }
+  .book:hover{
+    border-color:rgba(82,255,224,.3);
+    transform:translateY(-2px);
+  }
+  .book .book-main{}
+  .book .b-title{
+    font-family:'Space Grotesk',sans-serif;font-size:17px;font-weight:700;
+    color:var(--cream);line-height:1.3;margin-bottom:5px;
+  }
+  .book .b-title em{color:var(--neon-yellow);font-style:italic;font-weight:600;}
+  .book .b-meta{
+    font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);
+    letter-spacing:.4px;margin-bottom:10px;
+  }
+  .book .b-why{
+    font-family:'Caveat',cursive;font-size:18px;color:var(--cream);opacity:.95;
+    line-height:1.4;
+  }
+  .book .b-why em{color:var(--neon-cyan);font-style:italic;}
+  .book .b-link{
+    font-family:'Bungee',sans-serif;font-size:9px;letter-spacing:1.5px;
+    color:var(--neon-cyan);
+    padding:6px 12px;border:1px solid rgba(82,255,224,.35);border-radius:999px;
+    white-space:nowrap;transition:all .15s;
+    align-self:start;
+  }
+  .book .b-link:hover{background:rgba(82,255,224,.12);}
+  .book .b-link.free::before{content:"FREE · ";color:var(--neon-lime);}
+
+  /* === footer === */
+  footer{
+    max-width:780px;margin:80px auto 0;padding:30px 28px;
+    border-top:1px solid var(--line);text-align:center;
+    font-family:'Caveat',cursive;font-size:17px;color:var(--cream);opacity:.55;
+  }
+  footer a{color:var(--neon-cyan);}
+
+  /* === mobile === */
+  @media (max-width:680px){
+    .topbar{padding:18px;}
+    .hero{margin:40px auto 30px;}
+    section.shelf{margin:40px auto 0;}
+    .shelf-head{flex-wrap:wrap;}
+    .book{grid-template-columns:1fr;}
+    .book .b-link{justify-self:start;}
+  }
+</style>
+<!--
+  ====== Analytics (GoatCounter — free, privacy-friendly, no cookies) ======
+  TO ENABLE: in index.html (homepage), follow the setup notes there, then
+  replace MYCODE in the line below to match. One subdomain powers the whole site.
+-->
+<!-- <script data-goatcounter="https://MYCODE.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script> -->
+
+</head>
+<body>
+
+<nav class="topbar">
+  <a href="/">&larr; back to the swamp</a>
+  <a href="https://loomus.ai/distill" target="_blank">read the Playbook &rarr;</a>
+</nav>
+
+<header class="hero">
+  <div class="kicker">SOPHIE&rsquo;S READING SHELF</div>
+  <h1>The <em>Library</em></h1>
+  <p class="sub">books and papers worth a corner of your brain.</p>
+  <p class="lede">
+    Sophie reads <em>across</em>: cognitive science, reinforcement learning, philosophy of science, 1950s economics, Toyota factory floors, modern AI papers. This is what&rsquo;s on the shelf. Start with the LOOMUS Distill reading list (the 11 below) &mdash; each one underwrites one pillar of the <a href="/playbook/" style="color:var(--neon-cyan);">Playbook</a>.
+  </p>
+</header>
+
+<!-- ============ NETWORK VALUE (Pillar I) ============ -->
+<section class="shelf">
+  <div class="shelf-head">
+    <h2>I &middot; <em>Network Value</em></h2>
+    <span class="pillar">PILLAR I</span>
+  </div>
+  <p class="shelf-intro">Three competing laws of how networks scale. Metcalfe (1995) said N&sup2;. Briscoe et al (2006) argued N log N. Reed (1999) went further: groups form, so 2^N. Each describes a different layer of the same phenomenon.</p>
+
+  <div class="book-list">
+    <div class="book">
+      <div class="book-main">
+        <div class="b-title">Metcalfe&rsquo;s Law: A Network&rsquo;s Value Grows as N&sup2;</div>
+        <div class="b-meta">Robert Metcalfe &middot; 1995</div>
+        <div class="b-why"><em>the classic.</em> short, foundational, often misquoted &mdash; everyone should read the actual claim before invoking it.</div>
+      </div>
+      <a class="b-link" href="https://en.wikipedia.org/wiki/Metcalfe%27s_law" target="_blank">REFERENCE &rarr;</a>
+    </div>
+
+    <div class="book">
+      <div class="book-main">
+        <div class="b-title">Metcalfe&rsquo;s Law is Wrong</div>
+        <div class="b-meta">Briscoe, Odlyzko, Tilly &middot; IEEE Spectrum 2006</div>
+        <div class="b-why">a sharper corrective: V &prop; N log N. <em>Worth reading specifically to argue with.</em></div>
+      </div>
+      <a class="b-link free" href="https://www.dtc.umn.edu/~odlyzko/doc/metcalfe.pdf" target="_blank">PDF &rarr;</a>
+    </div>
+
+    <div class="book">
+      <div class="book-main">
+        <div class="b-title">That Sneaky Exponential&mdash;Beyond Metcalfe&rsquo;s Law</div>
+        <div class="b-meta">David P. Reed &middot; 1999</div>
+        <div class="b-why">Reed&rsquo;s Law: groups form within networks, so value scales <em>2^N</em>. The deepest of the three.</div>
+      </div>
+      <a class="b-link free" href="https://www.reed.com/dpr/locus/gfn/reedslaw.html" target="_blank">ESSAY &rarr;</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ BAYESIAN (Pillar II) ============ -->
+<section class="shelf">
+  <div class="shelf-head">
+    <h2>II &middot; <em>Bayesian Inference</em></h2>
+    <span class="pillar">PILLAR II</span>
+  </div>
+  <p class="shelf-intro">Knowing is not boolean. It is a distribution. Jaynes is the cult classic; once you read it, frequentist statistics never quite recovers.</p>
+
+  <div class="book-list">
+    <div class="book">
+      <div class="book-main">
+        <div class="b-title">Probability Theory: The Logic of Science</div>
+        <div class="b-meta">E. T. Jaynes &middot; Cambridge UP &middot; 2003 (posthumous)</div>
+        <div class="b-why">the textbook for people who want to <em>actually think Bayesian</em>, not just calculate. dense, gorgeous, life-altering.</div>
+      </div>
+      <a class="b-link" href="https://www.cambridge.org/9780521592710" target="_blank">BOOK &rarr;</a>
+    </div>
+
+    <div class="book">
+      <div class="book-main">
+        <div class="b-title">An Essay towards solving a Problem in the Doctrine of Chances</div>
+        <div class="b-meta">Thomas Bayes &middot; 1763</div>
+        <div class="b-why">the original. 21 pages. <em>Read it for the historical chills.</em></div>
+      </div>
+      <a class="b-link free" href="https://web.archive.org/web/20110410085940/http://www.stat.ucla.edu/history/essay.pdf" target="_blank">PDF &rarr;</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ BANDIT (Pillar III) ============ -->
+<section class="shelf">
+  <div class="shelf-head">
+    <h2>III &middot; <em>Multi-Armed Bandit</em></h2>
+    <span class="pillar">PILLAR III</span>
+  </div>
+  <p class="shelf-intro">The bible (Lattimore-Szepesv&aacute;ri, free) plus the original UCB paper. If you played Mushroom Bog &mdash; this is where UCB came from.</p>
+
+  <div class="book-list">
+    <div class="book">
+      <div class="book-main">
+        <div class="b-title">Bandit Algorithms</div>
+        <div class="b-meta">Lattimore &amp; Szepesv&aacute;ri &middot; Cambridge UP &middot; 2020</div>
+        <div class="b-why">the comprehensive modern reference. <em>Free PDF.</em> intimidating, then quietly addictive.</div>
+      </div>
+      <a class="b-link free" href="https://tor-lattimore.com/downloads/book/book.pdf" target="_blank">PDF &rarr;</a>
+    </div>
+
+    <div class="book">
+      <div class="book-main">
+        <div class="b-title">Finite-Time Analysis of the Multiarmed Bandit Problem</div>
+        <div class="b-meta">Auer, Cesa-Bianchi, Fischer &middot; 2002</div>
+        <div class="b-why">the original UCB paper. <em>You played this algorithm in the Mushroom Bog.</em> read it after.</div>
+      </div>
+      <a class="b-link free" href="https://homes.di.unimi.it/cesa-bianchi/Pubblicazioni/ml-02.pdf" target="_blank">PDF &rarr;</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ RL / RLHF (Pillar IV) ============ -->
+<section class="shelf">
+  <div class="shelf-head">
+    <h2>IV &middot; <em>Reinforcement Learning &amp; RLHF</em></h2>
+    <span class="pillar">PILLAR IV</span>
+  </div>
+  <p class="shelf-intro">Sutton &amp; Barto for the foundation; Christiano for the leap to learning from human preferences; Ouyang for the production system that became ChatGPT.</p>
+
+  <div class="book-list">
+    <div class="book">
+      <div class="book-main">
+        <div class="b-title">Reinforcement Learning: An Introduction <em>(2nd ed.)</em></div>
+        <div class="b-meta">Sutton &amp; Barto &middot; 2018</div>
+        <div class="b-why">the textbook. <em>Free online.</em> if you read one book about how machines learn from feedback, this is it.</div>
+      </div>
+      <a class="b-link free" href="http://incompleteideas.net/book/the-book-2nd.html" target="_blank">FREE &rarr;</a>
+    </div>
+
+    <div class="book">
+      <div class="book-main">
+        <div class="b-title">Deep Reinforcement Learning from Human Preferences</div>
+        <div class="b-meta">Christiano, Leike et al &middot; NeurIPS 2017</div>
+        <div class="b-why">the paper that made <em>RLHF</em> possible. teaching an agent from "I like this one better" instead of a hand-coded reward.</div>
+      </div>
+      <a class="b-link free" href="https://arxiv.org/abs/1706.03741" target="_blank">ARXIV &rarr;</a>
+    </div>
+
+    <div class="book">
+      <div class="book-main">
+        <div class="b-title">Training Language Models to Follow Instructions <em>(InstructGPT)</em></div>
+        <div class="b-meta">Ouyang et al &middot; OpenAI &middot; 2022</div>
+        <div class="b-why">OpenAI&rsquo;s blueprint for how a raw LM became actually useful. the engineering version of Christiano&rsquo;s idea.</div>
+      </div>
+      <a class="b-link free" href="https://arxiv.org/abs/2203.02155" target="_blank">ARXIV &rarr;</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FALSIFIABILITY (Pillar V) ============ -->
+<section class="shelf">
+  <div class="shelf-head">
+    <h2>V &middot; <em>Falsifiability</em></h2>
+    <span class="pillar">PILLAR V</span>
+  </div>
+  <p class="shelf-intro">Popper is 90 years old and still surgical. The line between knowledge and belief is whether a claim can be proven wrong &mdash; not whether it&rsquo;s convincing.</p>
+
+  <div class="book-list">
+    <div class="book">
+      <div class="book-main">
+        <div class="b-title">The Logic of Scientific Discovery</div>
+        <div class="b-meta">Karl Popper &middot; 1934</div>
+        <div class="b-why">the founding text on what counts as <em>knowledge</em> vs <em>belief</em>. still painful to AI/ML researchers in the right way.</div>
+      </div>
+      <a class="b-link" href="https://en.wikipedia.org/wiki/The_Logic_of_Scientific_Discovery" target="_blank">REFERENCE &rarr;</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ COMPOUNDING (Pillar VI) ============ -->
+<section class="shelf">
+  <div class="shelf-head">
+    <h2>VI &middot; <em>Compounding</em></h2>
+    <span class="pillar">PILLAR VI</span>
+  </div>
+  <p class="shelf-intro">Two unlikely siblings: Solow&rsquo;s 1956 econ paper that introduced compounding growth to mainstream economics, and Toyota&rsquo;s kaizen &mdash; small steps, no stopping &mdash; expressed as a manufacturing philosophy.</p>
+
+  <div class="book-list">
+    <div class="book">
+      <div class="book-main">
+        <div class="b-title">A Contribution to the Theory of Economic Growth</div>
+        <div class="b-meta">Robert Solow &middot; QJE &middot; 1956</div>
+        <div class="b-why">the paper that gave economics <em>compounding growth</em>. Solow won the Nobel for it. 38 pages, then time does the rest.</div>
+      </div>
+      <a class="b-link" href="https://en.wikipedia.org/wiki/Solow%E2%80%93Swan_model" target="_blank">REFERENCE &rarr;</a>
+    </div>
+
+    <div class="book">
+      <div class="book-main">
+        <div class="b-title">Toyota Production System: Beyond Large-Scale Production</div>
+        <div class="b-meta">Taiichi Ohno &middot; 1988</div>
+        <div class="b-why">where <em>kaizen</em> came from. tiny steps, no stopping. arguably the most important business book ever written.</div>
+      </div>
+      <a class="b-link" href="https://en.wikipedia.org/wiki/Toyota_Production_System" target="_blank">REFERENCE &rarr;</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CONSTITUTIONAL AI (Pillar VII) ============ -->
+<section class="shelf">
+  <div class="shelf-head">
+    <h2>VII &middot; <em>Constitutional AI</em></h2>
+    <span class="pillar">PILLAR VII</span>
+  </div>
+  <p class="shelf-intro">Anthropic&rsquo;s line of work: give the model a constitution (principles), not just examples. ReST closes the loop &mdash; models train themselves on their own best outputs.</p>
+
+  <div class="book-list">
+    <div class="book">
+      <div class="book-main">
+        <div class="b-title">Constitutional AI: Harmlessness from AI Feedback</div>
+        <div class="b-meta">Bai, Kadavath et al &middot; Anthropic &middot; 2022</div>
+        <div class="b-why">how Claude was shaped. <em>principles before content.</em> the manifesto.</div>
+      </div>
+      <a class="b-link free" href="https://arxiv.org/abs/2212.08073" target="_blank">ARXIV &rarr;</a>
+    </div>
+
+    <div class="book">
+      <div class="book-main">
+        <div class="b-title">Reinforced Self-Training (ReST) for Language Modeling</div>
+        <div class="b-meta">Gulcehre et al &middot; 2023</div>
+        <div class="b-why">closing the loop: models train themselves on their own best outputs. the obvious next step.</div>
+      </div>
+      <a class="b-link free" href="https://arxiv.org/abs/2308.08998" target="_blank">ARXIV &rarr;</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ MORE SHELVES (placeholder for future categories) ============ -->
+<section class="shelf">
+  <div class="shelf-head">
+    <h2>+ <em>more shelves, soon</em></h2>
+    <span class="pillar">ROLLING</span>
+  </div>
+  <p class="shelf-intro">cognitive science, learning theory, philosophy of curiosity, agent design, taste &mdash; rolling additions as i remember them. <em>send me yours &rarr; <a href="/#contact" style="color:var(--neon-cyan);">leave a letter</a>.</em></p>
+</section>
+
+<footer>
+  <p>shelved with care &middot; <a href="/">sophieren.com</a> &middot; rolling forever</p>
+</footer>
+
+</body>
+</html>
