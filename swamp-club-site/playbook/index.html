@@ -380,6 +380,80 @@
   }
   footer a{color:var(--neon-cyan);}
 
+  /* ============ TOAST + CONFIRM MODAL (swamp-styled) ============ */
+  .swamp-toast{
+    position:fixed;top:24px;left:50%;transform:translateX(-50%) translateY(-30px);
+    z-index:9999;
+    padding:14px 22px;
+    background:rgba(8,19,14,.85);
+    backdrop-filter:blur(14px) saturate(140%);
+    -webkit-backdrop-filter:blur(14px) saturate(140%);
+    border:1.5px solid rgba(82,255,224,.4);
+    border-radius:16px;
+    box-shadow:
+      0 20px 40px -16px rgba(0,0,0,.6),
+      0 0 0 4px rgba(255,182,193,.12);
+    font-family:'Caveat',cursive;font-size:20px;
+    color:var(--cream);
+    opacity:0;pointer-events:none;
+    transition:opacity .35s, transform .35s cubic-bezier(.3,.7,.4,1);
+    max-width:90vw;text-align:center;
+  }
+  .swamp-toast.show{
+    opacity:1;transform:translateX(-50%) translateY(0);
+  }
+  .swamp-toast em{color:var(--neon-cyan);font-style:italic;}
+
+  .swamp-modal-back{
+    position:fixed;inset:0;z-index:9998;
+    background:rgba(7,16,12,.7);
+    backdrop-filter:blur(6px);
+    opacity:0;pointer-events:none;
+    transition:opacity .3s;
+    display:flex;align-items:center;justify-content:center;padding:20px;
+  }
+  .swamp-modal-back.show{opacity:1;pointer-events:auto;}
+  .swamp-modal{
+    max-width:420px;width:100%;
+    padding:30px 28px 24px;
+    background:linear-gradient(180deg,rgba(15,31,26,.95) 0%,rgba(8,19,14,.98) 100%);
+    border:1.8px solid rgba(82,255,224,.35);
+    border-radius:24px;
+    box-shadow:
+      0 30px 70px -20px rgba(0,0,0,.7),
+      0 0 0 6px rgba(255,182,193,.1);
+    text-align:center;
+    transform:scale(.92);
+    transition:transform .35s cubic-bezier(.3,.7,.4,1);
+  }
+  .swamp-modal-back.show .swamp-modal{transform:scale(1);}
+  .swamp-modal .msg{
+    font-family:'Caveat',cursive;font-size:24px;line-height:1.35;
+    color:var(--cream);margin-bottom:22px;
+  }
+  .swamp-modal .msg em{color:var(--neon-cyan);font-style:italic;}
+  .swamp-modal .btn-row{
+    display:flex;gap:10px;justify-content:center;
+  }
+  .swamp-modal button{
+    font-family:'Bungee',sans-serif;font-size:11px;letter-spacing:1.5px;
+    padding:11px 22px;border-radius:999px;cursor:pointer;border:none;
+    transition:all .2s;
+  }
+  .swamp-modal button.cancel{
+    background:transparent;color:var(--cream);
+    border:1.5px solid rgba(243,238,221,.3);
+  }
+  .swamp-modal button.cancel:hover{
+    border-color:rgba(243,238,221,.6);background:rgba(243,238,221,.06);
+  }
+  .swamp-modal button.confirm{
+    background:var(--neon-pink);color:var(--ink);
+  }
+  .swamp-modal button.confirm:hover{
+    background:#ff8aab;transform:translateY(-1px);
+  }
+
   /* === MOBILE === */
   @media (max-width:680px){
     .topbar{padding:18px;}
@@ -584,7 +658,54 @@
   <p style="opacity:.7;margin-top:8px;">brewed in the swamp &middot; <a href="/">sophieren.com</a></p>
 </footer>
 
+<!-- ===== Swamp-styled toast + confirm modal (reusable) ===== -->
+<div class="swamp-toast" id="swampToast"></div>
+<div class="swamp-modal-back" id="swampModalBack">
+  <div class="swamp-modal">
+    <div class="msg" id="swampModalMsg"></div>
+    <div class="btn-row">
+      <button class="cancel" id="swampModalCancel">cancel</button>
+      <button class="confirm" id="swampModalConfirm">yes, do it</button>
+    </div>
+  </div>
+</div>
+
 <script>
+/* ============================================================
+   SWAMP-STYLED TOAST + CONFIRM (replaces native alert/confirm)
+============================================================ */
+const _toast = document.getElementById('swampToast');
+let _toastTimer = null;
+function swampToast(html, ms){
+  _toast.innerHTML = html;
+  _toast.classList.add('show');
+  if (_toastTimer) clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(() => _toast.classList.remove('show'), ms || 2400);
+}
+
+const _modalBack = document.getElementById('swampModalBack');
+const _modalMsg = document.getElementById('swampModalMsg');
+const _modalCancel = document.getElementById('swampModalCancel');
+const _modalConfirm = document.getElementById('swampModalConfirm');
+function swampConfirm(html, opts){
+  return new Promise(resolve => {
+    _modalMsg.innerHTML = html;
+    _modalConfirm.textContent = (opts && opts.confirmText) || 'yes, do it';
+    _modalCancel.textContent = (opts && opts.cancelText) || 'cancel';
+    _modalBack.classList.add('show');
+    const close = (val) => {
+      _modalBack.classList.remove('show');
+      _modalConfirm.onclick = null;
+      _modalCancel.onclick = null;
+      _modalBack.onclick = null;
+      resolve(val);
+    };
+    _modalConfirm.onclick = () => close(true);
+    _modalCancel.onclick = () => close(false);
+    _modalBack.onclick = (e) => { if (e.target === _modalBack) close(false); };
+  });
+}
+
 /* ============================================================
    GAME 1 — NETWORK RIPPLE (Metcalfe's Law)
    click empty space → add node
@@ -892,9 +1013,11 @@
   }
 
   btn.addEventListener('click', plant);
-  document.getElementById('bloomReset').addEventListener('click', () => {
-    if (!confirm('uproot the whole garden? this can’t be undone.')) return;
+  document.getElementById('bloomReset').addEventListener('click', async () => {
+    const ok = await swampConfirm('uproot the whole garden? <em>this can&rsquo;t be undone.</em>', {confirmText: 'uproot it', cancelText: 'keep growing'});
+    if (!ok) return;
     localStorage.removeItem('bloom:state'); render();
+    swampToast('&hearts; garden cleared. start fresh tomorrow.');
   });
   render();
 })();
@@ -1239,12 +1362,13 @@
 
   document.getElementById('constAsk').addEventListener('click', () => {
     if (picked.length !== 3){
-      alert('pick exactly 3 principles first.');
+      swampToast('pick exactly <em>3</em> principles first.');
       return;
     }
     const q = document.getElementById('constInput').value.trim();
     if (!q){
-      alert('ask the cat something.');
+      swampToast('<em>ask the cat</em> something first.');
+      document.getElementById('constInput').focus();
       return;
     }
     const ans = generate(q);
