@@ -790,29 +790,48 @@ function swampConfirm(html, opts){
   function updateStats(){
     const N = nodes.length;
     const E = edges.length;
-    // Only nodes participating in an edge count toward value (isolated = doesn't exist for Metcalfe)
-    const connectedSet = new Set();
-    edges.forEach(([a,b]) => { connectedSet.add(a); connectedSet.add(b); });
-    const N_eff = connectedSet.size;
-    const maxE_eff = N_eff * (N_eff - 1) / 2;
-    const connectivity = maxE_eff > 0 ? E / maxE_eff : 0;
-    const value = N_eff * N_eff * connectivity;
+    // Find connected components via BFS
+    const adj = {};
+    edges.forEach(([a, b]) => {
+      (adj[a] = adj[a] || []).push(b);
+      (adj[b] = adj[b] || []).push(a);
+    });
+    const visited = new Set();
+    const components = [];
+    for (let i = 0; i < nodes.length; i++){
+      if (visited.has(i) || !adj[i]) continue;
+      const comp = [];
+      const queue = [i];
+      while (queue.length){
+        const n = queue.shift();
+        if (visited.has(n)) continue;
+        visited.add(n);
+        comp.push(n);
+        (adj[n] || []).forEach(nb => { if (!visited.has(nb)) queue.push(nb); });
+      }
+      if (comp.length >= 2) components.push(comp);
+    }
+    // Metcalfe: each connected component contributes size² to value
+    let value = 0;
+    components.forEach(c => { value += c.length * c.length; });
+    const connectedNodeCount = components.reduce((a, c) => a + c.length, 0);
+    const isolatedCount = N - connectedNodeCount;
     // Stats row
-    document.getElementById('netN').textContent = N + (N_eff < N ? ' (' + (N - N_eff) + ' isolated)' : '');
+    document.getElementById('netN').textContent = N + (isolatedCount > 0 ? ' (' + isolatedCount + ' isolated)' : '');
     document.getElementById('netE').textContent = E;
-    document.getElementById('netMax').textContent = maxE_eff;
-    document.getElementById('netVal').textContent = value.toFixed(0);
+    document.getElementById('netMax').textContent = components.length + ' cluster' + (components.length===1?'':'s');
+    document.getElementById('netVal').textContent = value;
     // Meter bars
-    document.getElementById('meterN').textContent = N_eff + (N_eff < N ? ' / ' + N : '');
-    document.getElementById('meterEdges').textContent = E + ' / ' + maxE_eff;
-    document.getElementById('meterValue').textContent = value.toFixed(0);
-    document.getElementById('meterFillN').style.width = Math.min(100, (N_eff/10)*100) + '%';
-    document.getElementById('meterFillEdges').style.width = Math.min(100, connectivity*100) + '%';
+    document.getElementById('meterN').textContent = connectedNodeCount + (isolatedCount > 0 ? ' / ' + N : '');
+    document.getElementById('meterEdges').textContent = components.length + ' connected';
+    document.getElementById('meterValue').textContent = value;
+    document.getElementById('meterFillN').style.width = Math.min(100, (connectedNodeCount/10)*100) + '%';
+    document.getElementById('meterFillEdges').style.width = Math.min(100, components.length > 0 ? 50 + components.length*10 : 0) + '%';
     document.getElementById('meterFillValue').style.width = Math.min(100, value) + '%';
     // Win condition
     if (value >= 100 && !won){
       won = true;
-      swampToast('⚡ value 100 reached! <em>' + N_eff + ' connected nodes, ' + E + ' connections.</em>');
+      swampToast('⚡ value 100 reached! <em>' + components.length + ' cluster' + (components.length===1?'':'s') + ', biggest ' + Math.max(...components.map(c=>c.length)) + ' nodes.</em>');
     }
   }
   svg.addEventListener('click', e => {
