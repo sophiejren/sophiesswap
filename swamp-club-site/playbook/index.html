@@ -519,7 +519,7 @@
   <div class="pillar">PILLAR III &middot; MULTI-ARMED BANDIT</div>
   <h2>Mushroom Bog</h2>
   <p class="principle">
-    Five mushrooms. Each gives you a random number of fireflies when you kick it. You have <b>20 kicks</b>. Some mushrooms are generous, some aren&rsquo;t &mdash; but you don&rsquo;t know which is which. <em>Explore</em> too long and you waste kicks; <em>exploit</em> too fast and you miss the best one.
+    <b>Your goal:</b> figure out which of the 5 mushrooms has the highest average reward. You have <b>20 kicks</b>. Each kick gives a noisy hint about that mushroom&rsquo;s true average. At kick 20, your last "best guess" (the one with the yellow halo) is your final answer. Get it right &rarr; win.
   </p>
   <div class="stage">
     <div class="bog-goal">&#127812; find the most generous mushroom in 20 kicks.</div>
@@ -529,8 +529,8 @@
   </div>
   <div class="controls">
     <span class="stat">kicks left: <b id="bandKicks">20</b></span>
-    <span class="stat">fireflies: <b id="bandLoot" style="color:var(--neon-yellow);">0</b></span>
-    <span class="stat">regret: <b id="bandRegret" style="color:var(--neon-pink);">0</b></span>
+    <span class="stat" style="opacity:.6;">fireflies: <b id="bandLoot">0</b></span>
+    <span class="stat" style="opacity:.6;">regret: <b id="bandRegret">0</b></span>
     <button class="btn ghost" id="bandReset">reset</button>
   </div>
   <div class="pillar-footer">based on <a href="https://en.wikipedia.org/wiki/Multi-armed_bandit" target="_blank">Multi-Armed Bandit Problem</a> &middot; <a href="https://loomus.ai/distill" target="_blank">Pillar III &rarr;</a></div>
@@ -760,11 +760,12 @@ function swampConfirm(html, opts){
     const maxPossible = N * (N-1) / 2;
     document.getElementById('netE').textContent = edges.length;
     document.getElementById('netMax').textContent = maxPossible;
-    // Meter — both bars scale against N²=144 (i.e. N=12) so divergence is visible
-    const REF = 144;
+    // Meter — BOTH bars share the SAME reference axis (N²=625 at N=25).
+    // This way the N bar stays tiny while N² shoots up — the divergence IS the point.
+    const REF = 625;
     document.getElementById('meterN').textContent = N;
     document.getElementById('meterNSq').textContent = NSq;
-    document.getElementById('meterFillN').style.width = Math.min(100, (N/12)*100) + '%';
+    document.getElementById('meterFillN').style.width = Math.min(100, (N/REF)*100) + '%';
     document.getElementById('meterFillNSq').style.width = Math.min(100, (NSq/REF)*100) + '%';
   }
   svg.addEventListener('click', e => {
