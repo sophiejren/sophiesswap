@@ -511,7 +511,7 @@
   <div class="pillar">PILLAR I &middot; NETWORK VALUE</div>
   <h2>Network Ripple</h2>
   <p class="principle">
-    Add nodes. Connect them. Watch the <em>potential connections</em> grow faster than the nodes. <b>Metcalfe&rsquo;s Law:</b> the value of a network grows as N&sup2;, not N. Click empty space to drop a node; click two nodes in a row to connect them.
+    <b>Goal:</b> reach <em>value = 100</em>. Value = N&sup2; &times; how connected the network is. <b>Isolated nodes = 0 value.</b> You need to both add nodes AND connect them. Click empty space to drop a node. Click two nodes in a row to connect them.
   </p>
   <div class="stage net-wrap">
     <div class="net-canvas-wrap">
@@ -524,14 +524,20 @@
         <div class="meter-bar"><div class="meter-fill" id="meterFillN"></div></div>
       </div>
       <div class="meter-row">
-        <div class="meter-label"><span>N&sup2; (potential value)</span><span class="meter-val" id="meterNSq" style="color:var(--neon-yellow);">0</span></div>
-        <div class="meter-bar"><div class="meter-fill quad" id="meterFillNSq"></div></div>
+        <div class="meter-label"><span>edges connected</span><span class="meter-val" id="meterEdges" style="color:var(--neon-cyan);">0 / 0</span></div>
+        <div class="meter-bar"><div class="meter-fill" id="meterFillEdges" style="background:var(--neon-cyan);"></div></div>
       </div>
-      <div class="meter-note">&uarr; value compounds.<br>not just adds up.</div>
+      <div class="meter-row">
+        <div class="meter-label"><span>VALUE (target 100)</span><span class="meter-val" id="meterValue" style="color:var(--neon-yellow);">0</span></div>
+        <div class="meter-bar"><div class="meter-fill quad" id="meterFillValue"></div></div>
+      </div>
+      <div class="meter-note">value = N&sup2; &times; connectivity.<br>nodes <em>alone</em> = nothing.</div>
     </div>
   </div>
   <div class="controls">
-    <span class="stat">connections made: <b id="netE">0</b> / <b id="netMax">0</b></span>
+    <span class="stat">nodes: <b id="netN">0</b></span>
+    <span class="stat">connections: <b id="netE">0</b> / <b id="netMax">0</b></span>
+    <span class="stat" style="background:rgba(255,210,63,.1);border-color:rgba(255,210,63,.35);">value: <b id="netVal" style="color:var(--neon-yellow);">0</b> / 100</span>
     <button class="btn ghost" id="netReset">reset</button>
   </div>
   <div class="pillar-footer">based on <a href="https://en.wikipedia.org/wiki/Metcalfe%27s_law" target="_blank">Metcalfe&rsquo;s Law</a> &middot; <a href="https://loomus.ai/distill" target="_blank">Pillar I &rarr;</a></div>
@@ -739,10 +745,11 @@ function swampConfirm(html, opts){
 ============================================================ */
 (function(){
   const svg = document.getElementById('netCanvas');
-  const W = 600, H = 280;
+  const W = 600, H = 260;
   let nodes = [];
   let edges = [];
   let selectedNode = null;
+  let won = false;
   const COLORS = ['#52ffe0', '#ffd23f', '#ff8a3d', '#b6ff5b', '#ff6b9d'];
 
   function render(){
@@ -782,17 +789,27 @@ function swampConfirm(html, opts){
   }
   function updateStats(){
     const N = nodes.length;
-    const NSq = N * N;
+    const E = edges.length;
     const maxPossible = N * (N-1) / 2;
-    document.getElementById('netE').textContent = edges.length;
+    const connectivity = maxPossible > 0 ? E / maxPossible : 0;
+    const value = N * N * connectivity;
+    // Stats row
+    document.getElementById('netN').textContent = N;
+    document.getElementById('netE').textContent = E;
     document.getElementById('netMax').textContent = maxPossible;
-    // Meter — BOTH bars share the SAME reference axis (N²=625 at N=25).
-    // This way the N bar stays tiny while N² shoots up — the divergence IS the point.
-    const REF = 625;
+    document.getElementById('netVal').textContent = value.toFixed(1);
+    // Meter bars
     document.getElementById('meterN').textContent = N;
-    document.getElementById('meterNSq').textContent = NSq;
-    document.getElementById('meterFillN').style.width = Math.min(100, (N/REF)*100) + '%';
-    document.getElementById('meterFillNSq').style.width = Math.min(100, (NSq/REF)*100) + '%';
+    document.getElementById('meterEdges').textContent = E + ' / ' + maxPossible;
+    document.getElementById('meterValue').textContent = value.toFixed(1);
+    document.getElementById('meterFillN').style.width = Math.min(100, (N/12)*100) + '%';
+    document.getElementById('meterFillEdges').style.width = Math.min(100, connectivity*100) + '%';
+    document.getElementById('meterFillValue').style.width = Math.min(100, value) + '%';
+    // Win condition
+    if (value >= 100 && !won){
+      won = true;
+      swampToast('⚡ value 100 reached! <em>' + N + ' nodes, ' + E + ' connections.</em>');
+    }
   }
   svg.addEventListener('click', e => {
     const rect = svg.getBoundingClientRect();
@@ -802,7 +819,7 @@ function swampConfirm(html, opts){
     render();
   });
   document.getElementById('netReset').addEventListener('click', () => {
-    nodes = []; edges = []; selectedNode = null; render();
+    nodes = []; edges = []; selectedNode = null; won = false; render();
   });
   render();
 })();
