@@ -191,18 +191,9 @@
   }
   .mushroom svg{display:block;}
   .mushroom .empirical{
-    position:absolute;left:50%;bottom:6px;transform:translateX(-50%);
-    font-family:'JetBrains Mono',monospace;font-size:9px;
+    position:absolute;left:50%;bottom:-2px;transform:translateX(-50%);
+    font-family:'JetBrains Mono',monospace;font-size:10px;
     color:var(--neon-cyan);opacity:.85;white-space:nowrap;
-  }
-  .mushroom .ucb{
-    position:absolute;left:50%;bottom:-6px;transform:translateX(-50%);
-    font-family:'JetBrains Mono',monospace;font-size:9px;
-    color:var(--neon-yellow);white-space:nowrap;
-  }
-  .mushroom.ucb-best{
-    background:rgba(82,255,224,.08);
-    box-shadow:0 0 0 2px var(--neon-cyan);
   }
   .mushroom .true-mean{
     position:absolute;left:50%;top:-22px;transform:translateX(-50%);
@@ -530,17 +521,17 @@
 <nav class="topbar">
   <a href="/">&larr; back to the swamp</a>
   <span style="display:flex;gap:14px;align-items:center;">
-    <a href="/playbook/teens/" style="color:var(--neon-yellow);">&larr; lighter version (for teens)</a>
+    <a href="/playbook/" style="color:var(--neon-pink);">deeper version &rarr;</a>
     <a href="https://loomus.ai/distill" target="_blank">read the Playbook &rarr;</a>
   </span>
 </nav>
 
 <header class="hero">
-  <div class="kicker">SEVEN GAMES &middot; SEVEN PRINCIPLES &middot; <span style="color:var(--neon-pink);">DEEP</span></div>
-  <h1>The Playbook <em>+</em></h1>
-  <p class="sub">the same seven pillars &mdash; deeper.</p>
+  <div class="kicker">SEVEN GAMES &middot; SEVEN PRINCIPLES &middot; <span style="color:var(--neon-yellow);">FOR EVERYONE</span></div>
+  <h1>The <em>Playbook</em></h1>
+  <p class="sub">play the seven pillars of LOOMUS Distill</p>
   <p class="lede">
-    Same seven games, but with the <em>real</em> mathematics inside. Bandit gets UCB confidence intervals. Bayes gets a prior slider. Frog can mode-collapse. <b>This is the version for people who want to see the math through the play.</b>
+    Seven tiny games. Each one is a playable demo of one principle from <em>LOOMUS Distill</em> &mdash; Metcalfe&rsquo;s Law, Bayesian belief, multi-armed bandits, RLHF, Popper&rsquo;s falsifiability, Kaizen compounding, Constitutional AI. <b>Play the idea, then read the theory.</b>
   </p>
 </header>
 
@@ -586,7 +577,7 @@
   <div class="pillar">PILLAR III &middot; MULTI-ARMED BANDIT</div>
   <h2>Mushroom Bog</h2>
   <p class="principle">
-    <b>Goal:</b> find the most generous mushroom in <em>as few kicks as possible</em>. Each kick adds a sample; we display the <em>UCB upper confidence bound</em> for each mushroom (mean + uncertainty &times; sqrt(2 ln T / n)). The UCB algorithm says: <b>always kick the mushroom with the highest UCB &mdash; that&rsquo;s how it optimally balances explore vs exploit</b>. Try following UCB. Beat the algorithm if you can.
+    <b>Your goal:</b> find the most generous mushroom in <em>as few kicks as possible</em>. Each kick gives a noisy hint about that mushroom&rsquo;s true average. When you&rsquo;re sure, hit &ldquo;commit&rdquo; &mdash; we&rsquo;ll see if you were right. Stop too early &rarr; wrong guess. Kick forever &rarr; wasted time.
   </p>
   <div class="stage">
     <div class="bog-goal">&#127812; find the most generous mushroom. fewest kicks wins.</div>
@@ -635,21 +626,15 @@
   <div class="pillar">PILLAR II &middot; BAYESIAN INFERENCE</div>
   <h2>Bayes Fog</h2>
   <p class="principle">
-    <b>Set your prior</b> first (drag the sliders to assign initial probability to each box). Then take up to 3 hints &mdash; each is Bayesian evidence: P(box|hint) &prop; P(hint|box) &times; P(box). <em>Strong prior + weak hint &rarr; prior wins.</em> Weak prior + strong hint &rarr; hint wins. <b>Same hint, different prior, different answer</b>. This is the most underrated insight in Bayes.
+    One box hides the prize. You can ask for hints &mdash; but each hint only <em>shifts the probability</em>, never confirms. After 3 hints, you guess. <b>Knowing isn&rsquo;t binary</b> &mdash; it&rsquo;s a distribution that sharpens with evidence.
   </p>
   <div class="stage">
-    <p style="font-family:'Caveat',cursive;font-size:16px;color:var(--neon-yellow);text-align:center;margin-bottom:8px;">step 1 &mdash; set your prior beliefs (must sum to 100%)</p>
-    <div id="priorSliders" style="display:flex;flex-direction:column;gap:8px;max-width:380px;margin:0 auto 16px;"></div>
-    <div style="text-align:center;margin-bottom:12px;">
-      <button class="btn ghost" id="priorReset">reset to uniform (25% each)</button>
-      <button class="btn" id="priorLock" style="margin-left:6px;">lock prior &rarr; hint phase</button>
-    </div>
-    <div class="bayes-hint" id="bayesHint">set your prior first, then lock it in.</div>
+    <div class="bayes-hint" id="bayesHint">3 hints available. tap &ldquo;hint&rdquo; to update your beliefs.</div>
     <div class="bayes-boxes" id="bayesBoxes"></div>
   </div>
   <div class="controls">
     <span class="stat">hints used: <b id="bayesHintsUsed">0</b> / 3</span>
-    <button class="btn" id="bayesHintBtn" disabled>give me a hint</button>
+    <button class="btn" id="bayesHintBtn">give me a hint</button>
     <button class="btn ghost" id="bayesReset">new round</button>
   </div>
   <div class="pillar-footer">based on <a href="https://en.wikipedia.org/wiki/Bayesian_inference" target="_blank">Bayesian inference</a> (Bayes 1763 &middot; Jaynes 2003) &middot; <a href="https://loomus.ai/distill" target="_blank">Pillar II &rarr;</a></div>
@@ -678,7 +663,7 @@
   <div class="pillar">PILLAR IV &middot; REINFORCEMENT LEARNING</div>
   <h2>Teach the Frog</h2>
   <p class="principle">
-    <b>Goal:</b> train the frog to match a <em>target personality</em> &mdash; <b>without triggering mode collapse</b>. RLHF&rsquo;s dirty secret: if you reward one style too aggressively, the model converges to ONE thing and forgets the rest. Watch for the &ldquo;mode collapse&rdquo; warning when any vibe exceeds 75%. <em>Real models do this too &mdash; it&rsquo;s why over-trained chatbots all sound the same.</em>
+    <b>Goal:</b> train the frog to match a <em>target personality</em>. The frog says random things in 4 styles. Like it? <b>thumbs up</b> &rarr; that style&rsquo;s weight goes up. Don&rsquo;t? <b>thumbs down</b>. After 10 rounds, your frog&rsquo;s vibe distribution should match the target. This is <em>RLHF</em> in miniature.
   </p>
   <div class="stage frog-stage">
     <svg class="frog-svg" width="80" height="80" viewBox="0 0 80 80">
@@ -942,39 +927,20 @@ function swampConfirm(html, opts){
     </svg>`;
   }
 
-  function ucb(m, T){
-    if (m.kicks === 0) return Infinity;  // never tried = max priority
-    return (m.total/m.kicks) + Math.sqrt(2 * Math.log(Math.max(T, 1)) / m.kicks);
-  }
-
-  function ucbBestIdx(){
-    const T = kicksUsed;
-    let best = 0, bv = -Infinity;
-    mushrooms.forEach((m, i) => {
-      const v = ucb(m, T);
-      if (v > bv) { bv = v; best = i; }
-    });
-    return best;
-  }
-
   function render(){
     stage.innerHTML = '';
     const guess = bestGuessIdx();
-    const ucbIdx = committed ? -1 : ucbBestIdx();
     mushrooms.forEach((m, i) => {
       const btn = document.createElement('button');
       let cls = 'mushroom';
       if (m.revealed) cls += ' revealed';
       if (i === guess && !committed) cls += ' best-guess';
-      if (i === ucbIdx && !committed && i !== guess) cls += ' ucb-best';
       if (m.revealed && i === trulyBestIdx) cls += ' truly-best';
       btn.className = cls;
       btn.disabled = committed;
       const avgLabel = m.kicks ? '~' + (m.total/m.kicks).toFixed(1) : '?';
-      const ucbLabel = m.kicks === 0 ? 'UCB:∞' : 'UCB:' + ucb(m, kicksUsed).toFixed(1);
       btn.innerHTML = mushroomSVG(m.color) +
         '<span class="empirical">' + avgLabel + '</span>' +
-        '<span class="ucb">' + ucbLabel + '</span>' +
         '<span class="true-mean">true: ' + m.mean.toFixed(1) + '</span>';
       btn.addEventListener('click', () => kick(i, btn));
       stage.appendChild(btn);
@@ -982,12 +948,9 @@ function swampConfirm(html, opts){
     document.getElementById('bandKicks').textContent = kicksUsed;
     if (!committed){
       if (kicksUsed === 0){
-        document.getElementById('bogGuess').innerHTML = 'no kicks yet &mdash; UCB says: try any (they&rsquo;re all &#8734;)';
+        document.getElementById('bogGuess').innerHTML = 'no kicks yet &mdash; every mushroom is equally suspicious.';
       } else if (guess >= 0){
-        const ucbHint = (ucbIdx !== guess) ?
-          ' &middot; <span style="color:var(--neon-cyan)">UCB suggests <b>' + mushrooms[ucbIdx].name + '</b> next</span>' :
-          ' &middot; <span style="color:var(--neon-cyan)">UCB agrees</span>';
-        document.getElementById('bogGuess').innerHTML = 'best mean: <b>' + mushrooms[guess].name + '</b> (~' + (mushrooms[guess].total/mushrooms[guess].kicks).toFixed(1) + ')' + ucbHint;
+        document.getElementById('bogGuess').innerHTML = 'best guess so far: <b>' + mushrooms[guess].name + '</b> (avg ~' + (mushrooms[guess].total/mushrooms[guess].kicks).toFixed(1) + ', based on ' + mushrooms[guess].kicks + ' kick' + (mushrooms[guess].kicks===1?'':'s') + ')';
       }
     }
     document.getElementById('bandCommit').disabled = committed || guess < 0;
@@ -1209,48 +1172,17 @@ function swampConfirm(html, opts){
 ============================================================ */
 (function(){
   const BOXES = ['A', 'B', 'C', 'D'];
-  let probs, prior, secret, hintsUsed, locked, priorLocked;
+  let probs, secret, hintsUsed, locked;
 
   function init(){
-    prior = [25, 25, 25, 25];  // user-editable, percentages
-    probs = prior.slice().map(p => p/100);
+    probs = [.25, .25, .25, .25];
     secret = Math.floor(Math.random() * 4);
     hintsUsed = 0;
     locked = false;
-    priorLocked = false;
     document.getElementById('bayesHint').className = 'bayes-hint';
-    document.getElementById('bayesHint').textContent = 'set your prior first, then lock it in.';
-    document.getElementById('bayesHintBtn').disabled = true;
-    document.getElementById('priorLock').disabled = false;
-    document.getElementById('priorLock').textContent = 'lock prior → hint phase';
-    renderPriorSliders();
+    document.getElementById('bayesHint').textContent = '3 hints available. tap "hint" to update your beliefs.';
+    document.getElementById('bayesHintBtn').disabled = false;
     render();
-  }
-
-  function renderPriorSliders(){
-    const c = document.getElementById('priorSliders');
-    const sum = prior.reduce((a,b)=>a+b, 0);
-    c.innerHTML = '';
-    BOXES.forEach((name, i) => {
-      const row = document.createElement('div');
-      row.style.cssText = 'display:flex;align-items:center;gap:10px;';
-      row.innerHTML =
-        '<span style="font-family:Bungee,sans-serif;font-size:13px;color:var(--neon-cyan);width:18px;">'+name+'</span>' +
-        '<input type="range" min="0" max="100" value="'+prior[i]+'" style="flex:1;accent-color:var(--neon-cyan);" ' + (priorLocked ? 'disabled' : '') + ' data-i="'+i+'"/>' +
-        '<span style="font-family:JetBrains Mono,monospace;font-size:12px;color:var(--cream);width:42px;text-align:right;">'+prior[i]+'%</span>';
-      c.appendChild(row);
-    });
-    c.querySelectorAll('input').forEach(inp => {
-      inp.addEventListener('input', e => {
-        prior[+e.target.dataset.i] = +e.target.value;
-        renderPriorSliders();
-      });
-    });
-    const total = prior.reduce((a,b)=>a+b,0);
-    document.getElementById('priorLock').disabled = priorLocked || total === 0;
-    if (!priorLocked){
-      document.getElementById('priorLock').textContent = total === 100 ? 'lock prior → hint phase' : 'lock prior (currently ' + total + '%)';
-    }
   }
 
   function render(){
@@ -1309,24 +1241,6 @@ function swampConfirm(html, opts){
 
   document.getElementById('bayesHintBtn').addEventListener('click', giveHint);
   document.getElementById('bayesReset').addEventListener('click', init);
-  document.getElementById('priorReset').addEventListener('click', () => {
-    if (priorLocked) return;
-    prior = [25, 25, 25, 25];
-    renderPriorSliders();
-  });
-  document.getElementById('priorLock').addEventListener('click', () => {
-    const total = prior.reduce((a,b)=>a+b, 0);
-    if (total === 0) return;
-    // Normalize to probabilities
-    probs = prior.map(p => p/total);
-    priorLocked = true;
-    document.getElementById('bayesHintBtn').disabled = false;
-    document.getElementById('priorLock').textContent = 'prior locked ✓';
-    document.getElementById('priorLock').disabled = true;
-    document.getElementById('bayesHint').textContent = 'prior set. 3 hints available — each is Bayesian evidence.';
-    renderPriorSliders();
-    render();
-  });
   init();
 })();
 
@@ -1490,12 +1404,6 @@ function swampConfirm(html, opts){
     weights = weights.map(w => w/sum);
     round++;
     document.getElementById('frogRound').textContent = round;
-    // Mode collapse warning
-    const maxW = Math.max(...weights);
-    if (maxW > 0.75){
-      const collapsedVibe = VIBES[weights.indexOf(maxW)];
-      swampToast('⚠️ <em>mode collapse</em>: frog is ' + (maxW*100).toFixed(0) + '% <b>' + collapsedVibe + '</b> &mdash; over-trained, lost diversity.', 3000);
-    }
     renderCompare();
     nextPhrase();
   }
