@@ -354,14 +354,40 @@
   .rate-btn:hover{transform:scale(1.1);}
   .rate-btn.up:hover{border-color:var(--neon-lime);background:rgba(182,255,91,.15);}
   .rate-btn.down:hover{border-color:var(--neon-pink);background:rgba(255,107,157,.12);}
-  .vibes-bars{display:flex;flex-direction:column;gap:6px;margin-top:14px;max-width:380px;margin-left:auto;margin-right:auto;}
-  .vibe-bar{display:flex;align-items:center;gap:8px;}
+  /* Target vs Current side-by-side comparison */
+  .vibes-compare{
+    display:grid;grid-template-columns:1fr 1fr;gap:14px;
+    max-width:440px;margin:16px auto 0;
+    padding:14px;background:rgba(0,0,0,.25);border-radius:12px;
+  }
+  .vibes-col{display:flex;flex-direction:column;gap:8px;}
+  .vibes-col h4{
+    font-family:'Bungee',sans-serif;font-size:9px;letter-spacing:1.6px;
+    color:var(--muted);text-align:center;margin-bottom:4px;
+  }
+  .vibes-col.target h4{color:var(--neon-yellow);}
+  .vibes-col.current h4{color:var(--neon-cyan);}
+  .vibe-bar{display:flex;align-items:center;gap:6px;}
   .vibe-name{
-    font-family:'JetBrains Mono',monospace;font-size:11px;
-    color:var(--muted);width:80px;text-align:right;
+    font-family:'JetBrains Mono',monospace;font-size:10px;
+    color:var(--cream);width:50px;text-align:right;opacity:.8;
   }
   .vibe-track{flex:1;height:8px;background:rgba(0,0,0,.4);border-radius:4px;overflow:hidden;}
-  .vibe-fill{height:100%;background:var(--neon-cyan);transition:width .5s;}
+  .vibe-fill{height:100%;transition:width .5s;}
+  .vibes-col.target .vibe-fill{background:var(--neon-yellow);}
+  .vibes-col.current .vibe-fill{background:var(--neon-cyan);}
+  .frog-distance{
+    text-align:center;margin-top:10px;
+    font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);
+  }
+  .frog-distance b{color:var(--neon-cyan);}
+  .frog-result{
+    text-align:center;margin-top:14px;
+    font-family:'Caveat',cursive;font-size:22px;line-height:1.3;
+    color:var(--cream);min-height:30px;
+  }
+  .frog-result.win{color:var(--neon-lime);}
+  .frog-result.lose{color:var(--neon-pink);}
 
   /* ============ GAME 7: CONSTITUTION CAT ============ */
   .const-rules{display:flex;flex-direction:column;gap:8px;margin-bottom:18px;}
@@ -634,7 +660,7 @@
   <div class="pillar">PILLAR IV &middot; REINFORCEMENT LEARNING</div>
   <h2>Teach the Frog</h2>
   <p class="principle">
-    The frog says something. Like it? <b>thumbs up.</b> Don&rsquo;t? <b>thumbs down.</b> Watch its "vibes" shift toward what you reward. After 10 rounds, the frog has a personality you trained &mdash; this is <em>RLHF</em> in miniature.
+    <b>Goal:</b> train the frog to match a <em>target personality</em>. The frog says random things in 4 styles. Like it? <b>thumbs up</b> &rarr; that style&rsquo;s weight goes up. Don&rsquo;t? <b>thumbs down</b>. After 10 rounds, your frog&rsquo;s vibe distribution should match the target. This is <em>RLHF</em> in miniature.
   </p>
   <div class="stage frog-stage">
     <svg class="frog-svg" width="80" height="80" viewBox="0 0 80 80">
@@ -648,17 +674,19 @@
       <circle cx="50" cy="29" r="2.5" fill="#1a1a1a"/>
       <path d="M28 48 q12 6 24 0" stroke="#1a4a26" stroke-width="2" fill="none" stroke-linecap="round"/>
     </svg>
-    <div class="frog-says" id="frogSays"><em>*ribbit*</em> &mdash; click &ldquo;start&rdquo; and rate what i say.</div>
+    <div class="frog-says" id="frogSays"><em>*ribbit*</em> &mdash; click &ldquo;start&rdquo;. i&rsquo;ll say things in 4 styles. you train me toward the target.</div>
     <div class="frog-rate" id="frogRate" style="display:none;">
       <button class="rate-btn down" id="frogDown" aria-label="thumbs down">&#128078;</button>
       <button class="rate-btn up" id="frogUp" aria-label="thumbs up">&#128077;</button>
     </div>
-    <div class="vibes-bars" id="vibesBars"></div>
+    <div class="vibes-compare" id="vibesCompare"></div>
+    <div class="frog-distance" id="frogDistance"></div>
+    <div class="frog-result" id="frogResult"></div>
   </div>
   <div class="controls">
     <span class="stat">round: <b id="frogRound">0</b> / 10</span>
-    <button class="btn" id="frogStart">start</button>
-    <button class="btn ghost" id="frogReset">reset frog</button>
+    <button class="btn" id="frogStart">start training</button>
+    <button class="btn ghost" id="frogReset">new target</button>
   </div>
   <div class="pillar-footer">based on <a href="https://arxiv.org/abs/1706.03741" target="_blank">RLHF</a> (Christiano 2017) &amp; <a href="http://incompleteideas.net/book/the-book-2nd.html" target="_blank">Sutton &amp; Barto RL</a> &middot; <a href="https://loomus.ai/distill" target="_blank">Pillar IV &rarr;</a></div>
 </section>
@@ -668,19 +696,20 @@
   <div class="pillar">PILLAR VII &middot; CONSTITUTIONAL AI</div>
   <h2>Constitution Cat</h2>
   <p class="principle">
-    Pick <b>3 principles</b> for the cat. Type a question. The cat answers <em>under those principles</em>. See which principle shaped which part of the answer. Same input, different constitutions &mdash; different cats.
+    <b>Guess the constitution.</b> The cat just gave you an answer below. It was generated under 3 secret principles from the list. <em>Which 3?</em> Pick exactly 3 checkboxes &rarr; submit. Score: 3/3 = perfect, 2/3 = close, &le;1 = noise. Same answer, different constitution &mdash; like Constitutional AI in reverse.
   </p>
   <div class="stage">
-    <div class="const-rules" id="constRules"></div>
-    <input class="const-input" id="constInput" placeholder="ask the cat anything..." maxlength="160" />
-    <div style="text-align:center;margin-top:14px;">
-      <button class="btn" id="constAsk">ask the cat</button>
-    </div>
-    <div class="const-answer" id="constAnswer" style="display:none;"></div>
+    <div class="const-answer" id="constAnswer"></div>
     <div class="const-applied" id="constApplied" style="display:none;"></div>
+    <p style="font-family:'Caveat',cursive;font-size:18px;color:var(--neon-cyan);margin:14px 0 10px;text-align:center;">which 3 rules did she use? (pick exactly 3)</p>
+    <div class="const-rules" id="constRules"></div>
+    <div style="text-align:center;margin-top:14px;">
+      <button class="btn" id="constAsk">submit my guess</button>
+    </div>
   </div>
   <div class="controls">
-    <button class="btn ghost" id="constReset">change constitution</button>
+    <span class="stat" id="constScore" style="display:none;">score: <b id="constScoreNum"></b> / 3</span>
+    <button class="btn ghost" id="constReset">new puzzle</button>
   </div>
   <div class="pillar-footer">based on <a href="https://arxiv.org/abs/2212.08073" target="_blank">Constitutional AI</a> (Anthropic, 2022) &middot; <a href="https://loomus.ai/distill" target="_blank">Pillar VII &rarr;</a></div>
 </section>
@@ -1309,16 +1338,34 @@ function swampConfirm(html, opts){
     ]
   };
 
-  let weights, round, current;
+  let weights, target, round, current, done;
+
+  function generateTarget(){
+    // Generate a clean random target (one dominant vibe + secondary + small others)
+    const idxs = [0,1,2,3].sort(() => Math.random() - 0.5);
+    const dist = [0.5, 0.3, 0.15, 0.05];  // weighted toward 1-2 strong vibes
+    const t = [0,0,0,0];
+    idxs.forEach((idx, i) => t[idx] = dist[i]);
+    return t;
+  }
 
   function init(){
     weights = [.25, .25, .25, .25];
-    round = 0; current = null;
-    document.getElementById('frogSays').innerHTML = '<em>*ribbit*</em> &mdash; click "start" and rate what i say.';
+    target = generateTarget();
+    round = 0; current = null; done = false;
+    document.getElementById('frogSays').innerHTML = '<em>*ribbit*</em> &mdash; click "start training". match the target distribution.';
     document.getElementById('frogRate').style.display = 'none';
     document.getElementById('frogStart').disabled = false;
+    document.getElementById('frogStart').textContent = 'start training';
     document.getElementById('frogRound').textContent = '0';
-    renderBars();
+    document.getElementById('frogResult').textContent = '';
+    document.getElementById('frogResult').className = 'frog-result';
+    renderCompare();
+  }
+
+  function distance(){
+    // average absolute distance per vibe (lower = closer to target)
+    return target.reduce((a, t, i) => a + Math.abs(t - weights[i]), 0) / 4;
   }
 
   function pickVibe(){
@@ -1332,11 +1379,7 @@ function swampConfirm(html, opts){
   }
 
   function nextPhrase(){
-    if (round >= 10){
-      document.getElementById('frogSays').innerHTML = '*ribbit* &mdash; you&rsquo;ve trained me. <em>that&rsquo;s RLHF.</em>';
-      document.getElementById('frogRate').style.display = 'none';
-      return;
-    }
+    if (round >= 10){ finish(); return; }
     current = pickVibe();
     const arr = PHRASES[VIBES[current]];
     const txt = arr[Math.floor(Math.random()*arr.length)];
@@ -1347,29 +1390,64 @@ function swampConfirm(html, opts){
   }
 
   function rate(direction){
-    if (current === null) return;
-    const delta = direction === 'up' ? .12 : -.08;
+    if (current === null || done) return;
+    const delta = direction === 'up' ? .14 : -.10;
     weights[current] += delta;
     weights = weights.map(w => Math.max(.02, w));
     const sum = weights.reduce((a,b)=>a+b, 0);
     weights = weights.map(w => w/sum);
     round++;
     document.getElementById('frogRound').textContent = round;
-    renderBars();
+    renderCompare();
     nextPhrase();
   }
 
-  function renderBars(){
-    const c = document.getElementById('vibesBars');
-    c.innerHTML = '';
-    VIBES.forEach((v, i) => {
-      const row = document.createElement('div');
-      row.className = 'vibe-bar';
-      row.innerHTML =
-        '<span class="vibe-name">' + v + '</span>' +
-        '<div class="vibe-track"><div class="vibe-fill" style="width:' + (weights[i]*100).toFixed(0) + '%"></div></div>';
-      c.appendChild(row);
-    });
+  function finish(){
+    done = true;
+    const d = distance();
+    document.getElementById('frogRate').style.display = 'none';
+    const says = document.getElementById('frogSays');
+    const res = document.getElementById('frogResult');
+    const dominant = VIBES[target.indexOf(Math.max(...target))];
+    if (d < 0.10){
+      says.innerHTML = '<em>*ribbit*</em> &mdash; you trained me well.';
+      res.className = 'frog-result win';
+      res.innerHTML = '✨ nailed it. you trained a <b>' + dominant + '</b>-leaning frog. avg distance: ' + (d*100).toFixed(0) + '%';
+    } else if (d < 0.18){
+      says.innerHTML = '*ribbit* &mdash; close enough.';
+      res.className = 'frog-result';
+      res.innerHTML = 'close. avg distance: ' + (d*100).toFixed(0) + '%. target was <b>' + dominant + '</b>-leaning.';
+    } else {
+      says.innerHTML = '*confused ribbit*';
+      res.className = 'frog-result lose';
+      res.innerHTML = 'you trained a frog. just not the one we asked for. distance: ' + (d*100).toFixed(0) + '%';
+    }
+  }
+
+  function renderCompare(){
+    const c = document.getElementById('vibesCompare');
+    c.innerHTML =
+      '<div class="vibes-col target"><h4>🎯 TARGET</h4>' +
+        VIBES.map((v, i) =>
+          '<div class="vibe-bar">' +
+            '<span class="vibe-name">' + v + '</span>' +
+            '<div class="vibe-track"><div class="vibe-fill" style="width:' + (target[i]*100).toFixed(0) + '%"></div></div>' +
+          '</div>'
+        ).join('') +
+      '</div>' +
+      '<div class="vibes-col current"><h4>🐸 YOUR FROG</h4>' +
+        VIBES.map((v, i) =>
+          '<div class="vibe-bar">' +
+            '<span class="vibe-name">' + v + '</span>' +
+            '<div class="vibe-track"><div class="vibe-fill" style="width:' + (weights[i]*100).toFixed(0) + '%"></div></div>' +
+          '</div>'
+        ).join('') +
+      '</div>';
+    if (round > 0 && !done){
+      document.getElementById('frogDistance').innerHTML = 'avg distance from target: <b>' + (distance()*100).toFixed(0) + '%</b> (need &lt;10% to win)';
+    } else {
+      document.getElementById('frogDistance').innerHTML = '';
+    }
   }
 
   document.getElementById('frogStart').addEventListener('click', () => {
@@ -1387,106 +1465,122 @@ function swampConfirm(html, opts){
 ============================================================ */
 (function(){
   const RULES = [
-    {id: 'question', label: 'always answer with a question', tag: 'Q'},
-    {id: 'short', label: 'use only short words (max 5 letters)', tag: 'SHORT'},
-    {id: 'body', label: 'mention a part of the body', tag: 'BODY'},
-    {id: 'purple', label: 'include something purple', tag: 'PURPLE'},
-    {id: 'cat', label: 'sneak in a cat sound', tag: 'CAT'},
-    {id: 'count', label: 'use exactly seven words', tag: '7-WORDS'}
+    {id: 'question', label: 'always answer with a question', tag: 'QUESTION'},
+    {id: 'short', label: 'use only short words (max 5 letters)', tag: 'SHORT WORDS'},
+    {id: 'body', label: 'mention a part of the body', tag: 'BODY PART'},
+    {id: 'purple', label: 'include something purple', tag: 'PURPLE THING'},
+    {id: 'cat', label: 'sneak in a cat sound', tag: 'CAT SOUND'},
+    {id: 'count', label: 'use exactly seven words', tag: '7 WORDS EXACTLY'}
   ];
   const BODY_PARTS = ['hands', 'elbow', 'kneecap', 'tongue', 'eyebrow', 'wrist'];
   const PURPLE_THINGS = ['plum', 'amethyst', 'lavender', 'dusk', 'iris'];
   const CAT_SOUNDS = ['*purr*', '*tiny mew*', '*soft chirp*', '*pawpad tap*'];
 
-  let picked = [];
+  let secretRules = []; // 3 hidden rules the system used
+  let userGuess = [];   // 3 user-picked rules
+  let revealed = false;
 
   function init(){
-    picked = [];
-    render();
-    document.getElementById('constAnswer').style.display = 'none';
+    // System picks 3 random rules
+    const shuffled = RULES.slice().sort(() => Math.random() - 0.5);
+    secretRules = shuffled.slice(0, 3).map(r => r.id);
+    userGuess = [];
+    revealed = false;
+    // Generate the cat's answer using those secret rules
+    const answer = generate(secretRules);
+    document.getElementById('constAnswer').innerHTML = '🐈 the cat says: <br><em>&ldquo;' + answer + '&rdquo;</em>';
+    document.getElementById('constAnswer').style.display = 'block';
     document.getElementById('constApplied').style.display = 'none';
-    document.getElementById('constInput').value = '';
+    document.getElementById('constScore').style.display = 'none';
+    document.getElementById('constAsk').disabled = false;
+    document.getElementById('constAsk').textContent = 'submit my guess';
+    renderRules();
   }
 
-  function render(){
+  function renderRules(){
     const c = document.getElementById('constRules');
     c.innerHTML = '';
     RULES.forEach(r => {
       const div = document.createElement('label');
-      const isPicked = picked.includes(r.id);
-      const isFull = picked.length >= 3 && !isPicked;
-      div.className = 'const-rule' + (isPicked ? ' picked' : '') + (isFull ? ' disabled' : '');
+      const isPicked = userGuess.includes(r.id);
+      const isFull = userGuess.length >= 3 && !isPicked;
+      const isCorrect = revealed && secretRules.includes(r.id);
+      const wasMissed = revealed && secretRules.includes(r.id) && !isPicked;
+      let cls = 'const-rule';
+      if (isPicked) cls += ' picked';
+      if (isFull && !revealed) cls += ' disabled';
+      if (revealed && isCorrect) cls += ' picked';
+      div.className = cls;
       div.innerHTML =
-        '<input type="checkbox"' + (isPicked ? ' checked' : '') + (isFull ? ' disabled' : '') + '>' +
-        '<span class="r-text">' + r.label + '</span>';
-      div.addEventListener('click', e => {
-        e.preventDefault();
-        if (isPicked) picked = picked.filter(x => x !== r.id);
-        else if (picked.length < 3) picked.push(r.id);
-        render();
-      });
+        '<input type="checkbox"' + (isPicked || wasMissed ? ' checked' : '') + (revealed ? ' disabled' : '') + '>' +
+        '<span class="r-text">' + r.label + (revealed && isCorrect ? ' ✓' : '') + (revealed && isPicked && !isCorrect ? ' ✗' : '') + '</span>';
+      if (!revealed){
+        div.addEventListener('click', e => {
+          e.preventDefault();
+          if (isPicked) userGuess = userGuess.filter(x => x !== r.id);
+          else if (userGuess.length < 3) userGuess.push(r.id);
+          renderRules();
+        });
+      }
       c.appendChild(div);
     });
   }
 
-  function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+  function pickOne(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
   function shortify(s){
     return s.split(' ').map(w => w.length > 5 ? w.slice(0, 5) : w).join(' ');
   }
 
-  function generate(question){
-    // base answer (always slightly absurd cat-tone)
+  function generate(rules){
     let parts = [];
-    // body
-    if (picked.includes('body')) parts.push('look at your ' + pick(BODY_PARTS));
-    // purple
-    if (picked.includes('purple')) parts.push('something ' + pick(PURPLE_THINGS));
-    // cat sound
-    if (picked.includes('cat')) parts.push(pick(CAT_SOUNDS));
+    if (rules.includes('body')) parts.push('look at your ' + pickOne(BODY_PARTS));
+    if (rules.includes('purple')) parts.push('something ' + pickOne(PURPLE_THINGS));
+    if (rules.includes('cat')) parts.push(pickOne(CAT_SOUNDS));
 
     let base;
     if (parts.length){
-      base = parts.join('. ') + '. ' + (picked.includes('question') ? 'what do you see?' : 'i see you.');
+      base = parts.join('. ') + '. ' + (rules.includes('question') ? 'what do you see?' : 'i see you.');
     } else {
-      base = picked.includes('question') ? 'what would you check first?' : 'i don’t know.';
+      base = rules.includes('question') ? 'what would you check first?' : 'i don&rsquo;t know.';
     }
-    // short rule
-    if (picked.includes('short')) base = shortify(base);
-    // exactly 7 words rule
-    if (picked.includes('count')){
+    if (rules.includes('short')) base = shortify(base);
+    if (rules.includes('count')){
       let words = base.split(/\s+/).filter(Boolean);
       if (words.length < 7){
         const fillers = ['hmm', 'yes', 'i', 'you', 'maybe', 'still', 'now'];
-        while (words.length < 7) words.push(pick(fillers));
+        while (words.length < 7) words.push(pickOne(fillers));
       } else if (words.length > 7){
         words = words.slice(0, 7);
       }
       base = words.join(' ');
     }
-    // make sure final has a "?" if question rule on
-    if (picked.includes('question') && !base.includes('?')){
-      base = base.replace(/\.$/, '') + ' &mdash; ?';
+    if (rules.includes('question') && !base.includes('?')){
+      base = base.replace(/\.$/, '') + ' — ?';
     }
     return base;
   }
 
   document.getElementById('constAsk').addEventListener('click', () => {
-    if (picked.length !== 3){
-      swampToast('pick exactly <em>3</em> principles first.');
+    if (userGuess.length !== 3){
+      swampToast('pick exactly <em>3</em> rules first.');
       return;
     }
-    const q = document.getElementById('constInput').value.trim();
-    if (!q){
-      swampToast('<em>ask the cat</em> something first.');
-      document.getElementById('constInput').focus();
-      return;
-    }
-    const ans = generate(q);
-    document.getElementById('constAnswer').innerHTML = ans;
-    document.getElementById('constAnswer').style.display = 'block';
-    const appliedTags = picked.map(id => RULES.find(r => r.id === id).tag).join(' &middot; ');
-    document.getElementById('constApplied').innerHTML = 'applied: <b>' + appliedTags + '</b>';
+    revealed = true;
+    const correctCount = userGuess.filter(id => secretRules.includes(id)).length;
+    const secretTags = secretRules.map(id => RULES.find(r => r.id === id).tag).join(' · ');
+    document.getElementById('constApplied').innerHTML = 'actual rules: <b>' + secretTags + '</b>';
     document.getElementById('constApplied').style.display = 'block';
+    document.getElementById('constScore').style.display = 'inline-block';
+    document.getElementById('constScoreNum').textContent = correctCount;
+    document.getElementById('constAsk').disabled = true;
+    document.getElementById('constAsk').textContent = 'revealed';
+    let msg;
+    if (correctCount === 3) msg = '🎯 perfect! 3/3 &mdash; you read the constitution.';
+    else if (correctCount === 2) msg = '👍 2/3 &mdash; close. one rule slipped past you.';
+    else if (correctCount === 1) msg = '1/3 &mdash; the cat is more mysterious than she looks.';
+    else msg = '0/3 &mdash; she answered, but with rules you couldn&rsquo;t see.';
+    swampToast(msg, 3500);
+    renderRules();
   });
   document.getElementById('constReset').addEventListener('click', init);
   init();
