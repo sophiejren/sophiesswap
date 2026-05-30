@@ -1,0 +1,68 @@
+{
+  "name": "Quiet Web Ring",
+  "version": "1.0.0",
+  "tagline": "A ring for the un-clean web.",
+  "manifesto": "Personal sites. Slow sites. Weird sites. Sites that have a soul. Sites that don't look like every SaaS in 2026. Make one, link to the ring, the ring links to others like you.",
+  "source": "https://sophieren.com/quiet-ring/",
+  "repo": "https://github.com/sophiejren/sophiesswap",
+  "license": "MIT",
+  "join_via": "Open a pull request adding your entry to sites[] in this file. See https://sophieren.com/quiet-ring/#join",
+  "criteria": [
+    "Personal, not corporate.",
+    "Made by a human (vibes-coded with AI is fine — taste should still be yours).",
+    "Doesn't look like every other site.",
+    "Real working URL with non-trivial content.",
+    "No crypto pumps, no MLM, no engagement-bait."
+  ],
+  "sites": [
+    {
+      "url": "https://sophieren.com",
+      "name": "Sophie's Swamp",
+      "description": "Personal site of Sophie — art, blues, cognitive recipes, swamp things.",
+      "tags": ["personal","art","weird","author"],
+      "joined": "2026-05-29"
+    },
+    {
+      "url": "https://sophieren.com/curious/",
+      "name": "Curious Agent",
+      "description": "A black kitten named Little Sophie collects wonder-leaves from the world.",
+      "tags": ["agent","wonder","kids"],
+      "joined": "2026-05-29"
+    },
+    {
+      "url": "https://sophieren.com/playbook/",
+      "name": "Playbook",
+      "description": "Decision-making games for thinking about probability, priors, and the real world.",
+      "tags": ["games","thinking","learning"],
+      "joined": "2026-05-29"
+    },
+    {
+      "url": "https://sophieren.com/library/",
+      "name": "Sophie's Library",
+      "description": "109 books selected by LOOMUS, presented as a static shelf.",
+      "tags": ["library","books","reading"],
+      "joined": "2026-05-29"
+    },
+    {
+      "url": "https://sophieren.com/me-and-my-ai-friends/",
+      "name": "Me and My AI Friends",
+      "description": "Dev diary — moments of AI collaboration, plus Publicatomic devlog cross-posts.",
+      "tags": ["diary","ai","collaboration"],
+      "joined": "2026-05-29"
+    },
+    {
+      "url": "https://sophieren.com/mirror/",
+      "name": "The Mirror",
+      "description": "Claude's observations of Sophie — a slow, recurring column.",
+      "tags": ["mirror","observation","slow"],
+      "joined": "2026-05-29"
+    },
+    {
+      "url": "https://sophieren.com/swamp-ui/",
+      "name": "Swamp UI",
+      "description": "Organic, mechanical, weird components for the un-clean web.",
+      "tags": ["components","design","tools"],
+      "joined": "2026-05-29"
+    }
+  ]
+}

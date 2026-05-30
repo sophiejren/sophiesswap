@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<!--
+  Quiet Web Ring — landing page
+  A ring for the un-clean web. Manifesto, member directory, how to join.
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Quiet Web Ring — A ring for the un-clean web</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%230b2018'/><circle cx='16' cy='17' r='8' fill='%2352ffe0' fill-opacity='.3'/><circle cx='16' cy='17' r='4' fill='%2352ffe0'/></svg>" />
+
+<meta name="description" content="Quiet Web Ring — a webring for personal, slow, weird sites that don't look like every SaaS in 2026. Make one, join the ring." />
+<meta property="og:title" content="Quiet Web Ring — A ring for the un-clean web" />
+<meta property="og:description" content="Personal sites. Slow sites. Weird sites. Made by humans." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://sophieren.com/quiet-ring/" />
+<meta property="og:image" content="https://sophieren.com/images/og-image.png" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Caveat:wght@600;700&family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+<style>
+  :root{
+    --ink:#081310;--swamp-deep:#0b2018;--swamp:#0f2e22;--swamp-light:#16412f;
+    --panel:#102a20;--moss:#1f5238;
+    --neon-yellow:#ffd23f;--neon-pink:#ff4d8d;--neon-cyan:#52ffe0;
+    --neon-orange:#ff8a3d;--neon-lime:#b6ff5b;
+    --cream:#f3eedd;--muted:#86a596;--line:rgba(243,238,221,.12);
+    --code-bg:#06110d;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{font-family:'Space Grotesk',system-ui,sans-serif;background:var(--ink);color:var(--cream);overflow-x:hidden;line-height:1.65;min-height:100vh;position:relative;}
+  a{color:inherit;text-decoration:none;}
+  ::selection{background:var(--neon-cyan);color:var(--ink);}
+
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:9000;background:radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,.6) 100%);}
+  body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9001;opacity:.04;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+  .backdrop{position:fixed;inset:0;z-index:-2;overflow:hidden;background:radial-gradient(ellipse 80% 55% at 50% 25%,#103226 0%,#081814 60%,#040a08 100%);}
+
+  nav{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;align-items:center;justify-content:space-between;padding:14px clamp(16px,4vw,44px);background:linear-gradient(180deg,rgba(7,16,12,.95) 0%,rgba(7,16,12,.55) 60%,rgba(7,16,12,0) 100%);}
+  .brand{display:flex;align-items:center;gap:10px;font-family:'Bungee',sans-serif;font-size:14px;letter-spacing:.5px;color:var(--cream);}
+  .brand b{color:var(--neon-cyan);}
+  .brand-dot{width:14px;height:14px;border-radius:50%;background:var(--neon-cyan);box-shadow:0 0 12px var(--neon-cyan);}
+  .nav-links{display:flex;gap:8px;align-items:center;}
+  .nav-link{font-family:'Bungee',sans-serif;font-size:10.5px;letter-spacing:1.5px;color:var(--neon-cyan);padding:9px 16px;border:1px solid rgba(82,255,224,.35);border-radius:999px;transition:all .2s;}
+  .nav-link:hover{background:rgba(82,255,224,.1);box-shadow:0 0 14px rgba(82,255,224,.3);}
+  .nav-link.primary{color:var(--ink);background:var(--neon-cyan);border-color:var(--neon-cyan);}
+  .nav-link.primary:hover{background:var(--cream);border-color:var(--cream);}
+
+  .hero{min-height:88vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:130px 24px 60px;text-align:center;position:relative;}
+  .eyebrow{font-family:'Bungee',sans-serif;font-size:11px;letter-spacing:2.5px;color:var(--muted);margin-bottom:28px;}
+  .eyebrow .dot{color:var(--neon-cyan);margin:0 8px;}
+  .eyebrow a{color:var(--neon-cyan);}
+
+  h1.title{font-family:'Bungee',sans-serif;font-size:clamp(46px,9vw,108px);line-height:.95;color:var(--cream);letter-spacing:-1.5px;margin-bottom:14px;text-align:center;}
+  .tagline{font-family:'Caveat',cursive;font-size:clamp(22px,2.8vw,30px);color:var(--neon-cyan);margin-bottom:18px;font-weight:600;}
+  .subline{font-size:17px;color:var(--cream);opacity:.85;max-width:620px;margin:0 auto 30px;line-height:1.65;}
+  .subline em{color:var(--neon-cyan);font-style:italic;}
+
+  .hero-meta{display:flex;gap:8px;justify-content:center;margin-bottom:32px;flex-wrap:wrap;}
+  .chip{font-family:'Space Grotesk',sans-serif;font-size:12px;letter-spacing:.4px;padding:7px 14px;border:1px solid var(--line);border-radius:999px;color:var(--cream);background:rgba(15,46,34,.5);}
+  .chip .y{color:var(--neon-lime);margin-right:5px;font-weight:700;}
+  .chip .c{color:var(--neon-cyan);margin-right:5px;font-weight:700;}
+
+  .cta-row{display:flex;gap:14px;justify-content:center;margin-top:30px;flex-wrap:wrap;}
+  .cta{font-family:'Bungee',sans-serif;font-size:13px;letter-spacing:1.5px;padding:16px 26px;border-radius:999px;transition:all .2s;cursor:pointer;}
+  .cta.primary{color:var(--ink);background:var(--neon-cyan);}
+  .cta.primary:hover{background:var(--cream);transform:translateY(-2px);}
+  .cta.ghost{color:var(--neon-lime);border:1px solid rgba(182,255,91,.45);background:transparent;}
+  .cta.ghost:hover{background:rgba(182,255,91,.08);}
+
+  /* manifesto */
+  .manifesto{
+    padding:80px clamp(20px,5vw,80px);text-align:center;
+    background:linear-gradient(180deg,transparent 0%,rgba(15,46,34,.4) 50%,transparent 100%);
+  }
+  .mquote{font-family:'Caveat',cursive;font-size:clamp(24px,3.2vw,36px);color:var(--cream);max-width:760px;margin:0 auto 16px;line-height:1.45;font-weight:600;}
+  .mquote em{color:var(--neon-cyan);font-style:italic;}
+  .msign{color:var(--muted);font-size:13px;letter-spacing:1px;}
+
+  .container{max-width:1100px;margin:0 auto;padding:0 clamp(20px,5vw,40px) 100px;}
+  section{margin:64px 0;}
+  h2.shead{font-family:'Bungee',sans-serif;font-size:clamp(22px,3vw,30px);color:var(--cream);letter-spacing:.3px;margin-bottom:8px;display:flex;align-items:center;gap:12px;}
+  h2.shead::before{content:"";width:8px;height:8px;background:var(--neon-cyan);border-radius:50%;box-shadow:0 0 12px var(--neon-cyan);}
+  .shead-sub{font-family:'Caveat',cursive;font-size:18px;color:var(--neon-cyan);margin-left:20px;margin-bottom:18px;}
+  .p{font-size:16px;color:var(--cream);opacity:.88;line-height:1.7;margin-bottom:14px;}
+  .p em{color:var(--neon-cyan);font-style:italic;}
+  .p code{font-family:'JetBrains Mono',monospace;font-size:13.5px;background:var(--code-bg);padding:2px 7px;border-radius:5px;color:var(--neon-cyan);}
+
+  /* criteria */
+  .criteria{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin:18px 0;}
+  .crit{
+    background:rgba(15,46,34,.4);border:1px solid var(--line);border-radius:12px;padding:18px 20px;
+    font-size:14.5px;color:var(--cream);
+  }
+  .crit b{color:var(--neon-cyan);font-family:'Bungee',sans-serif;font-size:11px;letter-spacing:1.5px;display:block;margin-bottom:6px;}
+
+  /* member grid */
+  .members{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;margin:18px 0;}
+  .member{
+    background:linear-gradient(180deg,var(--swamp) 0%,var(--swamp-deep) 100%);
+    border:1px solid var(--line);border-radius:14px;padding:20px 22px;
+    transition:all .2s;display:flex;flex-direction:column;gap:8px;
+  }
+  .member:hover{border-color:var(--neon-cyan);transform:translateY(-2px);box-shadow:0 10px 24px -8px rgba(82,255,224,.3);}
+  .member-name{font-family:'Bungee',sans-serif;font-size:14px;letter-spacing:.5px;color:var(--cream);}
+  .member-url{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--neon-cyan);word-break:break-all;}
+  .member-desc{font-size:13.5px;color:var(--cream);opacity:.85;line-height:1.5;}
+  .member-tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:4px;}
+  .member-tag{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--muted);background:rgba(0,0,0,.3);padding:2px 7px;border-radius:5px;}
+  .member-visit{
+    margin-top:auto;font-family:'Bungee',sans-serif;font-size:10px;letter-spacing:1.5px;
+    color:var(--neon-cyan);padding-top:8px;
+  }
+
+  /* code blocks */
+  .code-wrap{background:var(--code-bg);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin:18px 0;}
+  .code-tabs{display:flex;align-items:center;justify-content:space-between;background:rgba(0,0,0,.4);border-bottom:1px solid var(--line);padding:0 12px 0 0;}
+  .code-tablist{display:flex;}
+  .code-tab{font-family:'Bungee',sans-serif;font-size:10.5px;letter-spacing:1.5px;color:var(--neon-cyan);padding:14px 18px;border:none;background:transparent;border-bottom:2px solid var(--neon-cyan);}
+  .copy-btn{font-family:'Bungee',sans-serif;font-size:10px;letter-spacing:1.5px;color:var(--neon-cyan);background:transparent;border:1px solid rgba(82,255,224,.35);padding:7px 13px;border-radius:7px;cursor:pointer;transition:all .2s;}
+  .copy-btn:hover{background:rgba(82,255,224,.12);}
+  .copy-btn.copied{color:var(--ink);background:var(--neon-cyan);border-color:var(--neon-cyan);}
+  pre.code{margin:0;padding:22px 24px;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.6;color:var(--cream);}
+  pre.code .kw{color:var(--neon-pink);}
+  pre.code .tag{color:var(--neon-lime);}
+  pre.code .attr{color:var(--neon-cyan);}
+  pre.code .str{color:var(--neon-yellow);}
+  pre.code .com{color:var(--muted);font-style:italic;}
+  pre.code .num{color:var(--neon-orange);}
+
+  /* preview box */
+  .preview-stage{
+    background:linear-gradient(180deg,var(--swamp) 0%,var(--swamp-deep) 100%);
+    border:1px solid var(--line);border-radius:14px;padding:32px;margin:18px 0;
+    text-align:center;
+  }
+  .preview-stage .lbl{font-family:'Bungee',sans-serif;font-size:9px;letter-spacing:2px;color:var(--muted);margin-bottom:18px;}
+
+  .license{background:linear-gradient(135deg,rgba(182,255,91,.08) 0%,rgba(82,255,224,.06) 100%);border:1px solid rgba(182,255,91,.3);border-radius:18px;padding:30px 28px;margin:48px 0;text-align:center;}
+  .license h3{font-family:'Bungee',sans-serif;font-size:16px;color:var(--neon-lime);letter-spacing:.6px;margin-bottom:8px;}
+  .license p{font-size:14px;color:var(--cream);opacity:.88;line-height:1.6;max-width:560px;margin:0 auto;}
+
+  .tipjar{background:linear-gradient(135deg,rgba(255,210,63,.07) 0%,rgba(82,255,224,.06) 100%);border:1px solid rgba(255,210,63,.28);border-radius:18px;padding:28px 26px;margin:48px 0;text-align:center;}
+  .tipjar h3{font-family:'Bungee',sans-serif;font-size:15px;color:var(--neon-yellow);letter-spacing:.5px;margin-bottom:8px;}
+  .tipjar p{font-size:14px;color:var(--cream);opacity:.85;margin-bottom:16px;}
+  .tipjar a{display:inline-flex;align-items:center;gap:8px;font-family:'Bungee',sans-serif;font-size:11.5px;letter-spacing:1.5px;color:var(--ink);background:var(--neon-yellow);padding:13px 22px;border-radius:999px;transition:all .2s;}
+  .tipjar a:hover{background:var(--cream);transform:translateY(-2px);box-shadow:0 10px 22px -8px rgba(255,210,63,.65);}
+
+  footer{padding:50px 24px 40px;text-align:center;border-top:1px solid var(--line);background:rgba(8,19,16,.6);margin-top:80px;}
+  footer .flinks{display:flex;gap:24px;justify-content:center;margin-bottom:14px;flex-wrap:wrap;}
+  footer .flinks a{color:var(--cream);font-size:13px;opacity:.75;}
+  footer .flinks a:hover{color:var(--neon-cyan);opacity:1;}
+  footer .copy{color:var(--muted);font-size:12px;}
+  footer .copy b{color:var(--neon-cyan);}
+
+  @media (max-width:600px){
+    .hero{padding-top:110px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="backdrop"></div>
+
+<nav>
+  <a class="brand" href="/">
+    <span class="brand-dot"></span>
+    <span>SOPHIE'S <b>SWAMP</b></span>
+  </a>
+  <div class="nav-links">
+    <a class="nav-link" href="/">← back to swamp</a>
+    <a class="nav-link" href="/swamp-ui/">Swamp UI</a>
+    <a class="nav-link primary" href="/quiet-ring/ring.json">RAW JSON ↗</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="eyebrow">A WEBRING FOR THE UN-CLEAN WEB <span class="dot">●</span> BY <a href="/">SOPHIE'S SWAMP</a> <span class="dot">●</span> MIT</div>
+
+  <h1 class="title">QUIET WEB RING</h1>
+  <div class="tagline">personal sites. slow sites. weird sites.</div>
+  <p class="subline">
+    The internet has become a shopping mall. This is a webring for the sites that aren't —
+    the <em>handmade</em>, the <em>slow</em>, the <em>strange</em>, the ones with a soul.
+    Drop a tiny script on your site, the ring lights up <code style="color:var(--neon-cyan);background:var(--code-bg);padding:2px 6px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:14px;">← prev · ⚝ random · next →</code> at the bottom, and people start walking the long way home.
+  </p>
+
+  <div class="hero-meta">
+    <div class="chip"><span class="y">✓</span> <span id="memberCountChip">…</span> members</div>
+    <div class="chip"><span class="y">✓</span> ~3 KB widget</div>
+    <div class="chip"><span class="y">✓</span> Zero tracking</div>
+    <div class="chip"><span class="c">★</span> MIT</div>
+  </div>
+
+  <div class="cta-row">
+    <a class="cta primary" href="#join">Join the ring →</a>
+    <a class="cta ghost" href="#members">See members</a>
+  </div>
+</header>
+
+<!-- MANIFESTO -->
+<section class="manifesto">
+  <p class="mquote">
+    The web used to be <em>weird</em>. Personal sites looked like the people who made them.<br>
+    Now everything is <em>SaaS dashboard energy</em>.<br>
+    This ring is for the holdouts.
+  </p>
+  <p class="msign">— and for everyone who wants to take the long way home.</p>
+</section>
+
+<div class="container">
+
+  <!-- CRITERIA -->
+  <section id="what">
+    <h2 class="shead">What counts</h2>
+    <div class="shead-sub">soft rules. taste matters more than checklists.</div>
+    <div class="criteria">
+      <div class="crit"><b>Personal</b>Your site, not your company's. Made by a human (vibes-coded with AI is fine — the taste should still be yours).</div>
+      <div class="crit"><b>Has a voice</b>Doesn't look like every other site. A specific feeling, a specific weirdness, a specific stubbornness.</div>
+      <div class="crit"><b>Real</b>Working URL, non-trivial content, not a placeholder, not a coming-soon page.</div>
+      <div class="crit"><b>Not for sale</b>No crypto pumps, no MLM, no engagement-bait, no SEO-spam, no infinite scroll.</div>
+    </div>
+  </section>
+
+  <!-- MEMBERS -->
+  <section id="members">
+    <h2 class="shead">Members</h2>
+    <div class="shead-sub">click any to visit · ring grows by PR</div>
+    <div class="members" id="memberList"></div>
+  </section>
+
+  <!-- PREVIEW -->
+  <section id="preview">
+    <h2 class="shead">What you'll embed</h2>
+    <div class="shead-sub">live preview, on this page</div>
+    <div class="preview-stage">
+      <div class="lbl">LIVE WIDGET · AS A MEMBER WOULD SEE IT</div>
+      <!-- The widget will inject itself just after this script tag. -->
+      <script src="./widget.js" data-site="https://sophieren.com/quiet-ring/"></script>
+    </div>
+  </section>
+
+  <!-- JOIN -->
+  <section id="join">
+    <h2 class="shead">How to join</h2>
+    <div class="shead-sub">two steps, no application form</div>
+
+    <p class="p"><strong>1.</strong> Open a pull request on the repo adding your entry to <code>sites</code> in <code>quiet-ring/ring.json</code>:</p>
+    <div class="code-wrap">
+      <div class="code-tabs"><div class="code-tablist"><button class="code-tab">JSON</button></div><button class="copy-btn" data-target="ex-entry">COPY</button></div>
+<pre class="code" id="ex-entry">{
+  <span class="attr">"url"</span>: <span class="str">"https://your-site.com"</span>,
+  <span class="attr">"name"</span>: <span class="str">"Your Site"</span>,
+  <span class="attr">"description"</span>: <span class="str">"What it is, in one sentence."</span>,
+  <span class="attr">"tags"</span>: [<span class="str">"personal"</span>, <span class="str">"art"</span>],
+  <span class="attr">"joined"</span>: <span class="str">"YYYY-MM-DD"</span>
+}</pre>
+    </div>
+
+    <p class="p"><strong>2.</strong> Once your PR is merged, drop this on your site (anywhere — usually the footer):</p>
+    <div class="code-wrap">
+      <div class="code-tabs"><div class="code-tablist"><button class="code-tab">HTML</button></div><button class="copy-btn" data-target="ex-embed">COPY</button></div>
+<pre class="code" id="ex-embed"><span class="tag">&lt;script</span> <span class="attr">src</span>=<span class="str">"https://sophieren.com/quiet-ring/widget.js"</span>
+        <span class="attr">data-site</span>=<span class="str">"https://your-site.com"</span><span class="tag">&gt;&lt;/script&gt;</span></pre>
+    </div>
+
+    <p class="p" style="margin-top:18px;">
+      That's it. The widget will fetch <code>ring.json</code>, find your URL, and render
+      <code>prev / random / next</code> in the order members joined. Override colors via
+      CSS variables on <code>.quiet-ring</code> (<code>--qr-bg</code>, <code>--qr-fg</code>,
+      <code>--qr-accent</code>, <code>--qr-border</code>, <code>--qr-radius</code>).
+    </p>
+  </section>
+
+  <!-- SELF-HOST -->
+  <section id="selfhost">
+    <h2 class="shead">Or self-host a fork</h2>
+    <div class="shead-sub">don't like this ring? make one. it's tiny.</div>
+    <p class="p">
+      Everything here is two files: <code>widget.js</code> (~3 KB) and <code>ring.json</code>.
+      Fork the repo, host both on your own domain, point <code>data-ring</code> at your URL:
+    </p>
+    <div class="code-wrap">
+      <div class="code-tabs"><div class="code-tablist"><button class="code-tab">HTML</button></div><button class="copy-btn" data-target="ex-self">COPY</button></div>
+<pre class="code" id="ex-self"><span class="tag">&lt;script</span> <span class="attr">src</span>=<span class="str">"https://yourdomain.com/path/widget.js"</span>
+        <span class="attr">data-site</span>=<span class="str">"https://your-site.com"</span>
+        <span class="attr">data-ring</span>=<span class="str">"https://yourdomain.com/path/ring.json"</span><span class="tag">&gt;&lt;/script&gt;</span></pre>
+    </div>
+    <p class="p">No central authority. Start a ring for poetry sites. Start a ring for cooking blogs. Start a ring for whatever this ring isn't.</p>
+  </section>
+
+  <!-- LICENSE -->
+  <div class="license">
+    <h3>MIT licensed</h3>
+    <p>Widget + ring data are MIT. Member sites belong to their authors. Forking the structure to host your own ring is encouraged.</p>
+  </div>
+
+  <!-- TIPJAR -->
+  <div class="tipjar">
+    <h3>Walking the long way home?</h3>
+    <p>Feed the cats who watch the path.</p>
+    <a href="https://buymeacoffee.com/sophiejr" target="_blank" rel="noopener">🧋 TREAT THE SWAMP →</a>
+  </div>
+
+  <!-- VERSIONS -->
+  <section>
+    <h2 class="shead">Versions</h2>
+    <p class="p"><code>v1.0.0</code> · 2026-05-29 · initial ring with 7 charter sites + widget + JSON.</p>
+  </section>
+
+</div>
+
+<footer>
+  <div class="flinks">
+    <a href="/">Sophie's Swamp</a>
+    <a href="/swamp-ui/">Swamp UI</a>
+    <a href="/swamp-tarot/">Swamp Tarot</a>
+    <a href="/swamp-sounds/">Swamp Sounds</a>
+    <a href="/swamp-icons/">Swamp Icons</a>
+    <a href="https://github.com/sophiejren/sophiesswap" target="_blank" rel="noopener">GitHub</a>
+  </div>
+  <p class="copy">© 2026 Sophie. <b>MIT licensed.</b> Use freely, credit kindly. 🐸</p>
+</footer>
+
+<script>
+  // ============ LOAD RING + RENDER MEMBER DIRECTORY ============
+  fetch('./ring.json', { cache: 'no-cache' })
+    .then(r => r.json())
+    .then(ring => {
+      const list = document.getElementById('memberList');
+      document.getElementById('memberCountChip').textContent = ring.sites.length;
+      ring.sites.forEach(s => {
+        const el = document.createElement('a');
+        el.className = 'member';
+        el.href = s.url;
+        el.target = '_blank';
+        el.rel = 'noopener';
+        el.innerHTML = `
+          <div class="member-name">${s.name}</div>
+          <div class="member-url">${s.url}</div>
+          <div class="member-desc">${s.description || ''}</div>
+          <div class="member-tags">${(s.tags||[]).map(t => `<span class="member-tag">${t}</span>`).join('')}</div>
+          <div class="member-visit">VISIT →</div>
+        `;
+        list.appendChild(el);
+      });
+    })
+    .catch(() => {
+      document.getElementById('memberList').innerHTML = `<p style="grid-column:1/-1;color:var(--muted);font-family:'Caveat',cursive;font-size:18px;">(ring is loading from ring.json — if you see this longer than a moment, something's off.)</p>`;
+    });
+
+  document.querySelectorAll('.copy-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = document.getElementById(btn.dataset.target);
+      if (!target) return;
+      navigator.clipboard.writeText(target.innerText).then(() => {
+        const original = btn.textContent;
+        btn.textContent = 'COPIED ✓';
+        btn.classList.add('copied');
+        setTimeout(() => { btn.textContent = original; btn.classList.remove('copied'); }, 1600);
+      });
+    });
+  });
+</script>
+
+</body>
+</html>
