@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<!--
+  Swamp UI — Swamp Tarot
+  Pull a card from the bog. 15 archetypes. Card flips, name spins in via split-flap.
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Swamp Tarot — Swamp UI</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%230b2018'/><circle cx='16' cy='17' r='8' fill='%23ff4d8d'/><circle cx='16' cy='17' r='3.4' fill='%23081310'/></svg>" />
+
+<meta name="description" content="Swamp Tarot — pull a card from the bog. 15 swamp archetypes with split-flap name reveal. A copy-paste oracle component from Swamp UI." />
+<meta property="og:title" content="Swamp Tarot — Swamp UI" />
+<meta property="og:description" content="Pull a card. The bog answers. Copy-paste, no dependencies." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://sophieren.com/swamp-ui/components/swamp-tarot.html" />
+<meta property="og:image" content="https://sophieren.com/images/og-image.png" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Caveat:wght@600;700&family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+<style>
+  :root{
+    --ink:#081310;--swamp-deep:#0b2018;--swamp:#0f2e22;--swamp-light:#16412f;
+    --panel:#102a20;--moss:#1f5238;
+    --neon-yellow:#ffd23f;--neon-pink:#ff4d8d;--neon-cyan:#52ffe0;
+    --neon-orange:#ff8a3d;--neon-lime:#b6ff5b;
+    --cream:#f3eedd;--muted:#86a596;--line:rgba(243,238,221,.12);
+    --code-bg:#06110d;
+    --card-bg:linear-gradient(160deg,#1c4a34 0%,#0e2b1f 100%);
+    --card-bg-back:linear-gradient(160deg,#2a1530 0%,#0e0a1a 100%);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{font-family:'Space Grotesk',system-ui,sans-serif;background:var(--ink);color:var(--cream);overflow-x:hidden;line-height:1.65;min-height:100vh;position:relative;}
+  a{color:inherit;text-decoration:none;}
+  ::selection{background:var(--neon-pink);color:var(--ink);}
+
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:9000;background:radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,.6) 100%);}
+  body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9001;opacity:.04;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+  .backdrop{position:fixed;inset:0;z-index:-2;overflow:hidden;background:radial-gradient(ellipse 80% 55% at 50% 20%,#1a1226 0%,#081814 60%,#040a08 100%);}
+
+  /* nav */
+  nav{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;align-items:center;justify-content:space-between;padding:14px clamp(16px,4vw,44px);background:linear-gradient(180deg,rgba(7,16,12,.95) 0%,rgba(7,16,12,.55) 60%,rgba(7,16,12,0) 100%);}
+  .brand{display:flex;align-items:center;gap:10px;font-family:'Bungee',sans-serif;font-size:14px;letter-spacing:.5px;color:var(--cream);}
+  .brand b{color:var(--neon-pink);}
+  .brand-dot{width:14px;height:14px;border-radius:50%;background:var(--neon-pink);box-shadow:0 0 12px var(--neon-pink);}
+  .nav-links{display:flex;gap:8px;align-items:center;}
+  .nav-link{font-family:'Bungee',sans-serif;font-size:10.5px;letter-spacing:1.5px;color:var(--neon-pink);padding:9px 16px;border:1px solid rgba(255,77,141,.35);border-radius:999px;transition:all .2s;}
+  .nav-link:hover{background:rgba(255,77,141,.1);box-shadow:0 0 14px rgba(255,77,141,.3);}
+
+  .container{max-width:1100px;margin:0 auto;padding:120px clamp(20px,5vw,40px) 100px;}
+
+  .crumb{font-family:'Bungee',sans-serif;font-size:10px;letter-spacing:2px;color:var(--muted);margin-bottom:30px;}
+  .crumb a{color:var(--neon-pink);transition:color .2s;}
+  .crumb a:hover{color:var(--neon-lime);}
+  .crumb .sep{color:var(--neon-yellow);margin:0 10px;}
+
+  header.hero{margin-bottom:40px;}
+  h1.title{font-family:'Bungee',sans-serif;font-size:clamp(40px,7vw,80px);line-height:.98;color:var(--cream);letter-spacing:-1px;margin-bottom:14px;}
+  .sub{font-family:'Caveat',cursive;font-size:26px;color:var(--neon-pink);margin-bottom:16px;font-weight:600;}
+  .lede{font-size:17px;color:var(--cream);opacity:.85;max-width:660px;line-height:1.6;}
+  .lede em{color:var(--neon-pink);font-style:italic;}
+
+  .meta{display:flex;gap:8px;margin-top:22px;flex-wrap:wrap;}
+  .chip{font-family:'Space Grotesk',sans-serif;font-size:11.5px;letter-spacing:.4px;padding:5px 12px;border:1px solid var(--line);border-radius:999px;color:var(--cream);background:rgba(15,46,34,.5);}
+  .chip b{color:var(--neon-pink);margin-right:5px;}
+
+  /* ============ DEMO STAGE ============ */
+  .stage{background:linear-gradient(180deg,#1c1530 0%,#0a0815 100%);border:1px solid var(--line);border-radius:18px;padding:32px 26px 38px;margin:48px 0;position:relative;}
+  .stage-label{position:absolute;top:14px;left:18px;font-family:'Bungee',sans-serif;font-size:9px;letter-spacing:2px;color:var(--muted);}
+
+  /* the deck + drawn card */
+  .tarot-table{display:flex;flex-direction:column;align-items:center;gap:28px;padding-top:24px;min-height:480px;justify-content:center;}
+
+  .deck-wrap{position:relative;width:200px;height:280px;perspective:1200px;}
+  .deck-card{
+    position:absolute;inset:0;border-radius:14px;
+    background:var(--card-bg-back);
+    border:1px solid rgba(255,77,141,.35);
+    box-shadow:0 12px 40px -10px rgba(0,0,0,.7);
+    cursor:pointer;transition:transform .25s;
+    transform-style:preserve-3d;
+  }
+  .deck-card::after{
+    content:"";position:absolute;inset:14px;border:1px dashed rgba(255,210,63,.25);border-radius:8px;
+    background:radial-gradient(circle at 50% 50%,rgba(255,210,63,.06) 0%,transparent 70%);
+  }
+  .deck-glyph{
+    position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+    font-family:'Bungee',sans-serif;font-size:11px;letter-spacing:3px;color:var(--neon-yellow);opacity:.7;
+    z-index:1;text-align:center;
+  }
+  .deck-glyph .moon{display:block;font-size:36px;margin-bottom:8px;color:var(--neon-pink);}
+  .deck-card.s2{transform:translate(4px,4px) rotate(1.2deg);}
+  .deck-card.s3{transform:translate(8px,8px) rotate(2.4deg);}
+  .deck-card.top:hover{transform:translateY(-6px);box-shadow:0 18px 50px -10px rgba(255,77,141,.4);}
+  .deck-card.top:active{transform:translateY(-2px);}
+
+  .deck-hint{font-family:'Caveat',cursive;font-size:20px;color:var(--neon-pink);opacity:.7;text-align:center;}
+  .deck-hint .arr{display:block;font-size:24px;margin-top:4px;}
+
+  /* drawn card */
+  .drawn-stage{display:none;flex-direction:column;align-items:center;gap:22px;animation:drawn-in .6s ease-out;}
+  .drawn-stage.shown{display:flex;}
+  @keyframes drawn-in{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+
+  .drawn-card{
+    width:240px;height:336px;border-radius:16px;
+    background:var(--card-bg);
+    border:1px solid rgba(182,255,91,.4);
+    box-shadow:0 20px 60px -15px rgba(0,0,0,.8),inset 0 0 60px rgba(0,0,0,.4);
+    position:relative;overflow:hidden;
+    display:flex;flex-direction:column;align-items:center;justify-content:space-between;
+    padding:22px 18px 20px;
+    animation:flip-in .9s cubic-bezier(.34,1.56,.64,1);
+  }
+  @keyframes flip-in{
+    0%{transform:rotateY(180deg) translateY(-40px);opacity:0;}
+    50%{transform:rotateY(90deg) translateY(-20px);opacity:.6;}
+    100%{transform:rotateY(0) translateY(0);opacity:1;}
+  }
+  .drawn-card::before{
+    content:"";position:absolute;inset:10px;border:1px solid rgba(182,255,91,.18);border-radius:10px;pointer-events:none;
+  }
+  .drawn-card::after{
+    content:"";position:absolute;inset:0;border-radius:16px;pointer-events:none;
+    background:radial-gradient(ellipse at top,rgba(255,210,63,.08) 0%,transparent 60%);
+  }
+
+  .card-num{font-family:'Bungee',sans-serif;font-size:10px;letter-spacing:2.5px;color:var(--neon-yellow);opacity:.7;z-index:1;}
+  .card-art{
+    flex:1;display:flex;align-items:center;justify-content:center;width:100%;
+    margin:6px 0;z-index:1;
+  }
+  .card-art svg{width:120px;height:120px;filter:drop-shadow(0 4px 12px rgba(0,0,0,.5));}
+
+  .card-name{
+    font-family:'Bungee',sans-serif;font-size:18px;letter-spacing:2.5px;color:var(--cream);
+    text-align:center;line-height:1.1;min-height:22px;z-index:1;
+    display:flex;justify-content:center;gap:1px;
+  }
+  .card-name .ch{
+    display:inline-block;min-width:.55em;text-align:center;
+    transition:transform .3s;
+  }
+  .card-meaning{
+    font-family:'Caveat',cursive;font-size:18px;color:var(--neon-lime);
+    text-align:center;line-height:1.2;margin-top:6px;min-height:22px;z-index:1;
+    font-weight:600;
+  }
+
+  .reading{
+    max-width:440px;text-align:center;font-size:15.5px;color:var(--cream);opacity:.92;line-height:1.65;
+    font-style:italic;padding:0 14px;
+  }
+  .reading::before{content:"\201C";color:var(--neon-pink);font-size:28px;font-family:Georgia,serif;line-height:0;vertical-align:-8px;margin-right:4px;}
+  .reading::after{content:"\201D";color:var(--neon-pink);font-size:28px;font-family:Georgia,serif;line-height:0;vertical-align:-14px;margin-left:4px;}
+
+  .drawn-actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;}
+  .draw-btn{
+    font-family:'Bungee',sans-serif;font-size:11px;letter-spacing:1.5px;
+    padding:12px 22px;border-radius:999px;cursor:pointer;border:none;
+    background:var(--neon-pink);color:var(--ink);transition:all .2s;
+  }
+  .draw-btn:hover{background:var(--cream);transform:translateY(-2px);box-shadow:0 10px 22px -8px rgba(255,77,141,.7);}
+  .draw-btn.ghost{background:transparent;color:var(--neon-pink);border:1px solid rgba(255,77,141,.4);}
+  .draw-btn.ghost:hover{background:rgba(255,77,141,.08);color:var(--cream);}
+
+  /* sections */
+  section{margin:64px 0;}
+  h2.shead{font-family:'Bungee',sans-serif;font-size:22px;color:var(--cream);letter-spacing:.3px;margin-bottom:18px;display:flex;align-items:center;gap:12px;}
+  h2.shead::before{content:"";width:8px;height:8px;background:var(--neon-pink);border-radius:50%;box-shadow:0 0 12px var(--neon-pink);}
+  .p{font-size:16px;color:var(--cream);opacity:.88;line-height:1.7;margin-bottom:14px;}
+  .p em{color:var(--neon-pink);font-style:italic;}
+  .p code{font-family:'JetBrains Mono',monospace;font-size:13.5px;background:var(--code-bg);padding:2px 7px;border-radius:5px;color:var(--neon-pink);}
+
+  /* code block */
+  .code-wrap{background:var(--code-bg);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin:24px 0;}
+  .code-tabs{display:flex;align-items:center;justify-content:space-between;background:rgba(0,0,0,.4);border-bottom:1px solid var(--line);padding:0 12px 0 0;}
+  .code-tablist{display:flex;}
+  .code-tab{font-family:'Bungee',sans-serif;font-size:10.5px;letter-spacing:1.5px;color:var(--neon-pink);padding:14px 18px;border:none;background:transparent;border-bottom:2px solid var(--neon-pink);}
+  .copy-btn{font-family:'Bungee',sans-serif;font-size:10px;letter-spacing:1.5px;color:var(--neon-pink);background:transparent;border:1px solid rgba(255,77,141,.35);padding:7px 13px;border-radius:7px;cursor:pointer;transition:all .2s;}
+  .copy-btn:hover{background:rgba(255,77,141,.12);}
+  .copy-btn.copied{color:var(--ink);background:var(--neon-pink);border-color:var(--neon-pink);}
+  pre.code{margin:0;padding:22px 24px;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.6;color:var(--cream);}
+  pre.code .kw{color:var(--neon-pink);}
+  pre.code .tag{color:var(--neon-lime);}
+  pre.code .attr{color:var(--neon-cyan);}
+  pre.code .str{color:var(--neon-yellow);}
+  pre.code .com{color:var(--muted);font-style:italic;}
+  pre.code .num{color:var(--neon-orange);}
+  pre.code .prop{color:var(--neon-cyan);}
+
+  /* parameters */
+  table.params{width:100%;border-collapse:collapse;margin:18px 0;background:rgba(28,21,48,.3);border:1px solid var(--line);border-radius:12px;overflow:hidden;}
+  table.params th{text-align:left;padding:14px 16px;font-family:'Bungee',sans-serif;font-size:10px;letter-spacing:1.5px;color:var(--neon-pink);background:rgba(0,0,0,.3);border-bottom:1px solid var(--line);}
+  table.params td{padding:14px 16px;border-bottom:1px solid var(--line);font-size:14px;color:var(--cream);}
+  table.params tr:last-child td{border-bottom:none;}
+  table.params code{font-family:'JetBrains Mono',monospace;font-size:12.5px;background:var(--code-bg);padding:2px 7px;border-radius:5px;color:var(--neon-pink);}
+  table.params .def{color:var(--neon-yellow);font-family:'JetBrains Mono',monospace;font-size:12.5px;}
+
+  .skip-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:24px 0;}
+  .skip-btn{background:rgba(28,21,48,.4);border:1px solid var(--line);border-radius:10px;padding:12px 14px;text-align:left;cursor:pointer;transition:all .2s;}
+  .skip-btn:hover{border-color:var(--neon-pink);background:rgba(255,77,141,.06);}
+  .skip-btn .n{font-family:'Bungee',sans-serif;font-size:9.5px;letter-spacing:1.5px;color:var(--neon-yellow);}
+  .skip-btn .l{font-size:13px;color:var(--cream);margin-top:4px;}
+
+  /* deck overview */
+  .deck-gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:14px;margin:24px 0;}
+  .mini-card{
+    aspect-ratio:5/7;border-radius:10px;background:var(--card-bg);
+    border:1px solid rgba(255,77,141,.25);padding:10px;
+    display:flex;flex-direction:column;align-items:center;justify-content:space-between;
+    text-align:center;transition:all .2s;cursor:pointer;
+  }
+  .mini-card:hover{border-color:var(--neon-pink);transform:translateY(-3px);box-shadow:0 10px 24px -8px rgba(255,77,141,.4);}
+  .mini-card svg{width:50px;height:50px;}
+  .mini-card .mn{font-family:'Bungee',sans-serif;font-size:9px;letter-spacing:1.4px;color:var(--cream);line-height:1.1;}
+  .mini-card .mm{font-family:'Caveat',cursive;font-size:13px;color:var(--neon-lime);font-weight:600;line-height:1.1;}
+
+  /* tipjar */
+  .tipjar{background:linear-gradient(135deg,rgba(255,210,63,.07) 0%,rgba(255,77,141,.06) 100%);border:1px solid rgba(255,210,63,.28);border-radius:18px;padding:28px 26px;margin:48px 0;text-align:center;}
+  .tipjar h3{font-family:'Bungee',sans-serif;font-size:15px;color:var(--neon-yellow);letter-spacing:.5px;margin-bottom:8px;}
+  .tipjar p{font-size:14px;color:var(--cream);opacity:.85;margin-bottom:16px;}
+  .tipjar a{display:inline-flex;align-items:center;gap:8px;font-family:'Bungee',sans-serif;font-size:11.5px;letter-spacing:1.5px;color:var(--ink);background:var(--neon-yellow);padding:13px 22px;border-radius:999px;transition:all .2s;}
+  .tipjar a:hover{background:var(--cream);transform:translateY(-2px);box-shadow:0 10px 22px -8px rgba(255,210,63,.65);}
+
+  /* next */
+  .next-cta{display:flex;align-items:center;justify-content:space-between;gap:20px;background:linear-gradient(180deg,#1c1530 0%,#0a0815 100%);border:1px solid var(--line);border-radius:14px;padding:24px 28px;margin:48px 0;flex-wrap:wrap;}
+  .next-cta .l b{display:block;font-family:'Bungee',sans-serif;font-size:14px;color:var(--cream);letter-spacing:.5px;margin-bottom:4px;}
+  .next-cta .l span{font-size:13.5px;color:var(--muted);}
+  .next-cta a{font-family:'Bungee',sans-serif;font-size:11px;letter-spacing:1.5px;color:var(--ink);background:var(--neon-pink);padding:12px 20px;border-radius:999px;transition:all .2s;}
+  .next-cta a:hover{background:var(--cream);}
+
+  footer{padding:50px 24px 40px;text-align:center;border-top:1px solid var(--line);background:rgba(8,19,16,.6);margin-top:80px;}
+  footer .flinks{display:flex;gap:24px;justify-content:center;margin-bottom:14px;flex-wrap:wrap;}
+  footer .flinks a{color:var(--cream);font-size:13px;opacity:.75;}
+  footer .flinks a:hover{color:var(--neon-pink);opacity:1;}
+  footer .copy{color:var(--muted);font-size:12px;}
+  footer .copy b{color:var(--neon-pink);}
+
+  @media (max-width:600px){
+    .deck-wrap{width:160px;height:224px;}
+    .drawn-card{width:200px;height:280px;}
+    .card-art svg{width:96px;height:96px;}
+    .next-cta{flex-direction:column;text-align:center;}
+  }
+</style>
+</head>
+<body>
+
+<div class="backdrop"></div>
+
+<nav>
+  <a class="brand" href="/swamp-ui/">
+    <span class="brand-dot"></span>
+    <span>SWAMP <b>UI</b></span>
+  </a>
+  <div class="nav-links">
+    <a class="nav-link" href="/swamp-ui/">← all components</a>
+    <a class="nav-link" href="https://github.com/sophiejren/sophiesswap" target="_blank" rel="noopener">★ GitHub</a>
+  </div>
+</nav>
+
+<div class="container">
+
+  <div class="crumb">
+    <a href="/swamp-ui/">SWAMP UI</a>
+    <span class="sep">/</span> COMPONENTS <span class="sep">/</span> SWAMP TAROT
+  </div>
+
+  <header class="hero">
+    <h1 class="title">Swamp Tarot</h1>
+    <div class="sub">15 archetypes from the bog. tap the deck.</div>
+    <p class="lede">
+      Pull a card. The bog answers. Each card is an <em>archetype of the swamp</em> —
+      The Heron, The Fog, The Frog King, The Lantern — with a short reading.
+      The name spins into place via split-flap. Use as a daily oracle, a decision aid,
+      or a quiet "I'm stuck, give me a metaphor" button.
+    </p>
+    <div class="meta">
+      <div class="chip"><b>★</b> No dependencies</div>
+      <div class="chip"><b>★</b> 15 archetypes</div>
+      <div class="chip"><b>★</b> Split-flap reveal</div>
+      <div class="chip"><b>★</b> Daily-seed mode</div>
+    </div>
+  </header>
+
+  <!-- LIVE PREVIEW -->
+  <div class="stage">
+    <div class="stage-label">LIVE PREVIEW · TAP THE DECK</div>
+
+    <div class="tarot-table" id="tarotTable">
+      <!-- deck (visible until first draw) -->
+      <div id="deckView">
+        <div class="deck-wrap" id="deckWrap">
+          <div class="deck-card s3"></div>
+          <div class="deck-card s2"></div>
+          <div class="deck-card top" id="deckTop">
+            <div class="deck-glyph"><span class="moon">☾</span>SWAMP<br>TAROT</div>
+          </div>
+        </div>
+        <p class="deck-hint" style="margin-top:18px;">tap the deck to pull a card<span class="arr">↑</span></p>
+      </div>
+
+      <!-- drawn card (shown after pull) -->
+      <div class="drawn-stage" id="drawnStage">
+        <div class="drawn-card" id="drawnCard">
+          <div class="card-num" id="cardNum">— · —</div>
+          <div class="card-art" id="cardArt"></div>
+          <div class="card-name" id="cardName"></div>
+          <div class="card-meaning" id="cardMeaning"></div>
+        </div>
+        <p class="reading" id="cardReading"></p>
+        <div class="drawn-actions">
+          <button class="draw-btn" id="drawAgain">PULL ANOTHER</button>
+          <button class="draw-btn ghost" id="backToDeck">SHUFFLE DECK</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section>
+    <h2 class="shead">When to use</h2>
+    <p class="p">
+      Reach for it when you want a moment of <em>structured wonder</em> — a creative
+      block, a stuck decision, a journal prompt, a daily ritual. Drop it on a
+      "/oracle" page, a 404, a sidebar of a blog. Use the <code>daily</code> mode
+      so the same visitor sees the same card each day (and a new one tomorrow).
+    </p>
+    <p class="p">
+      Skip it when the page is task-focused and timed (checkouts, signups) — the
+      whole point of the card is patience. The swamp does not rush.
+    </p>
+  </section>
+
+  <section>
+    <h2 class="shead">The 15 cards</h2>
+    <p class="p">Click any to draw it directly.</p>
+    <div class="deck-gallery" id="gallery"></div>
+  </section>
+
+  <section>
+    <h2 class="shead">Skip to</h2>
+    <div class="skip-grid">
+      <a class="skip-btn" href="#html"><div class="n">01</div><div class="l">HTML</div></a>
+      <a class="skip-btn" href="#css"><div class="n">02</div><div class="l">CSS</div></a>
+      <a class="skip-btn" href="#js"><div class="n">03</div><div class="l">JavaScript</div></a>
+      <a class="skip-btn" href="#data"><div class="n">04</div><div class="l">The deck (data)</div></a>
+      <a class="skip-btn" href="#params"><div class="n">05</div><div class="l">Parameters</div></a>
+    </div>
+  </section>
+
+  <section id="html">
+    <h2 class="shead">1. HTML</h2>
+    <p class="p">A deck container and a drawn-card container. Toggle one or the other based on state.</p>
+    <div class="code-wrap">
+      <div class="code-tabs"><div class="code-tablist"><button class="code-tab">HTML</button></div><button class="copy-btn" data-target="code-html">COPY</button></div>
+<pre class="code" id="code-html"><span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"tarot"</span> <span class="attr">id</span>=<span class="str">"tarot"</span><span class="tag">&gt;</span>
+
+  <span class="com">&lt;!-- deck (visible until first draw) --&gt;</span>
+  <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"tarot-deck"</span> <span class="attr">id</span>=<span class="str">"deck"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"tarot-back s3"</span><span class="tag">&gt;&lt;/div&gt;</span>
+    <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"tarot-back s2"</span><span class="tag">&gt;&lt;/div&gt;</span>
+    <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"tarot-back top"</span><span class="tag">&gt;</span>
+      <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"tarot-glyph"</span><span class="tag">&gt;</span>☾ SWAMP TAROT<span class="tag">&lt;/div&gt;</span>
+    <span class="tag">&lt;/div&gt;</span>
+  <span class="tag">&lt;/div&gt;</span>
+
+  <span class="com">&lt;!-- drawn card (filled in by JS) --&gt;</span>
+  <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"tarot-drawn"</span> <span class="attr">id</span>=<span class="str">"drawn"</span> <span class="attr">hidden</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"tarot-card"</span><span class="tag">&gt;</span>
+      <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"tc-num"</span><span class="tag">&gt;&lt;/div&gt;</span>
+      <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"tc-art"</span><span class="tag">&gt;&lt;/div&gt;</span>
+      <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"tc-name"</span><span class="tag">&gt;&lt;/div&gt;</span>
+      <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"tc-mean"</span><span class="tag">&gt;&lt;/div&gt;</span>
+    <span class="tag">&lt;/div&gt;</span>
+    <span class="tag">&lt;p</span> <span class="attr">class</span>=<span class="str">"tc-read"</span><span class="tag">&gt;&lt;/p&gt;</span>
+    <span class="tag">&lt;button</span> <span class="attr">class</span>=<span class="str">"tc-btn"</span><span class="tag">&gt;</span>PULL ANOTHER<span class="tag">&lt;/button&gt;</span>
+  <span class="tag">&lt;/div&gt;</span>
+
+<span class="tag">&lt;/div&gt;</span></pre>
+    </div>
+  </section>
+
+  <section id="css">
+    <h2 class="shead">2. CSS</h2>
+    <p class="p">The card uses a 3D flip-in. Three stacked card backs make the deck feel like it has weight.</p>
+    <div class="code-wrap">
+      <div class="code-tabs"><div class="code-tablist"><button class="code-tab">CSS</button></div><button class="copy-btn" data-target="code-css">COPY</button></div>
+<pre class="code" id="code-css"><span class="kw">.tarot-back</span> {
+  <span class="prop">width</span>: <span class="num">200px</span>; <span class="prop">height</span>: <span class="num">280px</span>; <span class="prop">border-radius</span>: <span class="num">14px</span>;
+  <span class="prop">background</span>: linear-gradient(<span class="num">160deg</span>, <span class="str">#2a1530</span>, <span class="str">#0e0a1a</span>);
+  <span class="prop">border</span>: <span class="num">1px</span> solid rgba(<span class="num">255, 77, 141, .35</span>);
+  <span class="prop">cursor</span>: pointer;
+  <span class="prop">box-shadow</span>: <span class="num">0 12px 40px</span> rgba(<span class="num">0, 0, 0, .7</span>);
+}
+<span class="kw">.tarot-back.s2</span> { <span class="prop">transform</span>: translate(<span class="num">4px</span>, <span class="num">4px</span>) rotate(<span class="num">1.2deg</span>); }
+<span class="kw">.tarot-back.s3</span> { <span class="prop">transform</span>: translate(<span class="num">8px</span>, <span class="num">8px</span>) rotate(<span class="num">2.4deg</span>); }
+
+<span class="kw">.tarot-card</span> {
+  <span class="prop">width</span>: <span class="num">240px</span>; <span class="prop">height</span>: <span class="num">336px</span>; <span class="prop">border-radius</span>: <span class="num">16px</span>;
+  <span class="prop">background</span>: linear-gradient(<span class="num">160deg</span>, <span class="str">#1c4a34</span>, <span class="str">#0e2b1f</span>);
+  <span class="prop">animation</span>: flip-in <span class="num">.9s</span> cubic-bezier(<span class="num">.34, 1.56, .64, 1</span>);
+}
+
+<span class="kw">@keyframes flip-in</span> {
+  <span class="num">0%</span>   { <span class="prop">transform</span>: rotateY(<span class="num">180deg</span>); <span class="prop">opacity</span>: <span class="num">0</span>; }
+  <span class="num">50%</span>  { <span class="prop">transform</span>: rotateY(<span class="num">90deg</span>);  <span class="prop">opacity</span>: <span class="num">.6</span>; }
+  <span class="num">100%</span> { <span class="prop">transform</span>: rotateY(<span class="num">0</span>);       <span class="prop">opacity</span>: <span class="num">1</span>; }
+}
+
+<span class="com">/* name slot — one .ch per character for split-flap */</span>
+<span class="kw">.tc-name</span>     { <span class="prop">display</span>: flex; <span class="prop">gap</span>: <span class="num">1px</span>; <span class="prop">font-family</span>: <span class="str">'Bungee'</span>; }
+<span class="kw">.tc-name .ch</span> { <span class="prop">display</span>: inline-block; <span class="prop">min-width</span>: <span class="num">.55em</span>; <span class="prop">text-align</span>: center; }</pre>
+    </div>
+  </section>
+
+  <section id="js">
+    <h2 class="shead">3. JavaScript</h2>
+    <p class="p">
+      <code>draw()</code> picks a random card (or daily-seeded one), renders SVG art,
+      flips the card, then spins the name into place character by character (split-flap).
+    </p>
+    <div class="code-wrap">
+      <div class="code-tabs"><div class="code-tablist"><button class="code-tab">JS</button></div><button class="copy-btn" data-target="code-js">COPY</button></div>
+<pre class="code" id="code-js"><span class="com">// Swamp Tarot — pull a card, flip + split-flap name reveal</span>
+(<span class="kw">function</span>(){
+  <span class="kw">const</span> POOL = <span class="str">'ABCDEFGHIJKLMNOPQRSTUVWXYZ '</span>;
+  <span class="kw">const</span> tarot = document.getElementById(<span class="str">'tarot'</span>);
+  <span class="kw">const</span> deck  = document.getElementById(<span class="str">'deck'</span>);
+  <span class="kw">const</span> drawn = document.getElementById(<span class="str">'drawn'</span>);
+
+  <span class="com">// Pick: random by default, daily if data-daily on container</span>
+  <span class="kw">function</span> <span class="prop">pick</span>(){
+    <span class="kw">if</span> (tarot.dataset.mode === <span class="str">'daily'</span>) {
+      <span class="kw">const</span> d = <span class="kw">new</span> Date();
+      <span class="kw">const</span> seed = d.getFullYear()*1000 + d.getMonth()*40 + d.getDate();
+      <span class="kw">return</span> DECK[seed % DECK.length];
+    }
+    <span class="kw">return</span> DECK[Math.floor(Math.random() * DECK.length)];
+  }
+
+  <span class="com">// Split-flap name reveal (lifted from the Split-Flap component)</span>
+  <span class="kw">function</span> <span class="prop">flapName</span>(el, text){
+    el.innerHTML = <span class="str">''</span>;
+    <span class="kw">const</span> spans = [...text].map(target =&gt; {
+      <span class="kw">const</span> s = document.createElement(<span class="str">'span'</span>);
+      s.className = <span class="str">'ch'</span>;
+      s.textContent = POOL[Math.floor(Math.random()*POOL.length)];
+      s.dataset.target = target;
+      el.appendChild(s);
+      <span class="kw">return</span> s;
+    });
+    spans.forEach((s, i) =&gt; {
+      <span class="kw">let</span> ticks = 8 + i*3;
+      <span class="kw">const</span> iv = setInterval(() =&gt; {
+        s.textContent = POOL[Math.floor(Math.random()*POOL.length)];
+        <span class="kw">if</span> (--ticks &lt;= 0) { s.textContent = s.dataset.target; clearInterval(iv); }
+      }, 45);
+    });
+  }
+
+  <span class="kw">function</span> <span class="prop">draw</span>(card){
+    card = card || pick();
+    deck.hidden = <span class="kw">true</span>;
+    drawn.hidden = <span class="kw">false</span>;
+    drawn.querySelector(<span class="str">'.tc-num'</span>).textContent = <span class="str">'CARD · '</span> + card.n;
+    drawn.querySelector(<span class="str">'.tc-art'</span>).innerHTML = card.svg;
+    drawn.querySelector(<span class="str">'.tc-mean'</span>).textContent = card.meaning;
+    drawn.querySelector(<span class="str">'.tc-read'</span>).textContent = card.reading;
+    flapName(drawn.querySelector(<span class="str">'.tc-name'</span>), card.name);
+  }
+
+  deck.addEventListener(<span class="str">'click'</span>, () =&gt; draw());
+  drawn.querySelector(<span class="str">'.tc-btn'</span>).addEventListener(<span class="str">'click'</span>, () =&gt; draw());
+
+  <span class="com">// expose for #-link draws</span>
+  window.swampTarotDraw = draw;
+})();</pre>
+    </div>
+  </section>
+
+  <section id="data">
+    <h2 class="shead">4. The deck (data)</h2>
+    <p class="p">15 archetypes. Each has a name, a one-line meaning, a paragraph reading, and an inline SVG so the whole component stays self-contained.</p>
+    <div class="code-wrap">
+      <div class="code-tabs"><div class="code-tablist"><button class="code-tab">DECK</button></div><button class="copy-btn" data-target="code-deck">COPY</button></div>
+<pre class="code" id="code-deck"><span class="kw">const</span> DECK = [
+  { n:<span class="str">'I'</span>,    name:<span class="str">'THE HERON'</span>,    meaning:<span class="str">'patience that catches'</span>,
+    reading:<span class="str">'You are not slow. You are waiting for the fish that the louder ones never see.'</span> },
+  { n:<span class="str">'II'</span>,   name:<span class="str">'THE BOG'</span>,      meaning:<span class="str">'the work is heavy on purpose'</span>,
+    reading:<span class="str">'Stuck is not the failure. The pull is the muscle. Walk slower, lift higher.'</span> },
+  { n:<span class="str">'III'</span>,  name:<span class="str">'THE LURE'</span>,     meaning:<span class="str">'bait wears the face of fortune'</span>,
+    reading:<span class="str">'The thing that shines may be a hook. Ask who is pulling, not just what glitters.'</span> },
+  { n:<span class="str">'IV'</span>,   name:<span class="str">'THE MIRROR'</span>,   meaning:<span class="str">'still water sees you'</span>,
+    reading:<span class="str">'You came for an answer; you found a face. Look anyway. The face was the answer.'</span> },
+  { n:<span class="str">'V'</span>,    name:<span class="str">'FROG KING'</span>,    meaning:<span class="str">'claim it'</span>,
+    reading:<span class="str">'The throne is a leaf. The crown is a sound. Take both. No one is coming to crown you.'</span> },
+  { n:<span class="str">'VI'</span>,   name:<span class="str">'THE LILY'</span>,     meaning:<span class="str">'the offering that floats'</span>,
+    reading:<span class="str">'Give without proof. The lily has no agenda and still everything orbits it.'</span> },
+  { n:<span class="str">'VII'</span>,  name:<span class="str">'THE FOG'</span>,      meaning:<span class="str">'you cannot see; that is the answer'</span>,
+    reading:<span class="str">'Stop deciding. The fog will lift in its own hour. Until then, breathe shallow and stand still.'</span> },
+  { n:<span class="str">'VIII'</span>, name:<span class="str">'THE CROAK'</span>,    meaning:<span class="str">'say the thing'</span>,
+    reading:<span class="str">'The swamp is listening. The frog who calls finds the frog who answers. Silence finds only silence.'</span> },
+  { n:<span class="str">'IX'</span>,   name:<span class="str">'THE TIDE'</span>,     meaning:<span class="str">'the next you is on the way'</span>,
+    reading:<span class="str">'Something is coming. Do not name it yet. Open the door wider, that is your only job.'</span> },
+  { n:<span class="str">'X'</span>,    name:<span class="str">'THE MOSS'</span>,     meaning:<span class="str">'slow growth is growth'</span>,
+    reading:<span class="str">'One millimeter a year is a kingdom by the time anyone notices. Keep going.'</span> },
+  { n:<span class="str">'XI'</span>,   name:<span class="str">'THE REED'</span>,     meaning:<span class="str">'bend, hollow, sing'</span>,
+    reading:<span class="str">'What broke you is what makes you sound. Stop refusing the wind; start being the flute.'</span> },
+  { n:<span class="str">'XII'</span>,  name:<span class="str">'THE SNAKE'</span>,    meaning:<span class="str">'cunning is not cruelty'</span>,
+    reading:<span class="str">'Take the long way. The shortcut bites. You are allowed to be patient and clever at once.'</span> },
+  { n:<span class="str">'XIII'</span>, name:<span class="str">'THE LANTERN'</span>,  meaning:<span class="str">'a small light, repeated'</span>,
+    reading:<span class="str">'Be the firefly. One blink will not light the swamp. A hundred thousand of them do.'</span> },
+  { n:<span class="str">'XIV'</span>,  name:<span class="str">'THE DRAGONFLY'</span>,meaning:<span class="str">'transformation'</span>,
+    reading:<span class="str">'The version of you that flies is not the version that crawled. Stop apologizing for the molt.'</span> },
+  { n:<span class="str">'XV'</span>,   name:<span class="str">'THE STUMP'</span>,    meaning:<span class="str">'what was felled became home'</span>,
+    reading:<span class="str">'The thing you mourn is now a habitat. Loss did not end the story; it changed the renters.'</span> }
+];</pre>
+    </div>
+  </section>
+
+  <section id="params">
+    <h2 class="shead">5. Parameters you can tweak</h2>
+    <table class="params">
+      <thead><tr><th>Where</th><th>Default</th><th>Effect</th></tr></thead>
+      <tbody>
+        <tr><td>HTML <code>data-mode="daily"</code></td><td><span class="def">random</span></td><td>Same card all day for the same visitor (seeded by date). Tomorrow rotates.</td></tr>
+        <tr><td><code>DECK</code> array</td><td><span class="def">15 cards</span></td><td>Add your own archetypes. Each card needs <code>n / name / meaning / reading / svg</code>.</td></tr>
+        <tr><td>CSS <code>@keyframes flip-in</code></td><td><span class="def">.9s</span></td><td>Flip duration. Shorter = quicker reveal; longer = more theatre.</td></tr>
+        <tr><td>JS <code>flapName</code> tick speed</td><td><span class="def">45ms</span></td><td>How fast each character cycles. Lower = snappier reveal.</td></tr>
+        <tr><td>JS <code>flapName</code> ticks per char</td><td><span class="def">8 + i·3</span></td><td>Each character locks 3 ticks later than the last. Higher = longer cascade.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- TIP JAR -->
+  <div class="tipjar">
+    <h3>Liked this card?</h3>
+    <p>Feed the cats who keep the bog tidy. (And tip the witch who wrote the deck.)</p>
+    <a href="https://buymeacoffee.com/sophiejr" target="_blank" rel="noopener">🧋 TREAT THE SWAMP →</a>
+  </div>
+
+  <!-- NEXT -->
+  <div class="next-cta">
+    <div class="l">
+      <b>More in the garden →</b>
+      <span>Split-Flap Text, Pond Ripple, Firefly Cursor, Curious Companion, Frog Hop.</span>
+    </div>
+    <a href="/swamp-ui/">Browse all →</a>
+  </div>
+
+</div>
+
+<footer>
+  <div class="flinks">
+    <a href="/swamp-ui/">Swamp UI</a>
+    <a href="/">Sophie's Swamp</a>
+    <a href="https://github.com/sophiejren/sophiesswap" target="_blank" rel="noopener">GitHub</a>
+  </div>
+  <p class="copy">© 2026 Sophie. <b>MIT licensed.</b> Use freely, credit kindly. 🐸</p>
+</footer>
+
+<script>
+  // ============ THE DECK ============
+  // Each card has SVG art so the component stays single-file.
+  const ART = {
+    heron: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#b6ff5b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M50 78 L50 50"/><path d="M50 50 Q40 35 50 22"/><circle cx="50" cy="20" r="3" fill="#b6ff5b"/>
+      <path d="M53 19 L62 17"/><path d="M50 50 Q60 48 65 55"/><path d="M50 50 Q40 48 35 55"/>
+      <path d="M40 78 L60 78"/><path d="M50 78 L48 88"/><path d="M50 78 L52 88"/>
+      <path d="M30 90 Q50 86 70 90" stroke="#52ffe0" opacity=".6"/>
+    </svg>`,
+    bog: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#ffd23f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <ellipse cx="50" cy="68" rx="38" ry="14" fill="#1f5238" stroke="none"/>
+      <path d="M16 68 Q22 60 30 64 Q38 56 46 62 Q54 54 62 60 Q70 54 78 62 Q84 56 84 68"/>
+      <circle cx="32" cy="56" r="2" fill="#ffd23f"/><circle cx="58" cy="48" r="2" fill="#ffd23f"/><circle cx="70" cy="58" r="2" fill="#ffd23f"/>
+      <path d="M20 80 Q50 76 80 80" opacity=".5"/>
+    </svg>`,
+    lure: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#ff8a3d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M20 10 L50 50"/><circle cx="50" cy="50" r="10" fill="#ffd23f"/>
+      <circle cx="46" cy="48" r="1.5" fill="#081310" stroke="none"/>
+      <path d="M58 56 Q66 56 70 64 Q66 68 58 62" fill="#ff4d8d" stroke="#ff4d8d"/>
+      <path d="M50 60 Q50 70 56 72" stroke="#ff4d8d" stroke-width="1.5"/>
+      <path d="M40 78 Q50 76 60 78" stroke="#52ffe0" opacity=".6"/>
+    </svg>`,
+    mirror: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#52ffe0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <ellipse cx="50" cy="55" rx="32" ry="22" fill="#102a20"/>
+      <ellipse cx="50" cy="55" rx="32" ry="22"/>
+      <path d="M22 50 Q30 45 38 50" opacity=".7"/>
+      <path d="M44 58 Q52 53 60 58" opacity=".7"/>
+      <path d="M66 52 Q72 48 78 52" opacity=".5"/>
+      <circle cx="50" cy="38" r="3" fill="#52ffe0"/>
+    </svg>`,
+    frogking: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#b6ff5b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <ellipse cx="50" cy="60" rx="26" ry="20" fill="#1f5238"/>
+      <circle cx="40" cy="46" r="7" fill="#b6ff5b"/><circle cx="60" cy="46" r="7" fill="#b6ff5b"/>
+      <circle cx="40" cy="46" r="2.5" fill="#081310"/><circle cx="60" cy="46" r="2.5" fill="#081310"/>
+      <path d="M38 64 Q50 70 62 64"/>
+      <path d="M30 35 L35 22 L42 30 L50 18 L58 30 L65 22 L70 35 Z" fill="#ffd23f" stroke="#ffd23f"/>
+      <circle cx="50" cy="14" r="2.5" fill="#ff4d8d"/>
+    </svg>`,
+    lily: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#ff4d8d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <ellipse cx="50" cy="74" rx="34" ry="10" fill="#1f5238" stroke="#1f5238"/>
+      <path d="M50 70 Q40 50 30 46 Q40 38 50 52 Q60 38 70 46 Q60 50 50 70" fill="#ff4d8d" opacity=".4"/>
+      <path d="M50 70 Q42 54 36 52 Q44 44 50 56 Q56 44 64 52 Q58 54 50 70" fill="#ffd23f" opacity=".5"/>
+      <circle cx="50" cy="58" r="3" fill="#ffd23f"/>
+      <path d="M20 80 Q50 76 80 80" stroke="#52ffe0" opacity=".5"/>
+    </svg>`,
+    fog: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#86a596" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 38 Q24 32 34 38 Q44 30 56 36 Q66 30 78 36 Q86 30 90 38" opacity=".7"/>
+      <path d="M14 54 Q26 48 38 54 Q48 46 60 52 Q72 46 86 54" opacity=".85"/>
+      <path d="M10 70 Q24 62 38 70 Q52 62 66 70 Q80 64 90 70"/>
+      <circle cx="78" cy="22" r="6" fill="#ffd23f" opacity=".7"/>
+    </svg>`,
+    croak: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#52ffe0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <ellipse cx="38" cy="62" rx="20" ry="16" fill="#1f5238"/>
+      <circle cx="32" cy="52" r="5" fill="#b6ff5b"/><circle cx="32" cy="52" r="1.8" fill="#081310"/>
+      <path d="M28 66 Q40 72 50 64"/>
+      <path d="M60 50 Q72 40 78 30" stroke-dasharray="2 3"/>
+      <path d="M58 42 Q66 30 70 22" stroke-dasharray="2 3" opacity=".7"/>
+      <text x="76" y="22" fill="#52ffe0" stroke="none" font-family="Bungee, sans-serif" font-size="9">!</text>
+    </svg>`,
+    tide: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#52ffe0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M8 46 Q22 36 36 46 Q50 36 64 46 Q78 36 92 46"/>
+      <path d="M8 60 Q22 50 36 60 Q50 50 64 60 Q78 50 92 60" opacity=".7"/>
+      <path d="M8 74 Q22 64 36 74 Q50 64 64 74 Q78 64 92 74" opacity=".4"/>
+      <circle cx="50" cy="22" r="8" fill="#ffd23f" opacity=".8" stroke="#ffd23f"/>
+    </svg>`,
+    moss: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#b6ff5b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M20 80 Q22 60 30 56 Q24 50 28 38 Q34 42 36 32 Q42 38 46 30 Q50 38 56 32 Q60 42 66 32 Q70 38 74 38 Q80 50 74 56 Q82 60 80 80 Z" fill="#1f5238"/>
+      <circle cx="32" cy="60" r="2" fill="#ffd23f"/><circle cx="48" cy="52" r="2" fill="#ffd23f"/><circle cx="62" cy="58" r="2" fill="#ffd23f"/><circle cx="72" cy="64" r="2" fill="#ffd23f"/>
+    </svg>`,
+    reed: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#ffd23f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M30 88 Q26 60 32 28"/><ellipse cx="32" cy="22" rx="3" ry="8" fill="#ff8a3d" stroke="#ff8a3d"/>
+      <path d="M50 88 Q46 56 52 18"/><ellipse cx="52" cy="14" rx="3" ry="8" fill="#ff8a3d" stroke="#ff8a3d"/>
+      <path d="M70 88 Q66 62 72 32"/><ellipse cx="72" cy="26" rx="3" ry="8" fill="#ff8a3d" stroke="#ff8a3d"/>
+      <path d="M20 88 Q50 86 80 88" stroke="#52ffe0" opacity=".5"/>
+    </svg>`,
+    snake: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#ff4d8d" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M16 80 Q30 70 26 56 Q22 42 38 38 Q56 36 56 50 Q56 64 70 62 Q86 60 82 44"/>
+      <ellipse cx="82" cy="42" rx="5" ry="4" fill="#ff4d8d"/>
+      <circle cx="80" cy="40" r="1.2" fill="#ffd23f"/>
+      <path d="M85 40 L92 38" stroke="#ffd23f"/>
+    </svg>`,
+    lantern: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#ffd23f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="50" cy="52" r="22" fill="#ffd23f" opacity=".15"/>
+      <circle cx="50" cy="52" r="12" fill="#ffd23f" opacity=".5"/>
+      <circle cx="50" cy="52" r="5" fill="#ffd23f"/>
+      <circle cx="22" cy="28" r="3" fill="#ffd23f" opacity=".7"/>
+      <circle cx="78" cy="34" r="3" fill="#ffd23f" opacity=".7"/>
+      <circle cx="78" cy="74" r="3" fill="#ffd23f" opacity=".7"/>
+      <circle cx="22" cy="78" r="3" fill="#ffd23f" opacity=".7"/>
+    </svg>`,
+    dragonfly: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#52ffe0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <ellipse cx="50" cy="55" rx="3" ry="22" fill="#52ffe0"/>
+      <ellipse cx="32" cy="44" rx="14" ry="6" fill="#52ffe0" opacity=".35" transform="rotate(-20 32 44)"/>
+      <ellipse cx="68" cy="44" rx="14" ry="6" fill="#ff4d8d" opacity=".35" transform="rotate(20 68 44)"/>
+      <ellipse cx="34" cy="60" rx="12" ry="5" fill="#52ffe0" opacity=".35" transform="rotate(20 34 60)"/>
+      <ellipse cx="66" cy="60" rx="12" ry="5" fill="#ff4d8d" opacity=".35" transform="rotate(-20 66 60)"/>
+      <circle cx="50" cy="32" r="4" fill="#ffd23f"/>
+      <circle cx="48" cy="30" r="1" fill="#081310"/><circle cx="52" cy="30" r="1" fill="#081310"/>
+    </svg>`,
+    stump: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#ff8a3d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M22 80 L26 50 Q26 42 50 42 Q74 42 74 50 L78 80 Z" fill="#3d2818"/>
+      <ellipse cx="50" cy="42" rx="24" ry="6" fill="#5a3a22"/>
+      <ellipse cx="50" cy="42" rx="16" ry="4" fill="none"/>
+      <ellipse cx="50" cy="42" rx="8" ry="2" fill="none"/>
+      <path d="M36 50 Q34 56 36 60" opacity=".5"/>
+      <path d="M62 52 Q66 58 64 62" opacity=".5"/>
+      <circle cx="40" cy="36" r="2" fill="#b6ff5b"/><circle cx="58" cy="38" r="2" fill="#b6ff5b"/>
+    </svg>`
+  };
+
+  const DECK = [
+    { n:'I',    key:'heron',     name:'THE HERON',     meaning:'patience that catches',
+      reading:'You are not slow. You are waiting for the fish that the louder ones never see.' },
+    { n:'II',   key:'bog',       name:'THE BOG',       meaning:'the work is heavy on purpose',
+      reading:'Stuck is not the failure. The pull is the muscle. Walk slower, lift higher.' },
+    { n:'III',  key:'lure',      name:'THE LURE',      meaning:'bait wears the face of fortune',
+      reading:'The thing that shines may be a hook. Ask who is pulling, not just what glitters.' },
+    { n:'IV',   key:'mirror',    name:'THE MIRROR',    meaning:'still water sees you',
+      reading:'You came for an answer; you found a face. Look anyway. The face was the answer.' },
+    { n:'V',    key:'frogking',  name:'FROG KING',     meaning:'claim it',
+      reading:'The throne is a leaf. The crown is a sound. Take both. No one is coming to crown you.' },
+    { n:'VI',   key:'lily',      name:'THE LILY',      meaning:'the offering that floats',
+      reading:'Give without proof. The lily has no agenda and still everything orbits it.' },
+    { n:'VII',  key:'fog',       name:'THE FOG',       meaning:'you cannot see; that is the answer',
+      reading:'Stop deciding. The fog will lift in its own hour. Until then, breathe shallow and stand still.' },
+    { n:'VIII', key:'croak',     name:'THE CROAK',     meaning:'say the thing',
+      reading:'The swamp is listening. The frog who calls finds the frog who answers. Silence finds only silence.' },
+    { n:'IX',   key:'tide',      name:'THE TIDE',      meaning:'the next you is on the way',
+      reading:'Something is coming. Do not name it yet. Open the door wider — that is your only job.' },
+    { n:'X',    key:'moss',      name:'THE MOSS',      meaning:'slow growth is growth',
+      reading:'One millimeter a year is a kingdom by the time anyone notices. Keep going.' },
+    { n:'XI',   key:'reed',      name:'THE REED',      meaning:'bend, hollow, sing',
+      reading:'What broke you is what makes you sound. Stop refusing the wind; start being the flute.' },
+    { n:'XII',  key:'snake',     name:'THE SNAKE',     meaning:'cunning is not cruelty',
+      reading:'Take the long way. The shortcut bites. You are allowed to be patient and clever at once.' },
+    { n:'XIII', key:'lantern',   name:'THE LANTERN',   meaning:'a small light, repeated',
+      reading:'Be the firefly. One blink will not light the swamp. A hundred thousand of them do.' },
+    { n:'XIV',  key:'dragonfly', name:'THE DRAGONFLY', meaning:'transformation',
+      reading:'The version of you that flies is not the version that crawled. Stop apologizing for the molt.' },
+    { n:'XV',   key:'stump',     name:'THE STUMP',     meaning:'what was felled became home',
+      reading:'The thing you mourn is now a habitat. Loss did not end the story; it changed the renters.' }
+  ];
+
+  // ============ SPLIT-FLAP NAME REVEAL ============
+  const POOL = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ ';
+  function flapName(el, text){
+    el.innerHTML = '';
+    const spans = [...text].map(target => {
+      const s = document.createElement('span');
+      s.className = 'ch';
+      s.textContent = target === ' ' ? ' ' : POOL[Math.floor(Math.random()*POOL.length)];
+      s.dataset.target = target;
+      el.appendChild(s);
+      return s;
+    });
+    spans.forEach((s, i) => {
+      if (s.dataset.target === ' ') return;
+      let ticks = 8 + i*3;
+      const iv = setInterval(() => {
+        s.textContent = POOL[Math.floor(Math.random()*POOL.length)];
+        if (--ticks <= 0) { s.textContent = s.dataset.target; clearInterval(iv); }
+      }, 45);
+    });
+  }
+
+  // ============ DRAW ============
+  const deckView   = document.getElementById('deckView');
+  const drawnStage = document.getElementById('drawnStage');
+  const cardNum    = document.getElementById('cardNum');
+  const cardArt    = document.getElementById('cardArt');
+  const cardName   = document.getElementById('cardName');
+  const cardMeaning= document.getElementById('cardMeaning');
+  const cardReading= document.getElementById('cardReading');
+  const drawnCard  = document.getElementById('drawnCard');
+
+  let lastIdx = -1;
+  function draw(idx){
+    let i = (typeof idx === 'number') ? idx : Math.floor(Math.random() * DECK.length);
+    if (typeof idx !== 'number' && i === lastIdx && DECK.length > 1) {
+      i = (i + 1 + Math.floor(Math.random() * (DECK.length - 1))) % DECK.length;
+    }
+    lastIdx = i;
+    const card = DECK[i];
+    cardNum.textContent = 'CARD · ' + card.n;
+    cardArt.innerHTML = ART[card.key];
+    cardMeaning.textContent = card.meaning;
+    cardReading.textContent = card.reading;
+    // re-trigger flip animation
+    drawnCard.style.animation = 'none';
+    void drawnCard.offsetWidth;
+    drawnCard.style.animation = '';
+    flapName(cardName, card.name);
+    deckView.style.display = 'none';
+    drawnStage.classList.add('shown');
+  }
+
+  document.getElementById('deckTop').addEventListener('click', () => draw());
+  document.getElementById('drawAgain').addEventListener('click', () => draw());
+  document.getElementById('backToDeck').addEventListener('click', () => {
+    drawnStage.classList.remove('shown');
+    deckView.style.display = '';
+  });
+
+  // ============ MINI-DECK GALLERY ============
+  const gallery = document.getElementById('gallery');
+  DECK.forEach((card, i) => {
+    const el = document.createElement('div');
+    el.className = 'mini-card';
+    el.innerHTML = `${ART[card.key]}<div class="mn">${card.name}</div><div class="mm">${card.meaning}</div>`;
+    el.addEventListener('click', () => {
+      draw(i);
+      drawnCard.scrollIntoView({behavior:'smooth', block:'center'});
+    });
+    gallery.appendChild(el);
+  });
+
+  // ============ COPY BUTTONS ============
+  document.querySelectorAll('.copy-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = document.getElementById(btn.dataset.target);
+      if (!target) return;
+      navigator.clipboard.writeText(target.innerText).then(() => {
+        const original = btn.textContent;
+        btn.textContent = 'COPIED ✓';
+        btn.classList.add('copied');
+        setTimeout(() => { btn.textContent = original; btn.classList.remove('copied'); }, 1600);
+      });
+    });
+  });
+</script>
+
+</body>
+</html>

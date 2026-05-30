@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<!--
+  Swamp UI — Mosquito Swat
+  Whack-a-mole with a swamp narrative. Don't swat the dragonflies.
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Mosquito Swat — Swamp UI</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%230b2018'/><circle cx='16' cy='17' r='8' fill='%23ff4d8d'/><circle cx='16' cy='17' r='3.4' fill='%23081310'/></svg>" />
+
+<meta name="description" content="Mosquito Swat — whack-a-mole with a swamp narrative. Don't hit the dragonflies. Reach 30 and the swamp sleeps." />
+<meta property="og:title" content="Mosquito Swat — Swamp UI" />
+<meta property="og:description" content="Click to swat. Don't hit the dragonfly. Copy-paste, no dependencies." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://sophieren.com/swamp-ui/components/mosquito-swat.html" />
+<meta property="og:image" content="https://sophieren.com/images/og-image.png" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Caveat:wght@600;700&family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+<style>
+  :root{
+    --ink:#081310;--swamp-deep:#0b2018;--swamp:#0f2e22;--swamp-light:#16412f;
+    --panel:#102a20;--moss:#1f5238;
+    --neon-yellow:#ffd23f;--neon-pink:#ff4d8d;--neon-cyan:#52ffe0;
+    --neon-orange:#ff8a3d;--neon-lime:#b6ff5b;
+    --cream:#f3eedd;--muted:#86a596;--line:rgba(243,238,221,.12);
+    --code-bg:#06110d;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{font-family:'Space Grotesk',system-ui,sans-serif;background:var(--ink);color:var(--cream);overflow-x:hidden;line-height:1.65;min-height:100vh;position:relative;}
+  a{color:inherit;text-decoration:none;}
+  ::selection{background:var(--neon-pink);color:var(--ink);}
+
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:9000;background:radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,.6) 100%);}
+  body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9001;opacity:.04;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+  .backdrop{position:fixed;inset:0;z-index:-2;overflow:hidden;background:radial-gradient(ellipse 80% 55% at 50% 20%,#103226 0%,#081814 60%,#040a08 100%);}
+
+  nav{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;align-items:center;justify-content:space-between;padding:14px clamp(16px,4vw,44px);background:linear-gradient(180deg,rgba(7,16,12,.95) 0%,rgba(7,16,12,.55) 60%,rgba(7,16,12,0) 100%);}
+  .brand{display:flex;align-items:center;gap:10px;font-family:'Bungee',sans-serif;font-size:14px;letter-spacing:.5px;color:var(--cream);}
+  .brand b{color:var(--neon-pink);}
+  .brand-dot{width:14px;height:14px;border-radius:50%;background:var(--neon-pink);box-shadow:0 0 12px var(--neon-pink);}
+  .nav-links{display:flex;gap:8px;align-items:center;}
+  .nav-link{font-family:'Bungee',sans-serif;font-size:10.5px;letter-spacing:1.5px;color:var(--neon-pink);padding:9px 16px;border:1px solid rgba(255,77,141,.35);border-radius:999px;transition:all .2s;}
+  .nav-link:hover{background:rgba(255,77,141,.1);box-shadow:0 0 14px rgba(255,77,141,.3);}
+
+  .container{max-width:1100px;margin:0 auto;padding:120px clamp(20px,5vw,40px) 100px;}
+
+  .crumb{font-family:'Bungee',sans-serif;font-size:10px;letter-spacing:2px;color:var(--muted);margin-bottom:30px;}
+  .crumb a{color:var(--neon-pink);transition:color .2s;}
+  .crumb a:hover{color:var(--neon-lime);}
+  .crumb .sep{color:var(--neon-yellow);margin:0 10px;}
+
+  header.hero{margin-bottom:40px;}
+  h1.title{font-family:'Bungee',sans-serif;font-size:clamp(40px,7vw,80px);line-height:.98;color:var(--cream);letter-spacing:-1px;margin-bottom:14px;}
+  .sub{font-family:'Caveat',cursive;font-size:26px;color:var(--neon-pink);margin-bottom:16px;font-weight:600;}
+  .lede{font-size:17px;color:var(--cream);opacity:.85;max-width:660px;line-height:1.6;}
+  .lede em{color:var(--neon-pink);font-style:italic;}
+
+  .meta{display:flex;gap:8px;margin-top:22px;flex-wrap:wrap;}
+  .chip{font-family:'Space Grotesk',sans-serif;font-size:11.5px;letter-spacing:.4px;padding:5px 12px;border:1px solid var(--line);border-radius:999px;color:var(--cream);background:rgba(15,46,34,.5);}
+  .chip b{color:var(--neon-pink);margin-right:5px;}
+
+  /* ============ DEMO ============ */
+  .stage{background:linear-gradient(180deg,var(--swamp) 0%,var(--swamp-deep) 100%);border:1px solid var(--line);border-radius:18px;padding:32px 26px 28px;margin:48px 0;position:relative;}
+  .stage-label{position:absolute;top:14px;left:18px;font-family:'Bungee',sans-serif;font-size:9px;letter-spacing:2px;color:var(--muted);}
+
+  .arena{
+    position:relative;height:380px;
+    background:radial-gradient(ellipse at center,#163e2b 0%,#091813 80%);
+    border:1px solid rgba(255,77,141,.18);border-radius:14px;
+    margin-top:18px;overflow:hidden;
+    cursor:crosshair;
+    box-shadow:inset 0 0 100px rgba(0,0,0,.6);
+  }
+  /* grass at bottom */
+  .arena::before{
+    content:"";position:absolute;bottom:0;left:0;right:0;height:10px;
+    background:repeating-linear-gradient(85deg,#1f5238 0,#1f5238 3px,transparent 3px,transparent 7px);
+    opacity:.45;
+  }
+  /* faint moon */
+  .arena::after{
+    content:"";position:absolute;top:30px;right:38px;width:50px;height:50px;border-radius:50%;
+    background:radial-gradient(circle,rgba(255,210,63,.2) 0%,rgba(255,210,63,0) 70%);
+    pointer-events:none;
+  }
+
+  .bug{
+    position:absolute;transform:translate(-50%,-50%);pointer-events:none;
+    transition:opacity .15s;
+  }
+  .bug svg{display:block;}
+  .mq svg{animation:buzz .07s steps(2) infinite;}
+  .df svg{animation:flutter .12s ease-in-out infinite;}
+  @keyframes buzz{50%{transform:translateY(-.5px);}}
+  @keyframes flutter{50%{transform:translateY(-2px);}}
+
+  /* hitbox layer (transparent, intercepts clicks per bug) */
+  .hit{
+    position:absolute;width:42px;height:42px;border-radius:50%;
+    transform:translate(-50%,-50%);
+    cursor:crosshair;
+  }
+  .hit.df-hit{width:64px;height:64px;}
+
+  /* splat */
+  .splat{
+    position:absolute;width:30px;height:30px;border-radius:50%;
+    background:radial-gradient(circle,rgba(255,77,141,.6) 0%,rgba(255,77,141,0) 70%);
+    transform:translate(-50%,-50%);
+    pointer-events:none;
+    animation:splat .5s ease-out forwards;
+  }
+  @keyframes splat{
+    0%{width:6px;height:6px;opacity:1;}
+    100%{width:50px;height:50px;opacity:0;}
+  }
+  .splat.bad{background:radial-gradient(circle,rgba(255,138,61,.7) 0%,rgba(255,138,61,0) 70%);}
+
+  /* score popup */
+  .popup{
+    position:absolute;transform:translate(-50%,-50%);
+    font-family:'Bungee',sans-serif;font-size:13px;letter-spacing:.5px;
+    color:var(--neon-lime);pointer-events:none;
+    animation:pop 1s ease-out forwards;
+    z-index:6;
+  }
+  .popup.bad{color:var(--neon-orange);}
+  @keyframes pop{
+    0%{opacity:0;transform:translate(-50%,-50%);}
+    20%{opacity:1;}
+    100%{opacity:0;transform:translate(-50%,calc(-50% - 28px));}
+  }
+
+  /* swatter cursor */
+  .swatter{
+    position:absolute;width:36px;height:36px;
+    transform:translate(-50%,-50%);
+    pointer-events:none;z-index:7;
+    transition:opacity .2s;
+  }
+  .swatter svg{display:block;}
+  .swatter.smash{animation:smash .14s ease-out;}
+  @keyframes smash{
+    0%{transform:translate(-50%,-50%) rotate(0) scale(1);}
+    50%{transform:translate(-50%,-50%) rotate(-22deg) scale(1.18);}
+    100%{transform:translate(-50%,-50%) rotate(0) scale(1);}
+  }
+
+  /* HUD */
+  .hud{position:absolute;top:14px;left:16px;display:flex;gap:8px;z-index:7;}
+  .hud-chip{
+    background:rgba(0,0,0,.55);border:1px solid var(--line);border-radius:8px;
+    padding:7px 12px;display:flex;align-items:center;gap:8px;
+    backdrop-filter:blur(4px);
+  }
+  .hud-label{font-family:'Bungee',sans-serif;font-size:9px;letter-spacing:1.5px;color:var(--muted);}
+  .hud-val{font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--cream);}
+  .hud-val.combo{color:var(--neon-yellow);}
+  .hud-val.score{color:var(--neon-lime);}
+
+  /* narrative banner */
+  .narr{
+    position:absolute;bottom:18px;left:50%;transform:translateX(-50%);
+    background:rgba(0,0,0,.55);border:1px solid rgba(82,255,224,.3);border-radius:999px;
+    padding:8px 18px;font-family:'Caveat',cursive;font-size:18px;color:var(--neon-cyan);
+    opacity:0;pointer-events:none;transition:opacity .4s;
+    text-align:center;backdrop-filter:blur(4px);
+    z-index:7;
+  }
+  .narr.show{opacity:1;}
+
+  /* sleep overlay */
+  .sleep{
+    position:absolute;inset:0;
+    background:radial-gradient(ellipse at center,rgba(8,19,16,.4) 0%,rgba(8,19,16,.85) 90%);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;
+    opacity:0;pointer-events:none;transition:opacity .8s;
+    z-index:9;
+  }
+  .sleep.show{opacity:1;pointer-events:auto;}
+  .sleep-title{font-family:'Bungee',sans-serif;font-size:30px;color:var(--neon-cyan);letter-spacing:2px;text-shadow:0 0 18px rgba(82,255,224,.5);}
+  .sleep-sub{font-family:'Caveat',cursive;font-size:20px;color:var(--cream);opacity:.8;text-align:center;max-width:360px;}
+  .sleep-btn{font-family:'Bungee',sans-serif;font-size:11px;letter-spacing:1.5px;color:var(--ink);background:var(--neon-pink);padding:11px 22px;border:none;border-radius:999px;cursor:pointer;transition:all .2s;margin-top:8px;}
+  .sleep-btn:hover{background:var(--cream);}
+
+  /* status row */
+  .status-row{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:14px 18px;margin-top:14px;
+    background:rgba(0,0,0,.3);border:1px solid var(--line);border-radius:10px;
+    flex-wrap:wrap;gap:12px;
+  }
+  .sr-row{display:flex;gap:18px;align-items:center;font-size:13px;flex-wrap:wrap;}
+  .sr-label{font-family:'Bungee',sans-serif;font-size:9.5px;letter-spacing:1.5px;color:var(--muted);}
+  .sr-val{font-family:'JetBrains Mono',monospace;color:var(--cream);}
+  .sr-reset{font-family:'Bungee',sans-serif;font-size:10px;letter-spacing:1.5px;color:var(--neon-pink);background:transparent;border:1px solid rgba(255,77,141,.35);padding:8px 14px;border-radius:7px;cursor:pointer;transition:all .2s;}
+  .sr-reset:hover{background:rgba(255,77,141,.1);}
+
+  /* sections */
+  section{margin:64px 0;}
+  h2.shead{font-family:'Bungee',sans-serif;font-size:22px;color:var(--cream);letter-spacing:.3px;margin-bottom:18px;display:flex;align-items:center;gap:12px;}
+  h2.shead::before{content:"";width:8px;height:8px;background:var(--neon-pink);border-radius:50%;box-shadow:0 0 12px var(--neon-pink);}
+  .p{font-size:16px;color:var(--cream);opacity:.88;line-height:1.7;margin-bottom:14px;}
+  .p em{color:var(--neon-pink);font-style:italic;}
+  .p code{font-family:'JetBrains Mono',monospace;font-size:13.5px;background:var(--code-bg);padding:2px 7px;border-radius:5px;color:var(--neon-pink);}
+
+  .code-wrap{background:var(--code-bg);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin:24px 0;}
+  .code-tabs{display:flex;align-items:center;justify-content:space-between;background:rgba(0,0,0,.4);border-bottom:1px solid var(--line);padding:0 12px 0 0;}
+  .code-tablist{display:flex;}
+  .code-tab{font-family:'Bungee',sans-serif;font-size:10.5px;letter-spacing:1.5px;color:var(--neon-pink);padding:14px 18px;border:none;background:transparent;border-bottom:2px solid var(--neon-pink);}
+  .copy-btn{font-family:'Bungee',sans-serif;font-size:10px;letter-spacing:1.5px;color:var(--neon-pink);background:transparent;border:1px solid rgba(255,77,141,.35);padding:7px 13px;border-radius:7px;cursor:pointer;transition:all .2s;}
+  .copy-btn:hover{background:rgba(255,77,141,.12);}
+  .copy-btn.copied{color:var(--ink);background:var(--neon-pink);border-color:var(--neon-pink);}
+  pre.code{margin:0;padding:22px 24px;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.6;color:var(--cream);}
+  pre.code .kw{color:var(--neon-pink);}
+  pre.code .tag{color:var(--neon-lime);}
+  pre.code .attr{color:var(--neon-cyan);}
+  pre.code .str{color:var(--neon-yellow);}
+  pre.code .com{color:var(--muted);font-style:italic;}
+  pre.code .num{color:var(--neon-orange);}
+  pre.code .prop{color:var(--neon-cyan);}
+
+  table.params{width:100%;border-collapse:collapse;margin:18px 0;background:rgba(15,46,34,.3);border:1px solid var(--line);border-radius:12px;overflow:hidden;}
+  table.params th{text-align:left;padding:14px 16px;font-family:'Bungee',sans-serif;font-size:10px;letter-spacing:1.5px;color:var(--neon-pink);background:rgba(0,0,0,.3);border-bottom:1px solid var(--line);}
+  table.params td{padding:14px 16px;border-bottom:1px solid var(--line);font-size:14px;color:var(--cream);}
+  table.params tr:last-child td{border-bottom:none;}
+  table.params code{font-family:'JetBrains Mono',monospace;font-size:12.5px;background:var(--code-bg);padding:2px 7px;border-radius:5px;color:var(--neon-pink);}
+  table.params .def{color:var(--neon-yellow);font-family:'JetBrains Mono',monospace;font-size:12.5px;}
+
+  .skip-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:24px 0;}
+  .skip-btn{background:rgba(15,46,34,.4);border:1px solid var(--line);border-radius:10px;padding:12px 14px;text-align:left;cursor:pointer;transition:all .2s;}
+  .skip-btn:hover{border-color:var(--neon-pink);background:rgba(255,77,141,.06);}
+  .skip-btn .n{font-family:'Bungee',sans-serif;font-size:9.5px;letter-spacing:1.5px;color:var(--neon-yellow);}
+  .skip-btn .l{font-size:13px;color:var(--cream);margin-top:4px;}
+
+  .tipjar{background:linear-gradient(135deg,rgba(255,210,63,.07) 0%,rgba(255,77,141,.06) 100%);border:1px solid rgba(255,210,63,.28);border-radius:18px;padding:28px 26px;margin:48px 0;text-align:center;}
+  .tipjar h3{font-family:'Bungee',sans-serif;font-size:15px;color:var(--neon-yellow);letter-spacing:.5px;margin-bottom:8px;}
+  .tipjar p{font-size:14px;color:var(--cream);opacity:.85;margin-bottom:16px;}
+  .tipjar a{display:inline-flex;align-items:center;gap:8px;font-family:'Bungee',sans-serif;font-size:11.5px;letter-spacing:1.5px;color:var(--ink);background:var(--neon-yellow);padding:13px 22px;border-radius:999px;transition:all .2s;}
+  .tipjar a:hover{background:var(--cream);transform:translateY(-2px);box-shadow:0 10px 22px -8px rgba(255,210,63,.65);}
+
+  .next-cta{display:flex;align-items:center;justify-content:space-between;gap:20px;background:linear-gradient(180deg,var(--swamp) 0%,var(--swamp-deep) 100%);border:1px solid var(--line);border-radius:14px;padding:24px 28px;margin:48px 0;flex-wrap:wrap;}
+  .next-cta .l b{display:block;font-family:'Bungee',sans-serif;font-size:14px;color:var(--cream);letter-spacing:.5px;margin-bottom:4px;}
+  .next-cta .l span{font-size:13.5px;color:var(--muted);}
+  .next-cta a{font-family:'Bungee',sans-serif;font-size:11px;letter-spacing:1.5px;color:var(--ink);background:var(--neon-pink);padding:12px 20px;border-radius:999px;transition:all .2s;}
+  .next-cta a:hover{background:var(--cream);}
+
+  footer{padding:50px 24px 40px;text-align:center;border-top:1px solid var(--line);background:rgba(8,19,16,.6);margin-top:80px;}
+  footer .flinks{display:flex;gap:24px;justify-content:center;margin-bottom:14px;flex-wrap:wrap;}
+  footer .flinks a{color:var(--cream);font-size:13px;opacity:.75;}
+  footer .flinks a:hover{color:var(--neon-pink);opacity:1;}
+  footer .copy{color:var(--muted);font-size:12px;}
+  footer .copy b{color:var(--neon-pink);}
+
+  @media (max-width:600px){
+    .arena{height:300px;}
+    .next-cta{flex-direction:column;text-align:center;}
+  }
+</style>
+</head>
+<body>
+
+<div class="backdrop"></div>
+
+<nav>
+  <a class="brand" href="/swamp-ui/">
+    <span class="brand-dot"></span>
+    <span>SWAMP <b>UI</b></span>
+  </a>
+  <div class="nav-links">
+    <a class="nav-link" href="/swamp-ui/">← all components</a>
+    <a class="nav-link" href="https://github.com/sophiejren/sophiesswap" target="_blank" rel="noopener">★ GitHub</a>
+  </div>
+</nav>
+
+<div class="container">
+
+  <div class="crumb">
+    <a href="/swamp-ui/">SWAMP UI</a>
+    <span class="sep">/</span> COMPONENTS <span class="sep">/</span> MOSQUITO SWAT
+  </div>
+
+  <header class="hero">
+    <h1 class="title">Mosquito Swat</h1>
+    <div class="sub">click the buzz. spare the dragonfly.</div>
+    <p class="lede">
+      Whack-a-mole, swamp edition. Mosquitoes spawn from the reeds and drift in lazy loops —
+      click to swat. Don't hit the dragonflies; they eat mosquitoes for you (a swatted
+      dragonfly costs you score and combo). The swamp narrates as you go. Reach <em>30</em>
+      and the swamp sleeps.
+    </p>
+    <div class="meta">
+      <div class="chip"><b>★</b> No dependencies</div>
+      <div class="chip"><b>★</b> Friendly + hostile bugs</div>
+      <div class="chip"><b>★</b> Narrative thresholds</div>
+      <div class="chip"><b>★</b> Calm endgame</div>
+    </div>
+  </header>
+
+  <!-- LIVE PREVIEW -->
+  <div class="stage">
+    <div class="stage-label">LIVE PREVIEW · CLICK MOSQUITOES. NOT DRAGONFLIES.</div>
+
+    <div class="arena" id="arena">
+      <div class="hud">
+        <div class="hud-chip"><span class="hud-label">SCORE</span><span class="hud-val score" id="scoreVal">0</span></div>
+        <div class="hud-chip"><span class="hud-label">COMBO</span><span class="hud-val combo" id="comboVal">0</span></div>
+      </div>
+      <div class="swatter" id="swatter">
+        <svg viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg" fill="none">
+          <rect x="6" y="6" width="20" height="20" rx="3" fill="#1f5238" stroke="#b6ff5b" stroke-width="1.5"/>
+          <path d="M9 9 L23 9 M9 13 L23 13 M9 17 L23 17 M9 21 L23 21 M9 25 L23 25
+                   M9 9 L9 25 M13 9 L13 25 M17 9 L17 25 M21 9 L21 25 M25 9 L25 25"
+                stroke="#b6ff5b" stroke-width=".5" opacity=".6"/>
+          <path d="M24 24 L33 33" stroke="#86a596" stroke-width="2.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="narr" id="narr"></div>
+      <div class="sleep" id="sleep">
+        <div class="sleep-title">THE SWAMP SLEEPS ★</div>
+        <div class="sleep-sub">the air is still. the herons can hear themselves think. you can hear yourself too.</div>
+        <button class="sleep-btn" id="wakeBtn">WAKE THE SWAMP</button>
+      </div>
+    </div>
+
+    <div class="status-row">
+      <div class="sr-row">
+        <div><div class="sr-label">BEST COMBO</div><div class="sr-val" id="bestComboVal">0</div></div>
+        <div><div class="sr-label">DRAGONFLIES MISTAKEN</div><div class="sr-val" id="badVal">0</div></div>
+        <div><div class="sr-label">SWAMPS SLEPT</div><div class="sr-val" id="sleptVal">0</div></div>
+      </div>
+      <button class="sr-reset" id="resetBtn">↺ NEW NIGHT</button>
+    </div>
+  </div>
+
+  <section>
+    <h2 class="shead">When to use</h2>
+    <p class="p">
+      A <em>tension-release minigame</em>. Drop it on a 500 error page ("something is buzzing
+      where it shouldn't"), or as a between-section breather in a long page. The narrative
+      messages make it more than a stress ball: every swat is part of a small story about
+      the swamp finally getting some quiet.
+    </p>
+  </section>
+
+  <section>
+    <h2 class="shead">Skip to</h2>
+    <div class="skip-grid">
+      <a class="skip-btn" href="#html"><div class="n">01</div><div class="l">HTML</div></a>
+      <a class="skip-btn" href="#js"><div class="n">02</div><div class="l">JS (spawn + path)</div></a>
+      <a class="skip-btn" href="#narrative"><div class="n">03</div><div class="l">Narrative</div></a>
+      <a class="skip-btn" href="#params"><div class="n">04</div><div class="l">Parameters</div></a>
+    </div>
+  </section>
+
+  <section id="html">
+    <h2 class="shead">1. HTML</h2>
+    <p class="p">Arena, HUD, swatter that follows the cursor, narrative + sleep overlay.</p>
+    <div class="code-wrap">
+      <div class="code-tabs"><div class="code-tablist"><button class="code-tab">HTML</button></div><button class="copy-btn" data-target="code-html">COPY</button></div>
+<pre class="code" id="code-html"><span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"arena"</span> <span class="attr">id</span>=<span class="str">"arena"</span>
+     <span class="attr">data-quota</span>=<span class="str">"30"</span>
+     <span class="attr">data-spawn-ms</span>=<span class="str">"900"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"hud"</span><span class="tag">&gt;</span>...score / combo...<span class="tag">&lt;/div&gt;</span>
+  <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"swatter"</span> <span class="attr">id</span>=<span class="str">"swatter"</span><span class="tag">&gt;</span>...svg...<span class="tag">&lt;/div&gt;</span>
+  <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"narr"</span> <span class="attr">id</span>=<span class="str">"narr"</span><span class="tag">&gt;&lt;/div&gt;</span>
+  <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"sleep"</span> <span class="attr">id</span>=<span class="str">"sleep"</span><span class="tag">&gt;</span>...endgame...<span class="tag">&lt;/div&gt;</span>
+<span class="tag">&lt;/div&gt;</span></pre>
+    </div>
+  </section>
+
+  <section id="js">
+    <h2 class="shead">2. Spawn + flight path</h2>
+    <p class="p">
+      Each bug picks an edge spawn, a target heading, and a wobble (sine modulation perpendicular
+      to its heading). Dragonflies fly straighter and faster. Both have a generous click-radius
+      so the swatter feels accurate without being trivial.
+    </p>
+    <div class="code-wrap">
+      <div class="code-tabs"><div class="code-tablist"><button class="code-tab">JS (core)</button></div><button class="copy-btn" data-target="code-js">COPY</button></div>
+<pre class="code" id="code-js"><span class="com">// spawn one bug</span>
+<span class="kw">function</span> <span class="prop">spawnBug</span>(kind){
+  <span class="kw">const</span> rect = arena.getBoundingClientRect();
+  <span class="kw">const</span> side = Math.floor(Math.random() * <span class="num">4</span>);
+  <span class="kw">let</span> x, y, vx, vy;
+  <span class="kw">if</span> (side === <span class="num">0</span>) { x = <span class="num">0</span>;          y = Math.random() * rect.height; vx = .5+Math.random(); vy = (Math.random()-.5); }
+  <span class="kw">if</span> (side === <span class="num">1</span>) { x = rect.width; y = Math.random() * rect.height; vx = -.5-Math.random(); vy = (Math.random()-.5); }
+  <span class="kw">if</span> (side === <span class="num">2</span>) { x = Math.random()*rect.width; y = <span class="num">0</span>;            vx = (Math.random()-.5); vy = .5+Math.random(); }
+  <span class="kw">if</span> (side === <span class="num">3</span>) { x = Math.random()*rect.width; y = rect.height;   vx = (Math.random()-.5); vy = -.5-Math.random(); }
+
+  <span class="kw">const</span> speed = kind === <span class="str">'df'</span> ? <span class="num">1.4</span> : <span class="num">0.9</span>;
+  <span class="kw">return</span> { kind, x, y, vx: vx*speed, vy: vy*speed, t: Math.random()*<span class="num">9</span>, alive: <span class="kw">true</span> };
+}
+
+<span class="com">// every frame: wobble + drift</span>
+bug.vx += Math.cos(bug.t) * (bug.kind === <span class="str">'df'</span> ? <span class="num">.03</span> : <span class="num">.06</span>);
+bug.vy += Math.sin(bug.t * <span class="num">1.3</span>) * (bug.kind === <span class="str">'df'</span> ? <span class="num">.03</span> : <span class="num">.06</span>);
+bug.x += bug.vx; bug.y += bug.vy; bug.t += <span class="num">0.05</span>;</pre>
+    </div>
+  </section>
+
+  <section id="narrative">
+    <h2 class="shead">3. Narrative thresholds</h2>
+    <p class="p">The swamp speaks at score milestones. Replace these with your own copy.</p>
+    <div class="code-wrap">
+      <div class="code-tabs"><div class="code-tablist"><button class="code-tab">NARR</button></div><button class="copy-btn" data-target="code-narr">COPY</button></div>
+<pre class="code" id="code-narr"><span class="kw">const</span> NARRATIVE = {
+  <span class="num">3</span>:  <span class="str">'the air is thinning'</span>,
+  <span class="num">8</span>:  <span class="str">'the bog notices'</span>,
+  <span class="num">14</span>: <span class="str">'the reeds are grateful'</span>,
+  <span class="num">21</span>: <span class="str">'the herons can hear themselves think'</span>,
+  <span class="num">30</span>: <span class="str">'the swamp sleeps'</span>
+};
+<span class="kw">const</span> SCOLD = {
+  <span class="num">1</span>:  <span class="str">'a dragonfly! she was helping.'</span>,
+  <span class="num">3</span>:  <span class="str">'the dragonflies are not the enemy.'</span>,
+  <span class="num">5</span>:  <span class="str">'the swamp is shaking its head.'</span>
+};</pre>
+    </div>
+  </section>
+
+  <section id="params">
+    <h2 class="shead">4. Parameters you can tweak</h2>
+    <table class="params">
+      <thead><tr><th>Where</th><th>Default</th><th>Effect</th></tr></thead>
+      <tbody>
+        <tr><td>HTML <code>data-quota</code></td><td><span class="def">30</span></td><td>Score needed to trigger the "swamp sleeps" endgame.</td></tr>
+        <tr><td>HTML <code>data-spawn-ms</code></td><td><span class="def">900</span></td><td>Average ms between spawns. Lower = swarm mode.</td></tr>
+        <tr><td>JS <code>DF_RATE</code></td><td><span class="def">0.18</span></td><td>Probability each spawn is a dragonfly (so don't go too high).</td></tr>
+        <tr><td>JS <code>CATCH_R</code></td><td><span class="def">26 px</span></td><td>Click radius. Higher = more forgiving swat.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <div class="tipjar">
+    <h3>Put a swamp to sleep?</h3>
+    <p>Feed the dragonflies. (They like jelly.)</p>
+    <a href="https://buymeacoffee.com/sophiejr" target="_blank" rel="noopener">🧋 TREAT THE SWAMP →</a>
+  </div>
+
+  <div class="next-cta">
+    <div class="l">
+      <b>More in the garden →</b>
+      <span>Swamp Tarot, Firefly Catch, Lily Pad Stepping, Lure Cast, Frog Hop.</span>
+    </div>
+    <a href="/swamp-ui/">Browse all →</a>
+  </div>
+
+</div>
+
+<footer>
+  <div class="flinks">
+    <a href="/swamp-ui/">Swamp UI</a>
+    <a href="/">Sophie's Swamp</a>
+    <a href="https://github.com/sophiejren/sophiesswap" target="_blank" rel="noopener">GitHub</a>
+  </div>
+  <p class="copy">© 2026 Sophie. <b>MIT licensed.</b> Use freely, credit kindly. 🐸</p>
+</footer>
+
+<script>
+  // ============ SOUND ============
+  let actx = null;
+  function tone(freq, dur, vol, type){
+    try{
+      if (!actx) actx = new (window.AudioContext||window.webkitAudioContext)();
+      const osc = actx.createOscillator(); const g = actx.createGain();
+      osc.connect(g).connect(actx.destination);
+      osc.type = type || 'sine';
+      osc.frequency.setValueAtTime(freq, actx.currentTime);
+      g.gain.setValueAtTime(vol || 0.1, actx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + dur);
+      osc.start(); osc.stop(actx.currentTime + dur);
+    }catch(e){}
+  }
+  function splatSound(){ tone(220, 0.08, 0.18, 'square'); }
+  function dfSound(){ tone(140, 0.3, 0.18, 'sawtooth'); }
+  function bigChime(){ [523, 659, 784, 988].forEach((f, i) => setTimeout(() => tone(f, 0.45, 0.1), i * 100)); }
+
+  // ============ CONFIG ============
+  const QUOTA = 30;
+  const SPAWN_MS = 900;
+  const DF_RATE = 0.18;
+  const CATCH_R = 26;
+  const NARRATIVE = {
+    3:  'the air is thinning',
+    8:  'the bog notices',
+    14: 'the reeds are grateful',
+    21: 'the herons can hear themselves think',
+    30: 'the swamp sleeps'
+  };
+  const SCOLD = {
+    1: 'a dragonfly! she was helping.',
+    3: 'the dragonflies are not the enemy.',
+    5: 'the swamp is shaking its head.'
+  };
+
+  // ============ STATE ============
+  const arena = document.getElementById('arena');
+  const swatter = document.getElementById('swatter');
+  const scoreVal = document.getElementById('scoreVal');
+  const comboVal = document.getElementById('comboVal');
+  const bestComboVal = document.getElementById('bestComboVal');
+  const badVal = document.getElementById('badVal');
+  const sleptVal = document.getElementById('sleptVal');
+  const narr = document.getElementById('narr');
+  const sleep = document.getElementById('sleep');
+  const wakeBtn = document.getElementById('wakeBtn');
+  const resetBtn = document.getElementById('resetBtn');
+
+  let bugs = [];
+  let score = 0;
+  let combo = 0;
+  let badCount = 0;
+  let bestCombo = +(localStorage.getItem('swamp.swat.bestCombo') || 0);
+  let slept = +(localStorage.getItem('swamp.swat.slept') || 0);
+  let triggered = new Set();
+  let scoldTriggered = new Set();
+  let sleeping = false;
+  let spawnTimer = null;
+
+  bestComboVal.textContent = bestCombo;
+  sleptVal.textContent = slept;
+
+  function makeBugEl(kind){
+    const el = document.createElement('div');
+    el.className = 'bug ' + (kind === 'df' ? 'df' : 'mq');
+    el.innerHTML = kind === 'df' ? `
+      <svg width="36" height="20" viewBox="0 0 36 20" xmlns="http://www.w3.org/2000/svg" fill="none">
+        <ellipse cx="18" cy="11" rx="2" ry="9" fill="#52ffe0"/>
+        <ellipse cx="10" cy="7" rx="7" ry="3" fill="#52ffe0" opacity=".4" transform="rotate(-12 10 7)"/>
+        <ellipse cx="26" cy="7" rx="7" ry="3" fill="#ff4d8d" opacity=".4" transform="rotate(12 26 7)"/>
+        <ellipse cx="10" cy="15" rx="6" ry="2.5" fill="#52ffe0" opacity=".4" transform="rotate(12 10 15)"/>
+        <ellipse cx="26" cy="15" rx="6" ry="2.5" fill="#ff4d8d" opacity=".4" transform="rotate(-12 26 15)"/>
+        <circle cx="18" cy="4" r="2.2" fill="#ffd23f"/>
+      </svg>
+    ` : `
+      <svg width="22" height="14" viewBox="0 0 22 14" xmlns="http://www.w3.org/2000/svg" fill="none">
+        <ellipse cx="11" cy="8" rx="4" ry="2.5" fill="#86a596"/>
+        <ellipse cx="7" cy="5" rx="4" ry="1.5" fill="#cfd9d4" opacity=".55" transform="rotate(-15 7 5)"/>
+        <ellipse cx="15" cy="5" rx="4" ry="1.5" fill="#cfd9d4" opacity=".55" transform="rotate(15 15 5)"/>
+        <circle cx="17" cy="7" r="1.5" fill="#86a596"/>
+        <path d="M19 7 L21 5" stroke="#86a596" stroke-width=".8"/>
+        <path d="M11 11 L11 13 M9 11 L8 13 M13 11 L14 13" stroke="#86a596" stroke-width=".7"/>
+      </svg>
+    `;
+    return el;
+  }
+
+  function spawnBug(){
+    if (sleeping) return;
+    const kind = Math.random() < DF_RATE ? 'df' : 'mq';
+    const rect = arena.getBoundingClientRect();
+    const side = Math.floor(Math.random() * 4);
+    let x, y, vx, vy;
+    if (side === 0) { x = -10;           y = Math.random() * rect.height; vx =  .5 + Math.random(); vy = (Math.random() - .5); }
+    if (side === 1) { x = rect.width+10; y = Math.random() * rect.height; vx = -.5 - Math.random(); vy = (Math.random() - .5); }
+    if (side === 2) { x = Math.random() * rect.width; y = -10;            vx = (Math.random() - .5); vy =  .5 + Math.random(); }
+    if (side === 3) { x = Math.random() * rect.width; y = rect.height+10; vx = (Math.random() - .5); vy = -.5 - Math.random(); }
+    const speed = kind === 'df' ? 1.4 : 0.9;
+    const el = makeBugEl(kind);
+    arena.appendChild(el);
+    bugs.push({
+      kind, el,
+      x, y,
+      vx: vx * speed, vy: vy * speed,
+      t: Math.random() * 9,
+      life: 0,
+      alive: true
+    });
+    scheduleSpawn();
+  }
+  function scheduleSpawn(){
+    clearTimeout(spawnTimer);
+    spawnTimer = setTimeout(spawnBug, SPAWN_MS * (0.6 + Math.random() * 0.8));
+  }
+
+  function step(){
+    const rect = arena.getBoundingClientRect();
+    bugs.forEach(b => {
+      // wobble drift
+      b.vx += Math.cos(b.t) * (b.kind === 'df' ? .03 : .06);
+      b.vy += Math.sin(b.t * 1.3) * (b.kind === 'df' ? .03 : .06);
+      // cap speed
+      const sp = Math.hypot(b.vx, b.vy);
+      const cap = b.kind === 'df' ? 1.9 : 1.6;
+      if (sp > cap) { b.vx = b.vx / sp * cap; b.vy = b.vy / sp * cap; }
+      b.x += b.vx; b.y += b.vy; b.t += 0.05; b.life += 16;
+      b.el.style.left = b.x + 'px';
+      b.el.style.top = b.y + 'px';
+      // remove if it leaves
+      if (b.x < -40 || b.x > rect.width + 40 || b.y < -40 || b.y > rect.height + 40 || b.life > 14000){
+        b.alive = false;
+        b.el.remove();
+      }
+    });
+    bugs = bugs.filter(b => b.alive);
+    requestAnimationFrame(step);
+  }
+
+  function showNarr(text){
+    narr.textContent = text;
+    narr.classList.add('show');
+    clearTimeout(showNarr._t);
+    showNarr._t = setTimeout(() => narr.classList.remove('show'), 2600);
+  }
+
+  function popup(x, y, text, bad){
+    const p = document.createElement('div');
+    p.className = 'popup' + (bad ? ' bad' : '');
+    p.style.left = x + 'px';
+    p.style.top = y + 'px';
+    p.textContent = text;
+    arena.appendChild(p);
+    setTimeout(() => p.remove(), 1000);
+  }
+  function splat(x, y, bad){
+    const s = document.createElement('div');
+    s.className = 'splat' + (bad ? ' bad' : '');
+    s.style.left = x + 'px';
+    s.style.top = y + 'px';
+    arena.appendChild(s);
+    setTimeout(() => s.remove(), 500);
+  }
+
+  function hit(b, x, y){
+    if (!b.alive) return;
+    b.alive = false;
+    b.el.remove();
+    swatter.classList.remove('smash'); void swatter.offsetWidth; swatter.classList.add('smash');
+    if (b.kind === 'mq'){
+      score++;
+      combo++;
+      if (combo > bestCombo){ bestCombo = combo; localStorage.setItem('swamp.swat.bestCombo', bestCombo); bestComboVal.textContent = bestCombo; }
+      scoreVal.textContent = score;
+      comboVal.textContent = combo;
+      splat(x, y, false);
+      popup(x, y, '+1');
+      splatSound();
+      // narrative threshold
+      for (const k of Object.keys(NARRATIVE)){
+        if (score >= +k && !triggered.has(+k)){
+          triggered.add(+k);
+          showNarr(NARRATIVE[k]);
+          if (+k === QUOTA) doSleep();
+        }
+      }
+    } else {
+      // dragonfly mistake
+      score = Math.max(0, score - 2);
+      combo = 0;
+      badCount++;
+      scoreVal.textContent = score;
+      comboVal.textContent = combo;
+      badVal.textContent = badCount;
+      splat(x, y, true);
+      popup(x, y, '-2', true);
+      dfSound();
+      for (const k of Object.keys(SCOLD)){
+        if (badCount >= +k && !scoldTriggered.has(+k)){
+          scoldTriggered.add(+k);
+          showNarr(SCOLD[k]);
+        }
+      }
+    }
+  }
+
+  function doSleep(){
+    sleeping = true;
+    clearTimeout(spawnTimer);
+    bugs.forEach(b => b.el.remove());
+    bugs = [];
+    sleep.classList.add('show');
+    bigChime();
+    slept++;
+    localStorage.setItem('swamp.swat.slept', slept);
+    sleptVal.textContent = slept;
+  }
+  function wakeUp(){
+    sleeping = false;
+    sleep.classList.remove('show');
+    score = 0; combo = 0; badCount = 0;
+    triggered.clear(); scoldTriggered.clear();
+    scoreVal.textContent = 0;
+    comboVal.textContent = 0;
+    badVal.textContent = badCount;
+    scheduleSpawn();
+  }
+
+  // ============ INPUT ============
+  arena.addEventListener('pointermove', e => {
+    const rect = arena.getBoundingClientRect();
+    swatter.style.left = (e.clientX - rect.left) + 'px';
+    swatter.style.top  = (e.clientY - rect.top) + 'px';
+  });
+  arena.addEventListener('pointerleave', () => {
+    swatter.style.opacity = '0';
+  });
+  arena.addEventListener('pointerenter', () => {
+    swatter.style.opacity = '';
+  });
+  arena.addEventListener('pointerdown', e => {
+    if (sleeping) return;
+    if (e.target.closest('.sleep') || e.target.closest('.sr-reset')) return;
+    const rect = arena.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    // find closest bug within radius
+    let best = null, bestD = Infinity;
+    bugs.forEach(b => {
+      const d = Math.hypot(b.x - x, b.y - y);
+      if (d < CATCH_R && d < bestD) { best = b; bestD = d; }
+    });
+    if (best) hit(best, x, y);
+    else {
+      // miss — break combo but don't penalize score
+      combo = 0;
+      comboVal.textContent = 0;
+      swatter.classList.remove('smash'); void swatter.offsetWidth; swatter.classList.add('smash');
+    }
+  });
+  wakeBtn.addEventListener('click', wakeUp);
+  resetBtn.addEventListener('click', wakeUp);
+
+  scheduleSpawn();
+  step();
+
+  // copy buttons
+  document.querySelectorAll('.copy-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = document.getElementById(btn.dataset.target);
+      if (!target) return;
+      navigator.clipboard.writeText(target.innerText).then(() => {
+        const original = btn.textContent;
+        btn.textContent = 'COPIED ✓';
+        btn.classList.add('copied');
+        setTimeout(() => { btn.textContent = original; btn.classList.remove('copied'); }, 1600);
+      });
+    });
+  });
+</script>
+
+</body>
+</html>

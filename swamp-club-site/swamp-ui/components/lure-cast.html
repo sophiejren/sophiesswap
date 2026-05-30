@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<!--
+  Swamp UI — Lure Cast
+  Hold to charge, release to cast. Wait for a bite. Click to set the hook.
+  Catch one of 14 swamp curiosities.
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Lure Cast — Swamp UI</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%230b2018'/><circle cx='16' cy='17' r='8' fill='%23ff8a3d'/><circle cx='16' cy='17' r='3.4' fill='%23081310'/></svg>" />
+
+<meta name="description" content="Lure Cast — a copy-paste fishing minigame from Swamp UI. Hold to charge, release to cast, wait, then strike on the bite. 14 possible catches." />
+<meta property="og:title" content="Lure Cast — Swamp UI" />
+<meta property="og:description" content="A patience-as-virtue fishing component. Copy-paste, no dependencies." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://sophieren.com/swamp-ui/components/lure-cast.html" />
+<meta property="og:image" content="https://sophieren.com/images/og-image.png" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Caveat:wght@600;700&family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+<style>
+  :root{
+    --ink:#081310;--swamp-deep:#0b2018;--swamp:#0f2e22;--swamp-light:#16412f;
+    --panel:#102a20;--moss:#1f5238;
+    --neon-yellow:#ffd23f;--neon-pink:#ff4d8d;--neon-cyan:#52ffe0;
+    --neon-orange:#ff8a3d;--neon-lime:#b6ff5b;
+    --cream:#f3eedd;--muted:#86a596;--line:rgba(243,238,221,.12);
+    --code-bg:#06110d;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{font-family:'Space Grotesk',system-ui,sans-serif;background:var(--ink);color:var(--cream);overflow-x:hidden;line-height:1.65;min-height:100vh;position:relative;}
+  a{color:inherit;text-decoration:none;}
+  ::selection{background:var(--neon-orange);color:var(--ink);}
+
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:9000;background:radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,.6) 100%);}
+  body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9001;opacity:.04;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+  .backdrop{position:fixed;inset:0;z-index:-2;overflow:hidden;background:radial-gradient(ellipse 80% 55% at 50% 20%,#103226 0%,#081814 60%,#040a08 100%);}
+
+  nav{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;align-items:center;justify-content:space-between;padding:14px clamp(16px,4vw,44px);background:linear-gradient(180deg,rgba(7,16,12,.95) 0%,rgba(7,16,12,.55) 60%,rgba(7,16,12,0) 100%);}
+  .brand{display:flex;align-items:center;gap:10px;font-family:'Bungee',sans-serif;font-size:14px;letter-spacing:.5px;color:var(--cream);}
+  .brand b{color:var(--neon-orange);}
+  .brand-dot{width:14px;height:14px;border-radius:50%;background:var(--neon-orange);box-shadow:0 0 12px var(--neon-orange);}
+  .nav-links{display:flex;gap:8px;align-items:center;}
+  .nav-link{font-family:'Bungee',sans-serif;font-size:10.5px;letter-spacing:1.5px;color:var(--neon-orange);padding:9px 16px;border:1px solid rgba(255,138,61,.35);border-radius:999px;transition:all .2s;}
+  .nav-link:hover{background:rgba(255,138,61,.1);box-shadow:0 0 14px rgba(255,138,61,.3);}
+
+  .container{max-width:1100px;margin:0 auto;padding:120px clamp(20px,5vw,40px) 100px;}
+
+  .crumb{font-family:'Bungee',sans-serif;font-size:10px;letter-spacing:2px;color:var(--muted);margin-bottom:30px;}
+  .crumb a{color:var(--neon-orange);transition:color .2s;}
+  .crumb a:hover{color:var(--neon-lime);}
+  .crumb .sep{color:var(--neon-yellow);margin:0 10px;}
+
+  header.hero{margin-bottom:40px;}
+  h1.title{font-family:'Bungee',sans-serif;font-size:clamp(40px,7vw,80px);line-height:.98;color:var(--cream);letter-spacing:-1px;margin-bottom:14px;}
+  .sub{font-family:'Caveat',cursive;font-size:26px;color:var(--neon-orange);margin-bottom:16px;font-weight:600;}
+  .lede{font-size:17px;color:var(--cream);opacity:.85;max-width:660px;line-height:1.6;}
+  .lede em{color:var(--neon-orange);font-style:italic;}
+
+  .meta{display:flex;gap:8px;margin-top:22px;flex-wrap:wrap;}
+  .chip{font-family:'Space Grotesk',sans-serif;font-size:11.5px;letter-spacing:.4px;padding:5px 12px;border:1px solid var(--line);border-radius:999px;color:var(--cream);background:rgba(15,46,34,.5);}
+  .chip b{color:var(--neon-orange);margin-right:5px;}
+
+  /* ============ DEMO ============ */
+  .stage{background:linear-gradient(180deg,var(--swamp) 0%,var(--swamp-deep) 100%);border:1px solid var(--line);border-radius:18px;padding:32px 26px 28px;margin:48px 0;position:relative;}
+  .stage-label{position:absolute;top:14px;left:18px;font-family:'Bungee',sans-serif;font-size:9px;letter-spacing:2px;color:var(--muted);}
+
+  .pond{
+    position:relative;height:340px;
+    background:radial-gradient(ellipse at center,#1a4936 0%,#0a2418 80%);
+    border:1px solid rgba(255,138,61,.18);border-radius:14px;
+    margin-top:18px;overflow:hidden;
+    box-shadow:inset 0 0 80px rgba(0,0,0,.5);
+    user-select:none;
+  }
+
+  /* fisher (silhouette in lower-left) */
+  .fisher{position:absolute;left:24px;bottom:16px;width:80px;height:140px;pointer-events:none;}
+  /* rod stays mostly fixed; rod-tip moves slightly with charge */
+  .rod{position:absolute;left:0;top:0;width:100%;height:100%;}
+
+  /* lure (the bobber) */
+  .lure{
+    position:absolute;width:14px;height:14px;border-radius:50%;
+    background:radial-gradient(circle at 35% 35%,#ffd23f,#ff8a3d 80%);
+    box-shadow:0 0 8px var(--neon-orange);
+    transform:translate(-50%,-50%);pointer-events:none;
+    z-index:5;
+  }
+  .lure.in-air{filter:drop-shadow(0 0 6px var(--neon-yellow));}
+  .lure.floating{animation:bob 2.4s ease-in-out infinite;}
+  @keyframes bob{50%{transform:translate(-50%,calc(-50% - 3px));}}
+  .lure.biting{animation:bite .35s ease-out infinite;}
+  @keyframes bite{
+    0%{transform:translate(-50%,-50%);}
+    50%{transform:translate(-50%,calc(-50% + 8px));}
+    100%{transform:translate(-50%,-50%);}
+  }
+
+  /* fishing line */
+  .line{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;}
+
+  /* ripples around lure */
+  .rip{
+    position:absolute;border-radius:50%;border:1.5px solid var(--neon-cyan);
+    background:rgba(82,255,224,.04);
+    transform:translate(-50%,-50%);pointer-events:none;
+    animation:rip 2s ease-out forwards;
+  }
+  @keyframes rip{
+    0%{width:8px;height:8px;opacity:.9;}
+    100%{width:120px;height:120px;opacity:0;border-width:.5px;}
+  }
+
+  /* charge meter */
+  .charge-meter{
+    position:absolute;left:18px;top:18px;width:120px;
+    background:rgba(0,0,0,.4);border:1px solid var(--line);border-radius:8px;
+    padding:8px 10px;
+  }
+  .cm-label{font-family:'Bungee',sans-serif;font-size:9px;letter-spacing:1.5px;color:var(--muted);margin-bottom:6px;}
+  .cm-bar{height:6px;background:rgba(0,0,0,.5);border-radius:3px;overflow:hidden;}
+  .cm-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--neon-lime),var(--neon-yellow),var(--neon-orange));border-radius:3px;transition:width .04s linear;}
+
+  /* hint / status text */
+  .pond-hint{
+    position:absolute;bottom:14px;left:50%;transform:translateX(-50%);
+    font-family:'Caveat',cursive;font-size:19px;color:var(--neon-orange);opacity:.75;
+    text-align:center;pointer-events:none;line-height:1.2;
+  }
+  .pond-hint.bite{color:var(--neon-yellow);opacity:1;font-size:22px;}
+
+  /* catch card */
+  .catch-card{
+    position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) scale(.9);
+    background:linear-gradient(160deg,#1c4a34 0%,#0e2b1f 100%);
+    border:1px solid rgba(255,138,61,.4);border-radius:14px;
+    padding:24px 22px;min-width:280px;max-width:80%;
+    box-shadow:0 20px 60px -15px rgba(0,0,0,.8);
+    opacity:0;pointer-events:none;transition:all .35s;text-align:center;z-index:10;
+  }
+  .catch-card.show{opacity:1;transform:translate(-50%,-50%) scale(1);pointer-events:auto;}
+  .catch-art{width:80px;height:80px;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;}
+  .catch-art svg{width:80px;height:80px;}
+  .catch-name{font-family:'Bungee',sans-serif;font-size:14px;letter-spacing:2px;color:var(--cream);margin-bottom:6px;}
+  .catch-desc{font-family:'Caveat',cursive;font-size:18px;color:var(--neon-yellow);font-weight:600;line-height:1.3;margin-bottom:14px;}
+  .catch-btn{font-family:'Bungee',sans-serif;font-size:10.5px;letter-spacing:1.5px;color:var(--ink);background:var(--neon-orange);padding:10px 18px;border:none;border-radius:999px;cursor:pointer;transition:all .2s;}
+  .catch-btn:hover{background:var(--cream);}
+
+  /* tally */
+  .tally{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:14px 18px;margin-top:14px;
+    background:rgba(0,0,0,.3);border:1px solid var(--line);border-radius:10px;
+    flex-wrap:wrap;gap:12px;
+  }
+  .ts-row{display:flex;gap:18px;align-items:center;font-size:13px;flex-wrap:wrap;}
+  .ts-label{font-family:'Bungee',sans-serif;font-size:9.5px;letter-spacing:1.5px;color:var(--muted);}
+  .ts-val{font-family:'JetBrains Mono',monospace;color:var(--cream);}
+  .ts-val.good{color:var(--neon-lime);}
+  .ts-val.miss{color:var(--neon-pink);}
+  .ts-collection{display:flex;gap:5px;font-size:18px;flex-wrap:wrap;max-width:300px;}
+
+  /* sections */
+  section{margin:64px 0;}
+  h2.shead{font-family:'Bungee',sans-serif;font-size:22px;color:var(--cream);letter-spacing:.3px;margin-bottom:18px;display:flex;align-items:center;gap:12px;}
+  h2.shead::before{content:"";width:8px;height:8px;background:var(--neon-orange);border-radius:50%;box-shadow:0 0 12px var(--neon-orange);}
+  .p{font-size:16px;color:var(--cream);opacity:.88;line-height:1.7;margin-bottom:14px;}
+  .p em{color:var(--neon-orange);font-style:italic;}
+  .p code{font-family:'JetBrains Mono',monospace;font-size:13.5px;background:var(--code-bg);padding:2px 7px;border-radius:5px;color:var(--neon-orange);}
+
+  .code-wrap{background:var(--code-bg);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin:24px 0;}
+  .code-tabs{display:flex;align-items:center;justify-content:space-between;background:rgba(0,0,0,.4);border-bottom:1px solid var(--line);padding:0 12px 0 0;}
+  .code-tablist{display:flex;}
+  .code-tab{font-family:'Bungee',sans-serif;font-size:10.5px;letter-spacing:1.5px;color:var(--neon-orange);padding:14px 18px;border:none;background:transparent;border-bottom:2px solid var(--neon-orange);}
+  .copy-btn{font-family:'Bungee',sans-serif;font-size:10px;letter-spacing:1.5px;color:var(--neon-orange);background:transparent;border:1px solid rgba(255,138,61,.35);padding:7px 13px;border-radius:7px;cursor:pointer;transition:all .2s;}
+  .copy-btn:hover{background:rgba(255,138,61,.12);}
+  .copy-btn.copied{color:var(--ink);background:var(--neon-orange);border-color:var(--neon-orange);}
+  pre.code{margin:0;padding:22px 24px;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.6;color:var(--cream);}
+  pre.code .kw{color:var(--neon-pink);}
+  pre.code .tag{color:var(--neon-lime);}
+  pre.code .attr{color:var(--neon-cyan);}
+  pre.code .str{color:var(--neon-yellow);}
+  pre.code .com{color:var(--muted);font-style:italic;}
+  pre.code .num{color:var(--neon-orange);}
+  pre.code .prop{color:var(--neon-cyan);}
+
+  table.params{width:100%;border-collapse:collapse;margin:18px 0;background:rgba(15,46,34,.3);border:1px solid var(--line);border-radius:12px;overflow:hidden;}
+  table.params th{text-align:left;padding:14px 16px;font-family:'Bungee',sans-serif;font-size:10px;letter-spacing:1.5px;color:var(--neon-orange);background:rgba(0,0,0,.3);border-bottom:1px solid var(--line);}
+  table.params td{padding:14px 16px;border-bottom:1px solid var(--line);font-size:14px;color:var(--cream);}
+  table.params tr:last-child td{border-bottom:none;}
+  table.params code{font-family:'JetBrains Mono',monospace;font-size:12.5px;background:var(--code-bg);padding:2px 7px;border-radius:5px;color:var(--neon-orange);}
+  table.params .def{color:var(--neon-yellow);font-family:'JetBrains Mono',monospace;font-size:12.5px;}
+
+  .skip-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:24px 0;}
+  .skip-btn{background:rgba(15,46,34,.4);border:1px solid var(--line);border-radius:10px;padding:12px 14px;text-align:left;cursor:pointer;transition:all .2s;}
+  .skip-btn:hover{border-color:var(--neon-orange);background:rgba(255,138,61,.06);}
+  .skip-btn .n{font-family:'Bungee',sans-serif;font-size:9.5px;letter-spacing:1.5px;color:var(--neon-yellow);}
+  .skip-btn .l{font-size:13px;color:var(--cream);margin-top:4px;}
+
+  /* tipjar */
+  .tipjar{background:linear-gradient(135deg,rgba(255,210,63,.07) 0%,rgba(255,138,61,.06) 100%);border:1px solid rgba(255,210,63,.28);border-radius:18px;padding:28px 26px;margin:48px 0;text-align:center;}
+  .tipjar h3{font-family:'Bungee',sans-serif;font-size:15px;color:var(--neon-yellow);letter-spacing:.5px;margin-bottom:8px;}
+  .tipjar p{font-size:14px;color:var(--cream);opacity:.85;margin-bottom:16px;}
+  .tipjar a{display:inline-flex;align-items:center;gap:8px;font-family:'Bungee',sans-serif;font-size:11.5px;letter-spacing:1.5px;color:var(--ink);background:var(--neon-yellow);padding:13px 22px;border-radius:999px;transition:all .2s;}
+  .tipjar a:hover{background:var(--cream);transform:translateY(-2px);box-shadow:0 10px 22px -8px rgba(255,210,63,.65);}
+
+  .next-cta{display:flex;align-items:center;justify-content:space-between;gap:20px;background:linear-gradient(180deg,var(--swamp) 0%,var(--swamp-deep) 100%);border:1px solid var(--line);border-radius:14px;padding:24px 28px;margin:48px 0;flex-wrap:wrap;}
+  .next-cta .l b{display:block;font-family:'Bungee',sans-serif;font-size:14px;color:var(--cream);letter-spacing:.5px;margin-bottom:4px;}
+  .next-cta .l span{font-size:13.5px;color:var(--muted);}
+  .next-cta a{font-family:'Bungee',sans-serif;font-size:11px;letter-spacing:1.5px;color:var(--ink);background:var(--neon-orange);padding:12px 20px;border-radius:999px;transition:all .2s;}
+  .next-cta a:hover{background:var(--cream);}
+
+  footer{padding:50px 24px 40px;text-align:center;border-top:1px solid var(--line);background:rgba(8,19,16,.6);margin-top:80px;}
+  footer .flinks{display:flex;gap:24px;justify-content:center;margin-bottom:14px;flex-wrap:wrap;}
+  footer .flinks a{color:var(--cream);font-size:13px;opacity:.75;}
+  footer .flinks a:hover{color:var(--neon-orange);opacity:1;}
+  footer .copy{color:var(--muted);font-size:12px;}
+  footer .copy b{color:var(--neon-orange);}
+
+  @media (max-width:600px){
+    .pond{height:280px;}
+    .next-cta{flex-direction:column;text-align:center;}
+  }
+</style>
+</head>
+<body>
+
+<div class="backdrop"></div>
+
+<nav>
+  <a class="brand" href="/swamp-ui/">
+    <span class="brand-dot"></span>
+    <span>SWAMP <b>UI</b></span>
+  </a>
+  <div class="nav-links">
+    <a class="nav-link" href="/swamp-ui/">← all components</a>
+    <a class="nav-link" href="https://github.com/sophiejren/sophiesswap" target="_blank" rel="noopener">★ GitHub</a>
+  </div>
+</nav>
+
+<div class="container">
+
+  <div class="crumb">
+    <a href="/swamp-ui/">SWAMP UI</a>
+    <span class="sep">/</span> COMPONENTS <span class="sep">/</span> LURE CAST
+  </div>
+
+  <header class="hero">
+    <h1 class="title">Lure Cast</h1>
+    <div class="sub">hold to charge. release to cast. wait.</div>
+    <p class="lede">
+      A patience-as-virtue fishing minigame. Hold the pond to charge a cast — the longer
+      you hold, the farther the lure flies. Release. Wait. When the bobber jerks down,
+      click to set the hook. <em>14 swamp curiosities</em> can come up: minnows, boots,
+      messages, a coin that is heads if you wanted heads. Sometimes the line returns empty —
+      the swamp kept it.
+    </p>
+    <div class="meta">
+      <div class="chip"><b>★</b> No dependencies</div>
+      <div class="chip"><b>★</b> 14 catches</div>
+      <div class="chip"><b>★</b> Charge-and-release</div>
+      <div class="chip"><b>★</b> Catch log persists</div>
+    </div>
+  </header>
+
+  <!-- LIVE PREVIEW -->
+  <div class="stage">
+    <div class="stage-label">LIVE PREVIEW · HOLD ANYWHERE ON THE POND TO CHARGE</div>
+
+    <div class="pond" id="pond">
+      <!-- charge meter -->
+      <div class="charge-meter">
+        <div class="cm-label">CHARGE</div>
+        <div class="cm-bar"><div class="cm-fill" id="chargeFill"></div></div>
+      </div>
+
+      <!-- fisher silhouette -->
+      <div class="fisher">
+        <svg viewBox="0 0 80 140" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#1f5238" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M30 130 L34 90"/>
+          <path d="M44 130 L40 90"/>
+          <path d="M30 90 Q37 70 44 90 Z" fill="#1f5238"/>
+          <circle cx="37" cy="62" r="8" fill="#1f5238"/>
+          <path d="M30 60 Q24 50 30 42" fill="#1f5238" stroke="#1f5238"/>
+          <path d="M45 68 L70 30" stroke="#86a596" stroke-width="2.5" id="rodStick"/>
+          <circle cx="70" cy="30" r="2" fill="#ffd23f"/>
+        </svg>
+      </div>
+
+      <!-- fishing line (SVG) -->
+      <svg class="line" id="lineSvg" viewBox="0 0 100 100" preserveAspectRatio="none">
+        <path id="linePath" d="" stroke="#f3eedd" stroke-width="0.3" fill="none" opacity=".55"/>
+      </svg>
+
+      <!-- the lure -->
+      <div class="lure" id="lure" style="left:-20px;top:-20px;"></div>
+
+      <!-- catch card -->
+      <div class="catch-card" id="catchCard">
+        <div class="catch-art" id="catchArt"></div>
+        <div class="catch-name" id="catchName"></div>
+        <div class="catch-desc" id="catchDesc"></div>
+        <button class="catch-btn" id="catchBtn">CAST AGAIN</button>
+      </div>
+
+      <p class="pond-hint" id="pondHint">hold anywhere to charge a cast ↑</p>
+    </div>
+
+    <!-- tally -->
+    <div class="tally">
+      <div class="ts-row">
+        <div><div class="ts-label">CATCHES</div><div class="ts-val good" id="catchVal">0</div></div>
+        <div><div class="ts-label">MISSES</div><div class="ts-val miss" id="missVal">0</div></div>
+        <div><div class="ts-label">LOG</div><div class="ts-collection" id="catchLog"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <section>
+    <h2 class="shead">When to use</h2>
+    <p class="p">
+      An <em>idle ritual</em>. Great as a daily "I cast a line" button on a homepage,
+      a 404, an empty-state ("nothing here yet — go fish?"), or a meditation widget that
+      doesn't pretend to be one. Each cast takes 5–10 seconds. Each result is a tiny gift.
+    </p>
+    <p class="p">
+      Skip it when the page is task-focused. Lure Cast is the antithesis of speed.
+    </p>
+  </section>
+
+  <section>
+    <h2 class="shead">Skip to</h2>
+    <div class="skip-grid">
+      <a class="skip-btn" href="#html"><div class="n">01</div><div class="l">HTML</div></a>
+      <a class="skip-btn" href="#js"><div class="n">02</div><div class="l">JS overview</div></a>
+      <a class="skip-btn" href="#catches"><div class="n">03</div><div class="l">The 14 catches</div></a>
+      <a class="skip-btn" href="#params"><div class="n">04</div><div class="l">Parameters</div></a>
+    </div>
+  </section>
+
+  <section id="html">
+    <h2 class="shead">1. HTML</h2>
+    <p class="p">A pond, a fisher silhouette, a lure, an SVG line, and a catch card. JS animates them.</p>
+    <div class="code-wrap">
+      <div class="code-tabs"><div class="code-tablist"><button class="code-tab">HTML</button></div><button class="copy-btn" data-target="code-html">COPY</button></div>
+<pre class="code" id="code-html"><span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"pond"</span> <span class="attr">id</span>=<span class="str">"pond"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"charge-meter"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"cm-bar"</span><span class="tag">&gt;&lt;div</span> <span class="attr">class</span>=<span class="str">"cm-fill"</span> <span class="attr">id</span>=<span class="str">"chargeFill"</span><span class="tag">&gt;&lt;/div&gt;&lt;/div&gt;</span>
+  <span class="tag">&lt;/div&gt;</span>
+  <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"fisher"</span><span class="tag">&gt;</span> ...silhouette SVG... <span class="tag">&lt;/div&gt;</span>
+  <span class="tag">&lt;svg</span> <span class="attr">class</span>=<span class="str">"line"</span> <span class="attr">viewBox</span>=<span class="str">"0 0 100 100"</span> <span class="attr">preserveAspectRatio</span>=<span class="str">"none"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;path</span> <span class="attr">id</span>=<span class="str">"linePath"</span> <span class="attr">stroke</span>=<span class="str">"#f3eedd"</span><span class="tag">/&gt;</span>
+  <span class="tag">&lt;/svg&gt;</span>
+  <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"lure"</span> <span class="attr">id</span>=<span class="str">"lure"</span><span class="tag">&gt;&lt;/div&gt;</span>
+  <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"catch-card"</span> <span class="attr">id</span>=<span class="str">"catchCard"</span><span class="tag">&gt;</span> ...filled by JS... <span class="tag">&lt;/div&gt;</span>
+<span class="tag">&lt;/div&gt;</span></pre>
+    </div>
+  </section>
+
+  <section id="js">
+    <h2 class="shead">2. JavaScript (state machine)</h2>
+    <p class="p">
+      Four states: <code>idle → charging → flying → waiting → biting → resolved</code>.
+      Pointer down starts <code>charging</code>; pointer up triggers <code>flying</code> with
+      power = clamped charge. After splash, schedule a random bite. On bite, the next click
+      must arrive inside <code>BITE_MS</code> or the fish gets away.
+    </p>
+    <div class="code-wrap">
+      <div class="code-tabs"><div class="code-tablist"><button class="code-tab">JS (core)</button></div><button class="copy-btn" data-target="code-js">COPY</button></div>
+<pre class="code" id="code-js"><span class="com">// Swamp UI — Lure Cast (core flow)</span>
+<span class="kw">const</span> ROD = { x: <span class="num">12</span>, y: <span class="num">42</span> };  <span class="com">// rod tip in % of pond</span>
+<span class="kw">const</span> MAX_CHARGE = <span class="num">1200</span>;
+<span class="kw">const</span> BITE_MS = <span class="num">560</span>;
+<span class="kw">let</span> state = <span class="str">'idle'</span>, charge = <span class="num">0</span>, chargeStart = <span class="num">0</span>;
+
+pond.addEventListener(<span class="str">'pointerdown'</span>, e =&gt; {
+  <span class="kw">if</span> (state !== <span class="str">'idle'</span>) <span class="kw">return</span>;
+  state = <span class="str">'charging'</span>;
+  chargeStart = performance.now();
+});
+
+pond.addEventListener(<span class="str">'pointerup'</span>, () =&gt; {
+  <span class="kw">if</span> (state === <span class="str">'charging'</span>) {
+    charge = Math.min(<span class="num">1</span>, (performance.now() - chargeStart) / MAX_CHARGE);
+    cast(charge);
+  } <span class="kw">else if</span> (state === <span class="str">'biting'</span>) {
+    resolve(<span class="str">'caught'</span>);
+  } <span class="kw">else if</span> (state === <span class="str">'waiting'</span>) {
+    resolve(<span class="str">'spooked'</span>); <span class="com">// clicked too early</span>
+  }
+});
+
+<span class="kw">function</span> <span class="prop">cast</span>(p){
+  state = <span class="str">'flying'</span>;
+  <span class="kw">const</span> dist = <span class="num">25</span> + p * <span class="num">55</span>;     <span class="com">// % across pond</span>
+  <span class="kw">const</span> tx = ROD.x + dist;
+  <span class="kw">const</span> ty = <span class="num">48</span> + (Math.random() - <span class="num">.5</span>) * <span class="num">14</span>;
+  animateArc(ROD.x, ROD.y, tx, ty, <span class="num">700</span>, () =&gt; {
+    splash(tx, ty);
+    state = <span class="str">'waiting'</span>;
+    setTimeout(() =&gt; {
+      <span class="kw">if</span> (state === <span class="str">'waiting'</span>) bite();
+    }, <span class="num">1800</span> + Math.random() * <span class="num">3500</span>);
+  });
+}</pre>
+    </div>
+  </section>
+
+  <section id="catches">
+    <h2 class="shead">3. The 14 catches</h2>
+    <p class="p">Each catch has a name, a one-line description, and a small emoji (used in the log). Edit the array to make it yours.</p>
+    <div class="code-wrap">
+      <div class="code-tabs"><div class="code-tablist"><button class="code-tab">CATCHES</button></div><button class="copy-btn" data-target="code-catches">COPY</button></div>
+<pre class="code" id="code-catches"><span class="kw">const</span> CATCHES = [
+  { e:<span class="str">'🐟'</span>, n:<span class="str">'A STARTLED MINNOW'</span>, d:<span class="str">'silver, brief, gone.'</span> },
+  { e:<span class="str">'👢'</span>, n:<span class="str">'AN OLD BOOT'</span>,        d:<span class="str">'mud, and a story you can finish for it.'</span> },
+  { e:<span class="str">'🍃'</span>, n:<span class="str">'A LILY ROOT'</span>,        d:<span class="str">'it remembers everything. you do not.'</span> },
+  { e:<span class="str">'📜'</span>, n:<span class="str">'A MESSAGE'</span>,          d:<span class="str">'"you have already decided."'</span> },
+  { e:<span class="str">'🪙'</span>, n:<span class="str">'A COIN'</span>,             d:<span class="str">'face down. it is heads if you wanted heads.'</span> },
+  { e:<span class="str">'✨'</span>, n:<span class="str">'A GLOWING PEBBLE'</span>,   d:<span class="str">'it hums for about an hour.'</span> },
+  { e:<span class="str">'🐸'</span>, n:<span class="str">'A FROG'</span>,             d:<span class="str">'one croak. then it leaves.'</span> },
+  { e:<span class="str">'🪶'</span>, n:<span class="str">"A HERON'S FEATHER"</span>,  d:<span class="str">'it weighs nothing. you carry it anyway.'</span> },
+  { e:<span class="str">'🪞'</span>, n:<span class="str">'YOUR REFLECTION'</span>,    d:<span class="str">'unexpected. closer than you think.'</span> },
+  { e:<span class="str">'🔑'</span>, n:<span class="str">'A SMALL KEY'</span>,        d:<span class="str">"you don't know what to. yet."</span> },
+  { e:<span class="str">'🎵'</span>, n:<span class="str">'A PIECE OF MUSIC'</span>,   d:<span class="str">'in the original key.'</span> },
+  { e:<span class="str">'🪨'</span>, n:<span class="str">'A ROUND STONE'</span>,      d:<span class="str">'ten thousand years of being held.'</span> },
+  { e:<span class="str">'🍶'</span>, n:<span class="str">'A BOTTLE CAP'</span>,       d:<span class="str">'someone else was here before you.'</span> },
+  { e:<span class="str">'💨'</span>, n:<span class="str">'NOTHING'</span>,            d:<span class="str">'the swamp kept it. that is allowed.'</span> }
+];</pre>
+    </div>
+  </section>
+
+  <section id="params">
+    <h2 class="shead">4. Parameters you can tweak</h2>
+    <table class="params">
+      <thead><tr><th>Where</th><th>Default</th><th>Effect</th></tr></thead>
+      <tbody>
+        <tr><td>JS <code>MAX_CHARGE</code></td><td><span class="def">1200ms</span></td><td>How long to hold for max cast distance.</td></tr>
+        <tr><td>JS bite delay</td><td><span class="def">1.8–5.3s</span></td><td>How long you wait before a bite. Lower = less patient game.</td></tr>
+        <tr><td>JS <code>BITE_MS</code></td><td><span class="def">560ms</span></td><td>Strike window. Shorter = harder. Longer = forgiving.</td></tr>
+        <tr><td>JS <code>CATCHES</code></td><td><span class="def">14 items</span></td><td>Your loot table. Add your own and they show up automatically.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- TIP JAR -->
+  <div class="tipjar">
+    <h3>Catch something good?</h3>
+    <p>Feed the cats. Tip the angler.</p>
+    <a href="https://buymeacoffee.com/sophiejr" target="_blank" rel="noopener">🧋 TREAT THE SWAMP →</a>
+  </div>
+
+  <!-- NEXT -->
+  <div class="next-cta">
+    <div class="l">
+      <b>More in the garden →</b>
+      <span>Swamp Tarot, Lily Pad Stepping, Firefly Catch, Mosquito Swat, Pond Ripple.</span>
+    </div>
+    <a href="/swamp-ui/">Browse all →</a>
+  </div>
+
+</div>
+
+<footer>
+  <div class="flinks">
+    <a href="/swamp-ui/">Swamp UI</a>
+    <a href="/">Sophie's Swamp</a>
+    <a href="https://github.com/sophiejren/sophiesswap" target="_blank" rel="noopener">GitHub</a>
+  </div>
+  <p class="copy">© 2026 Sophie. <b>MIT licensed.</b> Use freely, credit kindly. 🐸</p>
+</footer>
+
+<script>
+  // ============ DATA ============
+  const CATCHES = [
+    { e:'🐟', n:'A STARTLED MINNOW', d:'silver, brief, gone.' },
+    { e:'👢', n:'AN OLD BOOT',        d:'mud, and a story you can finish for it.' },
+    { e:'🍃', n:'A LILY ROOT',        d:'it remembers everything. you do not.' },
+    { e:'📜', n:'A MESSAGE',          d:'"you have already decided."' },
+    { e:'🪙', n:'A COIN',             d:'face down. it is heads if you wanted heads.' },
+    { e:'✨', n:'A GLOWING PEBBLE',   d:'it hums for about an hour.' },
+    { e:'🐸', n:'A FROG',             d:'one croak. then it leaves.' },
+    { e:'🪶', n:"A HERON'S FEATHER",  d:'it weighs nothing. you carry it anyway.' },
+    { e:'🪞', n:'YOUR REFLECTION',    d:'unexpected. closer than you think.' },
+    { e:'🔑', n:'A SMALL KEY',        d:"you don't know what to. yet." },
+    { e:'🎵', n:'A PIECE OF MUSIC',   d:'in the original key.' },
+    { e:'🪨', n:'A ROUND STONE',      d:'ten thousand years of being held.' },
+    { e:'🍶', n:'A BOTTLE CAP',       d:'someone else was here before you.' },
+    { e:'💨', n:'NOTHING',            d:'the swamp kept it. that is allowed.' }
+  ];
+
+  // ============ AUDIO ============
+  let actx = null;
+  function tone(freq, dur, vol, type){
+    try{
+      if (!actx) actx = new (window.AudioContext||window.webkitAudioContext)();
+      const osc = actx.createOscillator();
+      const g = actx.createGain();
+      osc.connect(g).connect(actx.destination);
+      osc.type = type || 'sine';
+      osc.frequency.setValueAtTime(freq, actx.currentTime);
+      g.gain.setValueAtTime(vol || 0.13, actx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + dur);
+      osc.start(); osc.stop(actx.currentTime + dur);
+    }catch(e){}
+  }
+  function plop(){ tone(180, 0.22, 0.15); }
+  function biteSound(){ tone(880, 0.06, 0.18); setTimeout(() => tone(740, 0.08, 0.14), 60); }
+  function catchSound(){ [523, 659, 784].forEach((f, i) => setTimeout(() => tone(f, 0.18, 0.13), i * 80)); }
+  function spookSound(){ tone(220, 0.18, 0.1, 'triangle'); }
+
+  // ============ ELEMENTS ============
+  const pond = document.getElementById('pond');
+  const lure = document.getElementById('lure');
+  const linePath = document.getElementById('linePath');
+  const chargeFill = document.getElementById('chargeFill');
+  const pondHint = document.getElementById('pondHint');
+  const catchCard = document.getElementById('catchCard');
+  const catchArt = document.getElementById('catchArt');
+  const catchName = document.getElementById('catchName');
+  const catchDesc = document.getElementById('catchDesc');
+  const catchBtn = document.getElementById('catchBtn');
+  const catchVal = document.getElementById('catchVal');
+  const missVal = document.getElementById('missVal');
+  const catchLog = document.getElementById('catchLog');
+
+  // ============ STATE ============
+  const ROD = { x: 11, y: 48 }; // % of pond
+  const MAX_CHARGE = 1200;
+  const BITE_MS = 560;
+  let state = 'idle';
+  let charge = 0, chargeStart = 0;
+  let lurePos = { x: ROD.x, y: ROD.y };
+  let biteTimer = null;
+  let chargeRaf = null;
+  let catches = +(localStorage.getItem('swamp.lure.catches') || 0);
+  let misses = +(localStorage.getItem('swamp.lure.misses') || 0);
+  let log = JSON.parse(localStorage.getItem('swamp.lure.log') || '[]');
+  catchVal.textContent = catches;
+  missVal.textContent = misses;
+  renderLog();
+
+  function setHint(text, isBite){
+    pondHint.textContent = text;
+    pondHint.classList.toggle('bite', !!isBite);
+  }
+  function setLure(x, y){
+    lurePos = { x, y };
+    lure.style.left = x + '%';
+    lure.style.top = y + '%';
+    // line from rod tip to lure
+    linePath.setAttribute('d', `M ${ROD.x} ${ROD.y} Q ${(ROD.x + x) / 2} ${Math.min(ROD.y, y) - 6} ${x} ${y}`);
+  }
+
+  function animateArc(x1, y1, x2, y2, duration, onDone){
+    const start = performance.now();
+    lure.classList.add('in-air');
+    lure.classList.remove('floating', 'biting');
+    (function step(){
+      const t = Math.min(1, (performance.now() - start) / duration);
+      const x = x1 + (x2 - x1) * t;
+      const apexLift = 22; // % of pond
+      const y = y1 + (y2 - y1) * t - Math.sin(Math.PI * t) * apexLift;
+      setLure(x, y);
+      if (t < 1) requestAnimationFrame(step);
+      else { lure.classList.remove('in-air'); onDone && onDone(); }
+    })();
+  }
+
+  function ripple(x, y){
+    const r = document.createElement('div');
+    r.className = 'rip';
+    r.style.left = x + '%';
+    r.style.top = y + '%';
+    pond.appendChild(r);
+    setTimeout(() => r.remove(), 2000);
+  }
+
+  function splash(x, y){
+    plop();
+    for (let i = 0; i < 3; i++) setTimeout(() => ripple(x, y), i * 280);
+    lure.classList.add('floating');
+    setHint('waiting…');
+  }
+
+  function bite(){
+    state = 'biting';
+    biteSound();
+    lure.classList.remove('floating');
+    lure.classList.add('biting');
+    setHint('CLICK NOW ★', true);
+    // little extra ripple
+    ripple(lurePos.x, lurePos.y);
+    clearTimeout(biteTimer);
+    biteTimer = setTimeout(() => {
+      if (state === 'biting') resolve('escaped');
+    }, BITE_MS);
+  }
+
+  function resolve(kind){
+    clearTimeout(biteTimer);
+    lure.classList.remove('biting', 'floating');
+    if (kind === 'caught'){
+      const c = CATCHES[Math.floor(Math.random() * CATCHES.length)];
+      catchArt.innerHTML = `<div style="font-size:64px;line-height:1;">${c.e}</div>`;
+      catchName.textContent = c.n;
+      catchDesc.textContent = c.d;
+      catchCard.classList.add('show');
+      catchSound();
+      catches++;
+      log.unshift({ e: c.e, t: Date.now() });
+      if (log.length > 30) log.length = 30;
+      localStorage.setItem('swamp.lure.catches', catches);
+      localStorage.setItem('swamp.lure.log', JSON.stringify(log));
+      catchVal.textContent = catches;
+      renderLog();
+    } else {
+      spookSound();
+      misses++;
+      localStorage.setItem('swamp.lure.misses', misses);
+      missVal.textContent = misses;
+      setHint(kind === 'spooked' ? 'too early — they fled' : 'too late — they slipped off');
+      setTimeout(reset, 1400);
+      return;
+    }
+    state = 'resolved';
+  }
+
+  function reset(){
+    catchCard.classList.remove('show');
+    setLure(-20, -20);
+    linePath.setAttribute('d', '');
+    chargeFill.style.width = '0%';
+    setHint('hold anywhere to charge a cast ↑');
+    state = 'idle';
+  }
+
+  function renderLog(){
+    catchLog.innerHTML = log.slice(0, 12).map(item => `<span title="${new Date(item.t).toLocaleString()}">${item.e}</span>`).join('');
+  }
+
+  // ============ INPUT ============
+  pond.addEventListener('pointerdown', e => {
+    // ignore clicks on the catch card buttons
+    if (e.target.closest('.catch-card')) return;
+    if (state === 'idle'){
+      state = 'charging';
+      chargeStart = performance.now();
+      setHint('charging…');
+      (function chargeLoop(){
+        if (state !== 'charging') return;
+        const c = Math.min(1, (performance.now() - chargeStart) / MAX_CHARGE);
+        chargeFill.style.width = (c * 100) + '%';
+        chargeRaf = requestAnimationFrame(chargeLoop);
+      })();
+    } else if (state === 'biting'){
+      resolve('caught');
+    } else if (state === 'waiting'){
+      resolve('spooked');
+    } else if (state === 'resolved'){
+      reset();
+    }
+  });
+
+  pond.addEventListener('pointerup', () => {
+    if (state !== 'charging') return;
+    cancelAnimationFrame(chargeRaf);
+    charge = Math.min(1, (performance.now() - chargeStart) / MAX_CHARGE);
+    if (charge < 0.08) {
+      // tap too brief — reset
+      setHint('hold longer to charge ↑');
+      chargeFill.style.width = '0%';
+      state = 'idle';
+      return;
+    }
+    state = 'flying';
+    const dist = 28 + charge * 52;       // %
+    const tx = ROD.x + dist;
+    const ty = 50 + (Math.random() - 0.5) * 18;
+    animateArc(ROD.x, ROD.y, tx, ty, 700, () => {
+      splash(tx, ty);
+      state = 'waiting';
+      const delay = 1800 + Math.random() * 3500;
+      biteTimer = setTimeout(() => {
+        if (state === 'waiting') bite();
+      }, delay);
+    });
+  });
+
+  // safety: pointer leave during charging cancels
+  pond.addEventListener('pointerleave', () => {
+    if (state === 'charging') {
+      cancelAnimationFrame(chargeRaf);
+      chargeFill.style.width = '0%';
+      state = 'idle';
+      setHint('hold anywhere to charge a cast ↑');
+    }
+  });
+
+  catchBtn.addEventListener('click', e => {
+    e.stopPropagation();
+    reset();
+  });
+
+  // copy buttons
+  document.querySelectorAll('.copy-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = document.getElementById(btn.dataset.target);
+      if (!target) return;
+      navigator.clipboard.writeText(target.innerText).then(() => {
+        const original = btn.textContent;
+        btn.textContent = 'COPIED ✓';
+        btn.classList.add('copied');
+        setTimeout(() => { btn.textContent = original; btn.classList.remove('copied'); }, 1600);
+      });
+    });
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<!--
+  Frog Hop — click a lily pad to send the frog jumping
+  Part of Swamp UI · sophieren.com/swamp-ui
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Frog Hop — Swamp UI</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%230b2018'/><circle cx='16' cy='17' r='8' fill='%23b6ff5b'/><circle cx='16' cy='17' r='3.4' fill='%23081310'/></svg>" />
+<meta name="description" content="Frog Hop — click a lily pad, the frog jumps in a parabolic arc. A Swamp UI game primitive." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Caveat:wght@600;700&family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --ink:#081310;--swamp-deep:#0b2018;--swamp:#0f2e22;--swamp-light:#16412f;
+    --panel:#102a20;--moss:#1f5238;
+    --neon-yellow:#ffd23f;--neon-pink:#ff4d8d;--neon-cyan:#52ffe0;
+    --neon-orange:#ff8a3d;--neon-lime:#b6ff5b;
+    --cream:#f3eedd;--muted:#86a596;--line:rgba(243,238,221,.12);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:'Space Grotesk',system-ui,sans-serif;
+    background:var(--ink);color:var(--cream);
+    overflow-x:hidden;line-height:1.65;min-height:100vh;position:relative;
+  }
+  a{color:inherit;text-decoration:none;}
+  ::selection{background:var(--neon-lime);color:var(--ink);}
+  body::before{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:9000;
+    background:radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,.6) 100%);
+  }
+  body::after{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:9001;opacity:.04;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  .backdrop{
+    position:fixed;inset:0;z-index:-2;overflow:hidden;
+    background:radial-gradient(ellipse 80% 55% at 50% 25%,#103226 0%,#081814 60%,#040a08 100%);
+  }
+  nav{
+    position:fixed;top:0;left:0;right:0;z-index:1000;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:14px clamp(16px,4vw,44px);
+    background:linear-gradient(180deg,rgba(7,16,12,.95) 0%,rgba(7,16,12,.55) 60%,rgba(7,16,12,0) 100%);
+  }
+  .brand{display:flex;align-items:center;gap:10px;font-family:'Bungee',sans-serif;font-size:14px;letter-spacing:.5px;}
+  .brand b{color:var(--neon-lime);}
+  .brand-dot{width:14px;height:14px;border-radius:50%;background:var(--neon-lime);box-shadow:0 0 12px var(--neon-lime);}
+  .back-link{
+    font-family:'Bungee',sans-serif;font-size:10.5px;letter-spacing:1.5px;
+    color:var(--neon-cyan);padding:9px 16px;border:1px solid rgba(82,255,224,.35);
+    border-radius:999px;transition:all .2s;
+  }
+  .back-link:hover{background:rgba(82,255,224,.1);box-shadow:0 0 14px rgba(82,255,224,.3);}
+
+  /* hero */
+  .hero{
+    padding:140px 24px 40px;text-align:center;max-width:880px;margin:0 auto;
+  }
+  .eyebrow{
+    font-family:'Bungee',sans-serif;font-size:11px;letter-spacing:3px;
+    color:var(--neon-cyan);margin-bottom:20px;opacity:.9;
+  }
+  .eyebrow .dot{color:var(--neon-yellow);margin:0 10px;}
+  h1{
+    font-family:'Bungee',sans-serif;font-size:clamp(44px,8vw,84px);
+    line-height:.95;letter-spacing:-1.5px;color:var(--cream);
+    text-shadow:0 0 50px rgba(182,255,91,.25);margin-bottom:18px;
+  }
+  h1 em{font-style:normal;color:var(--neon-lime);}
+  .tagline{
+    font-family:'Caveat',cursive;font-size:clamp(22px,3vw,28px);
+    color:var(--muted);margin-bottom:32px;
+  }
+  .meta-tags{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-bottom:20px;}
+  .tag{
+    font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;
+    text-transform:uppercase;padding:5px 11px;border-radius:999px;
+    border:1px solid var(--line);color:var(--muted);
+  }
+
+  /* stage */
+  .stage{padding:30px 24px 80px;max-width:1080px;margin:0 auto;}
+  .stage-frame{
+    position:relative;border:1px solid var(--line);border-radius:18px;
+    background:linear-gradient(180deg,#0a1c14 0%,#061310 100%);
+    padding:40px 30px;min-height:520px;overflow:hidden;
+    box-shadow:0 30px 80px rgba(0,0,0,.5),inset 0 0 80px rgba(82,255,224,.04);
+  }
+  .stage-label{
+    position:absolute;top:14px;left:18px;
+    font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;
+    color:var(--muted);text-transform:uppercase;
+  }
+  .stage-label .live{
+    color:var(--neon-lime);
+    animation:blink 2s infinite;
+  }
+  @keyframes blink{50%{opacity:.4;}}
+
+  /* pond playfield */
+  .pond{
+    position:relative;width:100%;height:460px;margin-top:24px;
+    background:radial-gradient(ellipse 70% 50% at 50% 60%,#0a2a23 0%,#06150f 100%);
+    border-radius:14px;overflow:hidden;
+    cursor:default;
+  }
+  .pond::before{
+    /* water shimmer */
+    content:"";position:absolute;inset:0;
+    background:
+      radial-gradient(ellipse 280px 60px at 25% 35%,rgba(82,255,224,.07),transparent 70%),
+      radial-gradient(ellipse 200px 50px at 70% 70%,rgba(182,255,91,.06),transparent 70%);
+    pointer-events:none;
+  }
+  .pad{
+    position:absolute;width:96px;height:72px;cursor:pointer;
+    transition:transform .15s ease-out,filter .2s;
+  }
+  .pad:hover{transform:scale(1.05);filter:brightness(1.15);}
+  .pad.sunk{transform:translateY(8px) scale(.92);filter:brightness(.7);}
+  .pad svg{display:block;width:100%;height:100%;filter:drop-shadow(0 4px 8px rgba(0,0,0,.45));}
+  .frog{
+    position:absolute;width:54px;height:54px;
+    pointer-events:none;will-change:transform;
+    transition:none;
+    z-index:5;
+  }
+  .frog svg{display:block;width:100%;height:100%;}
+  .frog.land{animation:squish .26s ease-out;}
+  @keyframes squish{
+    0%{transform:scale(1.05,.85);}
+    50%{transform:scale(.92,1.08);}
+    100%{transform:scale(1,1);}
+  }
+  .splash{
+    position:absolute;width:80px;height:80px;border-radius:50%;
+    border:2px solid rgba(82,255,224,.5);pointer-events:none;
+    transform:translate(-50%,-50%) scale(.2);opacity:.9;
+    animation:splash .7s ease-out forwards;
+  }
+  @keyframes splash{
+    to{transform:translate(-50%,-50%) scale(2.2);opacity:0;border-width:1px;}
+  }
+
+  /* HUD */
+  .hud{
+    position:absolute;top:14px;right:18px;display:flex;gap:14px;
+    font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:1.5px;
+    color:var(--muted);text-transform:uppercase;
+    z-index:10;
+  }
+  .hud b{color:var(--neon-lime);font-weight:500;margin-left:4px;}
+  .hud .miss b{color:var(--neon-pink);}
+
+  /* instructions strip */
+  .hint{
+    font-family:'Caveat',cursive;font-size:22px;color:var(--neon-yellow);
+    margin-top:14px;text-align:center;opacity:.85;
+  }
+
+  /* about / specs */
+  .about{padding:40px 24px;max-width:880px;margin:0 auto;}
+  .about h2{
+    font-family:'Bungee',sans-serif;font-size:24px;letter-spacing:.5px;
+    color:var(--neon-lime);margin-bottom:18px;
+  }
+  .about p{color:var(--cream);opacity:.85;margin-bottom:14px;}
+  .why{
+    margin-top:18px;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;
+  }
+  .why-card{
+    padding:18px 16px;border:1px solid var(--line);border-radius:12px;
+    background:rgba(16,42,32,.4);
+  }
+  .why-card h3{
+    font-family:'Bungee',sans-serif;font-size:11px;letter-spacing:1.5px;
+    color:var(--neon-cyan);margin-bottom:8px;text-transform:uppercase;
+  }
+  .why-card p{font-size:14px;margin:0;color:var(--muted);}
+
+  /* code */
+  .code-section{padding:30px 24px 80px;max-width:880px;margin:0 auto;}
+  .code-section h2{
+    font-family:'Bungee',sans-serif;font-size:24px;letter-spacing:.5px;
+    color:var(--neon-lime);margin-bottom:14px;
+  }
+  .code-block{
+    position:relative;border:1px solid var(--line);border-radius:12px;
+    background:#050c0a;padding:18px 18px 18px 22px;overflow-x:auto;margin-bottom:14px;
+  }
+  .code-block pre{
+    font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.6;
+    color:#cfd8d0;margin:0;
+  }
+  .code-block .com{color:#5d7a6c;}
+  .code-block .kw{color:var(--neon-pink);}
+  .code-block .str{color:var(--neon-yellow);}
+  .code-block .num{color:var(--neon-cyan);}
+  .copy-btn{
+    position:absolute;top:10px;right:10px;
+    font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;
+    padding:5px 10px;border:1px solid var(--line);border-radius:6px;
+    background:rgba(8,19,16,.6);color:var(--muted);cursor:pointer;text-transform:uppercase;
+    transition:all .2s;
+  }
+  .copy-btn:hover{color:var(--neon-lime);border-color:rgba(182,255,91,.35);}
+  .copy-btn.ok{color:var(--neon-lime);border-color:var(--neon-lime);}
+
+  footer{
+    padding:30px 24px;text-align:center;border-top:1px solid var(--line);
+    font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);
+    letter-spacing:1px;
+  }
+  footer a{color:var(--neon-cyan);}
+
+  @media (max-width:640px){
+    .pond{height:380px;}
+    .pad{width:80px;height:60px;}
+    .frog{width:44px;height:44px;}
+    .hud{top:8px;right:10px;font-size:9.5px;gap:8px;}
+  }
+</style>
+</head>
+<body>
+<div class="backdrop"></div>
+
+<nav>
+  <a class="brand" href="../">
+    <span class="brand-dot"></span>
+    <span>SWAMP <b>UI</b></span>
+  </a>
+  <a class="back-link" href="../">← ALL COMPONENTS</a>
+</nav>
+
+<section class="hero">
+  <div class="eyebrow">
+    <span>Game Primitive</span>
+    <span class="dot">●</span>
+    <span>~3 KB</span>
+    <span class="dot">●</span>
+    <span>No deps</span>
+  </div>
+  <h1>FROG <em>HOP</em></h1>
+  <p class="tagline">Click a lily pad. He jumps. Sometimes he lands. Sometimes the pad sinks.</p>
+  <div class="meta-tags">
+    <span class="tag">SVG</span>
+    <span class="tag">RAF</span>
+    <span class="tag">Web Audio</span>
+    <span class="tag">Parabolic arc</span>
+  </div>
+</section>
+
+<section class="stage">
+  <div class="stage-frame">
+    <div class="stage-label">LIVE DEMO · <span class="live">●</span></div>
+    <div class="hud">
+      <span>HOPS<b id="hopCount">0</b></span>
+      <span class="miss">SPLASH<b id="missCount">0</b></span>
+    </div>
+    <div class="pond" id="pond"></div>
+    <div class="hint" id="hint">tap a pad →</div>
+  </div>
+</section>
+
+<section class="about">
+  <h2>The Trick</h2>
+  <p>True parabolic motion via <code style="color:var(--neon-yellow);">requestAnimationFrame</code>. Each frame computes x as linear interpolation, y as <code style="color:var(--neon-yellow);">lerp_y − sin(t·π) · arcHeight</code> — so the frog rises and falls in a clean arc, not a bezier approximation.</p>
+  <p>Each pad has 12% chance of being rotten. Land on a rotten pad → it sinks, frog splashes, miss counter ticks. Risk + delight.</p>
+  <div class="why">
+    <div class="why-card">
+      <h3>Why parabola</h3>
+      <p>A CSS cubic-bezier curve can fake an arc but breaks if you change start/end mid-flight. RAF lets you retarget instantly.</p>
+    </div>
+    <div class="why-card">
+      <h3>Why squish-on-land</h3>
+      <p>Three-keyframe scale animation sells weight without physics — the frog feels like it has mass.</p>
+    </div>
+    <div class="why-card">
+      <h3>Why rotten pads</h3>
+      <p>Without failure, hopping has no texture. 12% spice rate = enough surprise, not enough to frustrate.</p>
+    </div>
+  </div>
+</section>
+
+<section class="code-section">
+  <h2>The Hop</h2>
+  <div class="code-block">
+    <button class="copy-btn" data-copy="hop-fn">COPY</button>
+    <pre id="hop-fn"><span class="com">// parabolic arc — t goes 0→1, sin(t*π) peaks at .5</span>
+<span class="kw">function</span> hop(frog, fromX, fromY, toX, toY, arcHeight, duration){
+  <span class="kw">const</span> t0 = performance.now();
+  <span class="kw">function</span> step(now){
+    <span class="kw">const</span> t = Math.min(<span class="num">1</span>, (now - t0) / duration);
+    <span class="kw">const</span> x = fromX + (toX - fromX) * t;
+    <span class="kw">const</span> y = fromY + (toY - fromY) * t - Math.sin(t * Math.PI) * arcHeight;
+    frog.style.transform = <span class="str">`translate(${x}px, ${y}px)`</span>;
+    <span class="kw">if</span> (t &lt; <span class="num">1</span>) requestAnimationFrame(step);
+    <span class="kw">else</span> frog.classList.add(<span class="str">'land'</span>);
+  }
+  requestAnimationFrame(step);
+}</pre>
+  </div>
+  <p style="color:var(--muted);font-size:14px;margin-top:8px;">Drop in any container with class <code style="color:var(--neon-yellow);">.pond</code>. Frog + pads render themselves.</p>
+</section>
+
+<footer>
+  Part of <a href="../">Swamp UI</a> · MIT · <a href="../../">sophieren.com</a>
+</footer>
+
+<script>
+(function(){
+  const POND = document.getElementById('pond');
+  const HOP_OUT = document.getElementById('hopCount');
+  const MISS_OUT = document.getElementById('missCount');
+  const HINT = document.getElementById('hint');
+
+  const PAD_COUNT = 6;
+  const FROG_W = 54, FROG_H = 54;
+  const ARC_HEIGHT = 110;
+  const HOP_MS = 520;
+
+  let frog, pads = [], frogPad = 0, busy = false, hops = 0, misses = 0;
+  let audio;
+
+  function rand(min, max){ return min + Math.random()*(max-min); }
+  function ensureAudio(){
+    if (audio) return audio;
+    try { audio = new (window.AudioContext || window.webkitAudioContext)(); } catch(e){}
+    return audio;
+  }
+  function blip(freq, dur, type='sine', gain=.14){
+    const ac = ensureAudio(); if (!ac) return;
+    const o = ac.createOscillator(), g = ac.createGain();
+    o.type = type; o.frequency.value = freq;
+    g.gain.value = 0;
+    o.connect(g).connect(ac.destination);
+    const t = ac.currentTime;
+    g.gain.linearRampToValueAtTime(gain, t + .01);
+    g.gain.exponentialRampToValueAtTime(.0001, t + dur);
+    o.start(t); o.stop(t + dur + .05);
+  }
+  function splashSound(){
+    blip(180, .25, 'sine', .12);
+    setTimeout(()=>blip(90, .35, 'sine', .08), 60);
+  }
+  function hopSound(){
+    blip(420, .12, 'triangle', .1);
+  }
+
+  function makePadSVG(){
+    // organic blobby lily pad
+    return `
+      <svg viewBox="0 0 100 75" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <radialGradient id="lg" cx=".4" cy=".35">
+            <stop offset="0" stop-color="#3a8a52"/>
+            <stop offset="1" stop-color="#1b4a2c"/>
+          </radialGradient>
+        </defs>
+        <path d="M50 5 C 78 7 95 28 92 50 C 90 67 70 72 50 70 C 28 71 8 65 7 47 C 6 27 22 5 50 5 Z"
+              fill="url(#lg)" stroke="#0d2a18" stroke-width="1.5"/>
+        <path d="M50 36 L 70 60" stroke="#0d2a18" stroke-width="1" opacity=".5"/>
+        <path d="M50 36 L 30 58" stroke="#0d2a18" stroke-width="1" opacity=".5"/>
+        <path d="M50 36 L 84 40" stroke="#0d2a18" stroke-width="1" opacity=".4"/>
+        <path d="M50 36 L 16 42" stroke="#0d2a18" stroke-width="1" opacity=".4"/>
+        <circle cx="50" cy="36" r="2.5" fill="#0a1f0f"/>
+      </svg>`;
+  }
+
+  function makeFrogSVG(){
+    return `
+      <svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <radialGradient id="frogG" cx=".35" cy=".3">
+            <stop offset="0" stop-color="#b6ff5b"/>
+            <stop offset="1" stop-color="#3a7a1f"/>
+          </radialGradient>
+        </defs>
+        <!-- body -->
+        <ellipse cx="30" cy="38" rx="20" ry="14" fill="url(#frogG)" stroke="#1a3a0c" stroke-width="1.5"/>
+        <!-- back legs -->
+        <ellipse cx="14" cy="42" rx="6" ry="3" fill="#5fa030" stroke="#1a3a0c" stroke-width="1"/>
+        <ellipse cx="46" cy="42" rx="6" ry="3" fill="#5fa030" stroke="#1a3a0c" stroke-width="1"/>
+        <!-- head bumps for eyes -->
+        <circle cx="22" cy="22" r="7" fill="url(#frogG)" stroke="#1a3a0c" stroke-width="1.5"/>
+        <circle cx="38" cy="22" r="7" fill="url(#frogG)" stroke="#1a3a0c" stroke-width="1.5"/>
+        <!-- eyes -->
+        <circle cx="22" cy="22" r="3.5" fill="#f3eedd"/>
+        <circle cx="38" cy="22" r="3.5" fill="#f3eedd"/>
+        <circle cx="22.5" cy="23" r="2" fill="#0a1f0f"/>
+        <circle cx="38.5" cy="23" r="2" fill="#0a1f0f"/>
+        <!-- mouth -->
+        <path d="M22 36 Q 30 40 38 36" stroke="#1a3a0c" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+      </svg>`;
+  }
+
+  function layoutPads(){
+    pads.forEach(p => p.el.remove());
+    pads = [];
+    const rect = POND.getBoundingClientRect();
+    const cols = rect.width;
+    const rows = rect.height;
+    // 6 pads in 2 rows of 3, with jitter
+    const positions = [];
+    const rowYs = [rows*.32, rows*.66];
+    const colXs = [cols*.18, cols*.5, cols*.82];
+    rowYs.forEach(y => colXs.forEach(x => positions.push({x: x + rand(-18,18), y: y + rand(-12,12)})));
+    positions.forEach((pos, i) => {
+      const el = document.createElement('div');
+      el.className = 'pad';
+      el.style.left = (pos.x - 48) + 'px';
+      el.style.top = (pos.y - 36) + 'px';
+      el.innerHTML = makePadSVG();
+      const rotten = Math.random() < .12;
+      el.dataset.rotten = rotten ? '1' : '0';
+      el.dataset.i = i;
+      el.style.cx = pos.x; el.style.cy = pos.y;
+      POND.appendChild(el);
+      pads.push({el, x: pos.x, y: pos.y, rotten});
+      el.addEventListener('click', () => onPadClick(i));
+    });
+  }
+
+  function placeFrogOnPad(i){
+    const p = pads[i];
+    frog.style.transform = `translate(${p.x - FROG_W/2}px, ${p.y - FROG_H/2 - 8}px)`;
+    frogPad = i;
+  }
+
+  function onPadClick(i){
+    if (busy || i === frogPad) return;
+    HINT.style.opacity = '0';
+    busy = true;
+    const from = pads[frogPad], to = pads[i];
+    const fromX = from.x - FROG_W/2, fromY = from.y - FROG_H/2 - 8;
+    const toX = to.x - FROG_W/2, toY = to.y - FROG_H/2 - 8;
+    hopSound();
+    hop(frog, fromX, fromY, toX, toY, ARC_HEIGHT, HOP_MS, () => {
+      busy = false;
+      frogPad = i;
+      hops++; HOP_OUT.textContent = hops;
+      frog.classList.add('land');
+      setTimeout(() => frog.classList.remove('land'), 280);
+      if (to.rotten) {
+        // sink + splash
+        setTimeout(() => {
+          to.el.classList.add('sunk');
+          splash(to.x, to.y);
+          splashSound();
+          misses++; MISS_OUT.textContent = misses;
+          // respawn a new pad after a beat
+          setTimeout(() => {
+            to.el.classList.remove('sunk');
+            to.rotten = Math.random() < .12;
+          }, 1400);
+        }, 200);
+      }
+    });
+  }
+
+  function hop(node, fx, fy, tx, ty, arc, dur, onDone){
+    const t0 = performance.now();
+    function step(now){
+      const t = Math.min(1, (now - t0)/dur);
+      const x = fx + (tx - fx) * t;
+      const y = fy + (ty - fy) * t - Math.sin(t * Math.PI) * arc;
+      node.style.transform = `translate(${x}px, ${y}px)`;
+      if (t < 1) requestAnimationFrame(step);
+      else onDone && onDone();
+    }
+    requestAnimationFrame(step);
+  }
+
+  function splash(x, y){
+    const s = document.createElement('div');
+    s.className = 'splash';
+    s.style.left = x + 'px';
+    s.style.top = y + 'px';
+    POND.appendChild(s);
+    setTimeout(() => s.remove(), 800);
+  }
+
+  function init(){
+    frog = document.createElement('div');
+    frog.className = 'frog';
+    frog.innerHTML = makeFrogSVG();
+    POND.appendChild(frog);
+    layoutPads();
+    placeFrogOnPad(0);
+  }
+
+  init();
+
+  window.addEventListener('resize', () => {
+    layoutPads();
+    placeFrogOnPad(frogPad);
+  });
+
+  // copy
+  document.querySelectorAll('.copy-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = document.getElementById(btn.dataset.copy);
+      if (!target) return;
+      navigator.clipboard.writeText(target.innerText).then(() => {
+        btn.textContent = 'COPIED';
+        btn.classList.add('ok');
+        setTimeout(() => { btn.textContent = 'COPY'; btn.classList.remove('ok'); }, 1400);
+      });
+    });
+  });
+})();
+</script>
+</body>
+</html>

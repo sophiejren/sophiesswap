@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<!--
+  Swamp UI — Lily Pad Stepping
+  Pads pulse on their own rhythms. Tap each one in its open window.
+  Cross the pond. Miss the timing and you splash.
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Lily Pad Stepping — Swamp UI</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%230b2018'/><circle cx='16' cy='17' r='8' fill='%23b6ff5b'/><circle cx='16' cy='17' r='3.4' fill='%23081310'/></svg>" />
+
+<meta name="description" content="Lily Pad Stepping — a rhythm-timing game from Swamp UI. Each pad pulses on its own beat. Tap when it opens. Cross the pond." />
+<meta property="og:title" content="Lily Pad Stepping — Swamp UI" />
+<meta property="og:description" content="Pads pulse. Tap on the beat. Cross the pond. Copy-paste, no dependencies." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://sophieren.com/swamp-ui/components/lily-pad-stepping.html" />
+<meta property="og:image" content="https://sophieren.com/images/og-image.png" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Caveat:wght@600;700&family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+<style>
+  :root{
+    --ink:#081310;--swamp-deep:#0b2018;--swamp:#0f2e22;--swamp-light:#16412f;
+    --panel:#102a20;--moss:#1f5238;
+    --neon-yellow:#ffd23f;--neon-pink:#ff4d8d;--neon-cyan:#52ffe0;
+    --neon-orange:#ff8a3d;--neon-lime:#b6ff5b;
+    --cream:#f3eedd;--muted:#86a596;--line:rgba(243,238,221,.12);
+    --code-bg:#06110d;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{font-family:'Space Grotesk',system-ui,sans-serif;background:var(--ink);color:var(--cream);overflow-x:hidden;line-height:1.65;min-height:100vh;position:relative;}
+  a{color:inherit;text-decoration:none;}
+  ::selection{background:var(--neon-lime);color:var(--ink);}
+
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:9000;background:radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,.6) 100%);}
+  body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9001;opacity:.04;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+  .backdrop{position:fixed;inset:0;z-index:-2;overflow:hidden;background:radial-gradient(ellipse 80% 55% at 50% 20%,#103226 0%,#081814 60%,#040a08 100%);}
+
+  /* nav */
+  nav{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;align-items:center;justify-content:space-between;padding:14px clamp(16px,4vw,44px);background:linear-gradient(180deg,rgba(7,16,12,.95) 0%,rgba(7,16,12,.55) 60%,rgba(7,16,12,0) 100%);}
+  .brand{display:flex;align-items:center;gap:10px;font-family:'Bungee',sans-serif;font-size:14px;letter-spacing:.5px;color:var(--cream);}
+  .brand b{color:var(--neon-lime);}
+  .brand-dot{width:14px;height:14px;border-radius:50%;background:var(--neon-lime);box-shadow:0 0 12px var(--neon-lime);}
+  .nav-links{display:flex;gap:8px;align-items:center;}
+  .nav-link{font-family:'Bungee',sans-serif;font-size:10.5px;letter-spacing:1.5px;color:var(--neon-lime);padding:9px 16px;border:1px solid rgba(182,255,91,.35);border-radius:999px;transition:all .2s;}
+  .nav-link:hover{background:rgba(182,255,91,.1);box-shadow:0 0 14px rgba(182,255,91,.3);}
+
+  .container{max-width:1100px;margin:0 auto;padding:120px clamp(20px,5vw,40px) 100px;}
+
+  .crumb{font-family:'Bungee',sans-serif;font-size:10px;letter-spacing:2px;color:var(--muted);margin-bottom:30px;}
+  .crumb a{color:var(--neon-lime);transition:color .2s;}
+  .crumb a:hover{color:var(--neon-cyan);}
+  .crumb .sep{color:var(--neon-yellow);margin:0 10px;}
+
+  header.hero{margin-bottom:40px;}
+  h1.title{font-family:'Bungee',sans-serif;font-size:clamp(40px,7vw,80px);line-height:.98;color:var(--cream);letter-spacing:-1px;margin-bottom:14px;}
+  .sub{font-family:'Caveat',cursive;font-size:26px;color:var(--neon-lime);margin-bottom:16px;font-weight:600;}
+  .lede{font-size:17px;color:var(--cream);opacity:.85;max-width:660px;line-height:1.6;}
+  .lede em{color:var(--neon-lime);font-style:italic;}
+
+  .meta{display:flex;gap:8px;margin-top:22px;flex-wrap:wrap;}
+  .chip{font-family:'Space Grotesk',sans-serif;font-size:11.5px;letter-spacing:.4px;padding:5px 12px;border:1px solid var(--line);border-radius:999px;color:var(--cream);background:rgba(15,46,34,.5);}
+  .chip b{color:var(--neon-lime);margin-right:5px;}
+
+  /* ============ DEMO STAGE ============ */
+  .stage{background:linear-gradient(180deg,var(--swamp) 0%,var(--swamp-deep) 100%);border:1px solid var(--line);border-radius:18px;padding:32px 26px 28px;margin:48px 0;position:relative;}
+  .stage-label{position:absolute;top:14px;left:18px;font-family:'Bungee',sans-serif;font-size:9px;letter-spacing:2px;color:var(--muted);}
+
+  /* the pond */
+  .pond{
+    position:relative;height:300px;
+    background:radial-gradient(ellipse at center,#1a4936 0%,#0a2418 80%);
+    border:1px solid rgba(82,255,224,.18);border-radius:14px;
+    margin-top:18px;overflow:hidden;
+    box-shadow:inset 0 0 80px rgba(0,0,0,.5);
+  }
+  .pond-shore-left, .pond-shore-right{
+    position:absolute;top:0;bottom:0;width:42px;
+    background:linear-gradient(90deg,#3d2818 0%,#2a1a10 80%,transparent 100%);
+  }
+  .pond-shore-left{left:0;}
+  .pond-shore-right{right:0;background:linear-gradient(270deg,#3d2818 0%,#2a1a10 80%,transparent 100%);}
+  .pond-shore-left::after, .pond-shore-right::after{
+    content:"";position:absolute;top:30%;bottom:0;left:0;right:0;
+    background:repeating-linear-gradient(90deg,#1f5238 0,#1f5238 3px,transparent 3px,transparent 7px);
+    opacity:.5;
+  }
+
+  /* lily pads */
+  .pad{
+    position:absolute;width:64px;height:46px;border-radius:50%;
+    background:linear-gradient(135deg,#2a6b48 0%,#1a3f2c 100%);
+    transform:translate(-50%,-50%);top:50%;
+    cursor:pointer;transition:transform .12s ease-out;
+    box-shadow:0 4px 12px rgba(0,0,0,.4);
+  }
+  .pad::before{
+    content:"";position:absolute;top:50%;left:8%;width:42%;height:6%;
+    background:rgba(255,255,255,.15);border-radius:50%;transform:translateY(-50%);
+  }
+  .pad-flower{
+    position:absolute;top:50%;left:50%;width:18px;height:18px;
+    transform:translate(-50%,-50%) scale(0);opacity:0;
+    transition:transform .3s,opacity .3s;
+    background:radial-gradient(circle,var(--neon-pink) 0%,var(--neon-yellow) 80%);
+    border-radius:50%;box-shadow:0 0 14px var(--neon-pink);
+    pointer-events:none;
+  }
+  .pad.open .pad-flower{transform:translate(-50%,-50%) scale(1);opacity:.95;}
+  .pad.open{transform:translate(-50%,-50%) scale(1.18);}
+  .pad.next{
+    box-shadow:0 0 0 2px var(--neon-cyan),0 4px 12px rgba(0,0,0,.4);
+  }
+  .pad.done{
+    background:linear-gradient(135deg,#3d8a5e 0%,#1f5238 100%);
+    box-shadow:0 0 16px rgba(182,255,91,.5),0 4px 12px rgba(0,0,0,.4);
+  }
+
+  /* frog */
+  .frog{
+    position:absolute;width:32px;height:24px;
+    transform:translate(-50%,-50%);
+    z-index:5;pointer-events:none;
+    transition:left .35s cubic-bezier(.4,1.6,.6,1),top .35s cubic-bezier(.4,1.6,.6,1);
+  }
+  .frog svg{display:block;filter:drop-shadow(0 2px 4px rgba(0,0,0,.5));}
+  .frog.jump{animation:jump-arc .35s ease-out;}
+  @keyframes jump-arc{
+    0%{transform:translate(-50%,-50%) translateY(0);}
+    50%{transform:translate(-50%,-50%) translateY(-22px);}
+    100%{transform:translate(-50%,-50%) translateY(0);}
+  }
+
+  /* splash */
+  .splash{
+    position:absolute;width:60px;height:60px;border-radius:50%;
+    border:2px solid var(--neon-cyan);background:rgba(82,255,224,.1);
+    transform:translate(-50%,-50%);pointer-events:none;
+    animation:splash 0.7s ease-out forwards;
+    z-index:4;
+  }
+  @keyframes splash{
+    0%{width:10px;height:10px;opacity:.95;}
+    100%{width:100px;height:100px;opacity:0;}
+  }
+
+  /* status bar */
+  .pond-status{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:14px 18px;margin-top:14px;
+    background:rgba(0,0,0,.3);border:1px solid var(--line);border-radius:10px;
+  }
+  .ps-row{display:flex;gap:18px;align-items:center;font-size:13px;}
+  .ps-label{font-family:'Bungee',sans-serif;font-size:9.5px;letter-spacing:1.5px;color:var(--muted);}
+  .ps-val{font-family:'JetBrains Mono',monospace;color:var(--cream);}
+  .ps-val.streak{color:var(--neon-yellow);}
+  .ps-val.win{color:var(--neon-lime);}
+  .ps-reset{font-family:'Bungee',sans-serif;font-size:10px;letter-spacing:1.5px;color:var(--neon-cyan);background:transparent;border:1px solid rgba(82,255,224,.35);padding:8px 14px;border-radius:7px;cursor:pointer;transition:all .2s;}
+  .ps-reset:hover{background:rgba(82,255,224,.1);}
+
+  /* win banner */
+  .win-banner{
+    position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    background:radial-gradient(ellipse at center,rgba(182,255,91,.15) 0%,transparent 70%);
+    opacity:0;pointer-events:none;transition:opacity .4s;
+    flex-direction:column;gap:8px;
+  }
+  .win-banner.show{opacity:1;}
+  .win-banner .wb-big{font-family:'Bungee',sans-serif;font-size:32px;color:var(--neon-lime);letter-spacing:2px;text-shadow:0 0 18px rgba(182,255,91,.7);}
+  .win-banner .wb-sub{font-family:'Caveat',cursive;font-size:20px;color:var(--cream);}
+  .win-firefly{
+    position:absolute;width:5px;height:5px;border-radius:50%;
+    background:var(--neon-yellow);box-shadow:0 0 10px var(--neon-yellow);
+    animation:fly-up 2.4s ease-out forwards;
+  }
+  @keyframes fly-up{
+    0%{opacity:0;}
+    20%{opacity:1;}
+    100%{transform:translateY(-160px);opacity:0;}
+  }
+
+  /* sections */
+  section{margin:64px 0;}
+  h2.shead{font-family:'Bungee',sans-serif;font-size:22px;color:var(--cream);letter-spacing:.3px;margin-bottom:18px;display:flex;align-items:center;gap:12px;}
+  h2.shead::before{content:"";width:8px;height:8px;background:var(--neon-lime);border-radius:50%;box-shadow:0 0 12px var(--neon-lime);}
+  .p{font-size:16px;color:var(--cream);opacity:.88;line-height:1.7;margin-bottom:14px;}
+  .p em{color:var(--neon-lime);font-style:italic;}
+  .p code{font-family:'JetBrains Mono',monospace;font-size:13.5px;background:var(--code-bg);padding:2px 7px;border-radius:5px;color:var(--neon-lime);}
+
+  .code-wrap{background:var(--code-bg);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin:24px 0;}
+  .code-tabs{display:flex;align-items:center;justify-content:space-between;background:rgba(0,0,0,.4);border-bottom:1px solid var(--line);padding:0 12px 0 0;}
+  .code-tablist{display:flex;}
+  .code-tab{font-family:'Bungee',sans-serif;font-size:10.5px;letter-spacing:1.5px;color:var(--neon-lime);padding:14px 18px;border:none;background:transparent;border-bottom:2px solid var(--neon-lime);}
+  .copy-btn{font-family:'Bungee',sans-serif;font-size:10px;letter-spacing:1.5px;color:var(--neon-lime);background:transparent;border:1px solid rgba(182,255,91,.35);padding:7px 13px;border-radius:7px;cursor:pointer;transition:all .2s;}
+  .copy-btn:hover{background:rgba(182,255,91,.12);}
+  .copy-btn.copied{color:var(--ink);background:var(--neon-lime);border-color:var(--neon-lime);}
+  pre.code{margin:0;padding:22px 24px;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.6;color:var(--cream);}
+  pre.code .kw{color:var(--neon-pink);}
+  pre.code .tag{color:var(--neon-lime);}
+  pre.code .attr{color:var(--neon-cyan);}
+  pre.code .str{color:var(--neon-yellow);}
+  pre.code .com{color:var(--muted);font-style:italic;}
+  pre.code .num{color:var(--neon-orange);}
+  pre.code .prop{color:var(--neon-cyan);}
+
+  table.params{width:100%;border-collapse:collapse;margin:18px 0;background:rgba(15,46,34,.3);border:1px solid var(--line);border-radius:12px;overflow:hidden;}
+  table.params th{text-align:left;padding:14px 16px;font-family:'Bungee',sans-serif;font-size:10px;letter-spacing:1.5px;color:var(--neon-lime);background:rgba(0,0,0,.3);border-bottom:1px solid var(--line);}
+  table.params td{padding:14px 16px;border-bottom:1px solid var(--line);font-size:14px;color:var(--cream);}
+  table.params tr:last-child td{border-bottom:none;}
+  table.params code{font-family:'JetBrains Mono',monospace;font-size:12.5px;background:var(--code-bg);padding:2px 7px;border-radius:5px;color:var(--neon-lime);}
+  table.params .def{color:var(--neon-yellow);font-family:'JetBrains Mono',monospace;font-size:12.5px;}
+
+  .skip-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:24px 0;}
+  .skip-btn{background:rgba(15,46,34,.4);border:1px solid var(--line);border-radius:10px;padding:12px 14px;text-align:left;cursor:pointer;transition:all .2s;}
+  .skip-btn:hover{border-color:var(--neon-lime);background:rgba(182,255,91,.06);}
+  .skip-btn .n{font-family:'Bungee',sans-serif;font-size:9.5px;letter-spacing:1.5px;color:var(--neon-yellow);}
+  .skip-btn .l{font-size:13px;color:var(--cream);margin-top:4px;}
+
+  /* tipjar */
+  .tipjar{background:linear-gradient(135deg,rgba(255,210,63,.07) 0%,rgba(182,255,91,.06) 100%);border:1px solid rgba(255,210,63,.28);border-radius:18px;padding:28px 26px;margin:48px 0;text-align:center;}
+  .tipjar h3{font-family:'Bungee',sans-serif;font-size:15px;color:var(--neon-yellow);letter-spacing:.5px;margin-bottom:8px;}
+  .tipjar p{font-size:14px;color:var(--cream);opacity:.85;margin-bottom:16px;}
+  .tipjar a{display:inline-flex;align-items:center;gap:8px;font-family:'Bungee',sans-serif;font-size:11.5px;letter-spacing:1.5px;color:var(--ink);background:var(--neon-yellow);padding:13px 22px;border-radius:999px;transition:all .2s;}
+  .tipjar a:hover{background:var(--cream);transform:translateY(-2px);box-shadow:0 10px 22px -8px rgba(255,210,63,.65);}
+
+  .next-cta{display:flex;align-items:center;justify-content:space-between;gap:20px;background:linear-gradient(180deg,var(--swamp) 0%,var(--swamp-deep) 100%);border:1px solid var(--line);border-radius:14px;padding:24px 28px;margin:48px 0;flex-wrap:wrap;}
+  .next-cta .l b{display:block;font-family:'Bungee',sans-serif;font-size:14px;color:var(--cream);letter-spacing:.5px;margin-bottom:4px;}
+  .next-cta .l span{font-size:13.5px;color:var(--muted);}
+  .next-cta a{font-family:'Bungee',sans-serif;font-size:11px;letter-spacing:1.5px;color:var(--ink);background:var(--neon-lime);padding:12px 20px;border-radius:999px;transition:all .2s;}
+  .next-cta a:hover{background:var(--cream);}
+
+  footer{padding:50px 24px 40px;text-align:center;border-top:1px solid var(--line);background:rgba(8,19,16,.6);margin-top:80px;}
+  footer .flinks{display:flex;gap:24px;justify-content:center;margin-bottom:14px;flex-wrap:wrap;}
+  footer .flinks a{color:var(--cream);font-size:13px;opacity:.75;}
+  footer .flinks a:hover{color:var(--neon-lime);opacity:1;}
+  footer .copy{color:var(--muted);font-size:12px;}
+  footer .copy b{color:var(--neon-lime);}
+
+  @media (max-width:600px){
+    .pond{height:240px;}
+    .pad{width:50px;height:38px;}
+    .next-cta{flex-direction:column;text-align:center;}
+  }
+</style>
+</head>
+<body>
+
+<div class="backdrop"></div>
+
+<nav>
+  <a class="brand" href="/swamp-ui/">
+    <span class="brand-dot"></span>
+    <span>SWAMP <b>UI</b></span>
+  </a>
+  <div class="nav-links">
+    <a class="nav-link" href="/swamp-ui/">← all components</a>
+    <a class="nav-link" href="https://github.com/sophiejren/sophiesswap" target="_blank" rel="noopener">★ GitHub</a>
+  </div>
+</nav>
+
+<div class="container">
+
+  <div class="crumb">
+    <a href="/swamp-ui/">SWAMP UI</a>
+    <span class="sep">/</span> COMPONENTS <span class="sep">/</span> LILY PAD STEPPING
+  </div>
+
+  <header class="hero">
+    <h1 class="title">Lily Pad Stepping</h1>
+    <div class="sub">tap each pad in its own window</div>
+    <p class="lede">
+      A rhythm-timing game in five pads. Each lily pulses on <em>its own beat</em> —
+      a flower blooms briefly, the pad lifts. Tap during the bloom and the frog jumps onto it.
+      Tap off-rhythm and you splash. The <em>next pad</em> is always outlined in cyan, so you
+      know where to look.
+    </p>
+    <div class="meta">
+      <div class="chip"><b>★</b> No dependencies</div>
+      <div class="chip"><b>★</b> ~80 lines of JS</div>
+      <div class="chip"><b>★</b> Audio feedback</div>
+      <div class="chip"><b>★</b> Configurable tempo</div>
+    </div>
+  </header>
+
+  <!-- LIVE PREVIEW -->
+  <div class="stage">
+    <div class="stage-label">LIVE PREVIEW · TAP THE NEXT PAD WHEN IT BLOOMS</div>
+
+    <div class="pond" id="pond">
+      <div class="pond-shore-left"></div>
+      <div class="pond-shore-right"></div>
+      <!-- pads injected by JS -->
+      <div class="frog" id="frog">
+        <svg viewBox="0 0 32 24" xmlns="http://www.w3.org/2000/svg">
+          <ellipse cx="16" cy="16" rx="13" ry="7" fill="#b6ff5b"/>
+          <ellipse cx="16" cy="14" rx="9" ry="3" fill="#7fbf3f" opacity=".6"/>
+          <circle cx="11" cy="9" r="4" fill="#b6ff5b"/>
+          <circle cx="21" cy="9" r="4" fill="#b6ff5b"/>
+          <circle cx="11" cy="9" r="1.6" fill="#081310"/>
+          <circle cx="21" cy="9" r="1.6" fill="#081310"/>
+          <circle cx="11.5" cy="8.5" r=".5" fill="#fff"/>
+          <circle cx="21.5" cy="8.5" r=".5" fill="#fff"/>
+        </svg>
+      </div>
+      <div class="win-banner" id="winBanner">
+        <div class="wb-big">REACHED THE BANK ★</div>
+        <div class="wb-sub">the swamp claps in fireflies</div>
+      </div>
+    </div>
+
+    <div class="pond-status">
+      <div class="ps-row">
+        <div><div class="ps-label">PROGRESS</div><div class="ps-val" id="progressVal">0 / 5</div></div>
+        <div><div class="ps-label">STREAK</div><div class="ps-val streak" id="streakVal">0</div></div>
+        <div><div class="ps-label">BEST</div><div class="ps-val win" id="bestVal">0</div></div>
+      </div>
+      <button class="ps-reset" id="resetBtn">↺ NEW POND</button>
+    </div>
+  </div>
+
+  <section>
+    <h2 class="shead">When to use</h2>
+    <p class="p">
+      A great <em>distraction primitive</em> — a 404 page, a loading state for something genuinely
+      slow, a "wait while we process your form" room. The kind of micro-game that takes 20 seconds
+      to learn and doesn't punish failure. Drop it where boredom would otherwise creep in.
+    </p>
+    <p class="p">
+      Not for: anywhere the user is in a hurry, anywhere accuracy matters more than vibe, or
+      anywhere sound is unwelcome (you can disable audio via <code>data-silent</code>).
+    </p>
+  </section>
+
+  <section>
+    <h2 class="shead">Skip to</h2>
+    <div class="skip-grid">
+      <a class="skip-btn" href="#html"><div class="n">01</div><div class="l">HTML</div></a>
+      <a class="skip-btn" href="#css"><div class="n">02</div><div class="l">CSS</div></a>
+      <a class="skip-btn" href="#js"><div class="n">03</div><div class="l">JavaScript</div></a>
+      <a class="skip-btn" href="#params"><div class="n">04</div><div class="l">Parameters</div></a>
+    </div>
+  </section>
+
+  <section id="html">
+    <h2 class="shead">1. HTML</h2>
+    <p class="p">One pond container. Pads are generated by JS so you can configure how many and how fast.</p>
+    <div class="code-wrap">
+      <div class="code-tabs"><div class="code-tablist"><button class="code-tab">HTML</button></div><button class="copy-btn" data-target="code-html">COPY</button></div>
+<pre class="code" id="code-html"><span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"pond"</span> <span class="attr">id</span>=<span class="str">"pond"</span>
+     <span class="attr">data-pads</span>=<span class="str">"5"</span>
+     <span class="attr">data-tempo</span>=<span class="str">"1100"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"pond-shore-left"</span><span class="tag">&gt;&lt;/div&gt;</span>
+  <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"pond-shore-right"</span><span class="tag">&gt;&lt;/div&gt;</span>
+  <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"frog"</span><span class="tag">&gt;</span>...<span class="tag">&lt;/div&gt;</span>
+  <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"win-banner"</span><span class="tag">&gt;</span>You made it<span class="tag">&lt;/div&gt;</span>
+<span class="tag">&lt;/div&gt;</span></pre>
+    </div>
+  </section>
+
+  <section id="css">
+    <h2 class="shead">2. CSS</h2>
+    <p class="p">Each pad transitions scale + a hidden flower. The <code>.open</code> class is added/removed by JS in sync with each pad's own rhythm.</p>
+    <div class="code-wrap">
+      <div class="code-tabs"><div class="code-tablist"><button class="code-tab">CSS</button></div><button class="copy-btn" data-target="code-css">COPY</button></div>
+<pre class="code" id="code-css"><span class="kw">.pad</span> {
+  <span class="prop">width</span>: <span class="num">64px</span>; <span class="prop">height</span>: <span class="num">46px</span>;
+  <span class="prop">border-radius</span>: <span class="num">50%</span>;
+  <span class="prop">background</span>: linear-gradient(<span class="num">135deg</span>, <span class="str">#2a6b48</span>, <span class="str">#1a3f2c</span>);
+  <span class="prop">transition</span>: transform <span class="num">.12s</span> ease-out;
+}
+
+<span class="com">/* JS adds .next to the pad the frog is targeting */</span>
+<span class="kw">.pad.next</span>  { <span class="prop">box-shadow</span>: <span class="num">0 0 0 2px</span> <span class="str">#52ffe0</span>; }
+
+<span class="com">/* JS adds .open during each pad's bloom window */</span>
+<span class="kw">.pad.open</span>  { <span class="prop">transform</span>: translate(<span class="num">-50%, -50%</span>) scale(<span class="num">1.18</span>); }
+<span class="kw">.pad.open .pad-flower</span> { <span class="prop">opacity</span>: <span class="num">.95</span>; <span class="prop">transform</span>: translate(<span class="num">-50%, -50%</span>) scale(<span class="num">1</span>); }
+
+<span class="com">/* JS adds .done once the frog has landed on it */</span>
+<span class="kw">.pad.done</span>  { <span class="prop">box-shadow</span>: <span class="num">0 0 16px</span> rgba(<span class="num">182, 255, 91, .5</span>); }</pre>
+    </div>
+  </section>
+
+  <section id="js">
+    <h2 class="shead">3. JavaScript</h2>
+    <p class="p">
+      Each pad has a <em>period</em> and <em>phase</em>. A heartbeat <code>requestAnimationFrame</code>
+      loop checks every pad: are we currently inside its open window? If yes, add <code>.open</code>.
+      Click → if target pad open, hop; else splash + reset streak.
+    </p>
+    <div class="code-wrap">
+      <div class="code-tabs"><div class="code-tablist"><button class="code-tab">JS (core)</button></div><button class="copy-btn" data-target="code-js">COPY</button></div>
+<pre class="code" id="code-js"><span class="com">// Swamp UI — Lily Pad Stepping</span>
+(<span class="kw">function</span>(){
+  <span class="kw">const</span> pond = document.getElementById(<span class="str">'pond'</span>);
+  <span class="kw">const</span> N = +pond.dataset.pads || <span class="num">5</span>;
+  <span class="kw">const</span> TEMPO = +pond.dataset.tempo || <span class="num">1100</span>; <span class="com">// ms between bloom peaks (avg)</span>
+  <span class="kw">const</span> OPEN_MS = <span class="num">340</span>;  <span class="com">// how long each pad stays open per cycle</span>
+  <span class="kw">const</span> pads = [];
+
+  <span class="com">// Build pads with staggered periods + phases</span>
+  <span class="kw">for</span> (<span class="kw">let</span> i = <span class="num">0</span>; i &lt; N; i++) {
+    <span class="kw">const</span> el = document.createElement(<span class="str">'div'</span>);
+    el.className = <span class="str">'pad'</span>;
+    el.style.left = (<span class="num">14</span> + (i+<span class="num">1</span>) * (<span class="num">72</span> / (N+<span class="num">1</span>))) + <span class="str">'%'</span>;
+    el.innerHTML = <span class="str">'&lt;div class="pad-flower"&gt;&lt;/div&gt;'</span>;
+    pond.appendChild(el);
+    pads.push({
+      el,
+      period: TEMPO + (i * <span class="num">170</span>) % <span class="num">450</span>,
+      phase:  Math.random() * TEMPO,
+      idx: i
+    });
+  }
+
+  <span class="kw">let</span> nextIdx = <span class="num">0</span>;
+  pads[<span class="num">0</span>].el.classList.add(<span class="str">'next'</span>);
+
+  <span class="com">// Heartbeat: open/close pads based on phase</span>
+  <span class="kw">function</span> <span class="prop">tick</span>(){
+    <span class="kw">const</span> t = performance.now();
+    pads.forEach(p =&gt; {
+      <span class="kw">const</span> within = ((t + p.phase) % p.period) &lt; OPEN_MS;
+      p.el.classList.toggle(<span class="str">'open'</span>, within);
+    });
+    requestAnimationFrame(tick);
+  }
+  tick();
+
+  <span class="com">// Click handling — only the .next pad matters</span>
+  pads.forEach(p =&gt; {
+    p.el.addEventListener(<span class="str">'click'</span>, () =&gt; {
+      <span class="kw">if</span> (p.idx === nextIdx &amp;&amp; p.el.classList.contains(<span class="str">'open'</span>)) hop(p);
+      <span class="kw">else</span> splash(p.el);
+    });
+  });
+})();</pre>
+    </div>
+  </section>
+
+  <section id="params">
+    <h2 class="shead">4. Parameters you can tweak</h2>
+    <table class="params">
+      <thead><tr><th>Where</th><th>Default</th><th>Effect</th></tr></thead>
+      <tbody>
+        <tr><td>HTML <code>data-pads</code></td><td><span class="def">5</span></td><td>Number of pads between shores. 3 = casual, 7 = brutal.</td></tr>
+        <tr><td>HTML <code>data-tempo</code></td><td><span class="def">1100</span></td><td>Base period (ms). Lower = harder.</td></tr>
+        <tr><td>HTML <code>data-silent</code></td><td><span class="def">—</span></td><td>Disable plop / splash sounds.</td></tr>
+        <tr><td>JS <code>OPEN_MS</code></td><td><span class="def">340</span></td><td>How long each pad stays open per cycle. Lower = harder.</td></tr>
+        <tr><td>JS period stagger</td><td><span class="def">(i·170)%450</span></td><td>Each pad gets a slightly different rhythm. Set to <code>0</code> for synced pads (easier).</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- TIP JAR -->
+  <div class="tipjar">
+    <h3>Reached the bank?</h3>
+    <p>Feed the frog. (And tip its owner a milk tea.)</p>
+    <a href="https://buymeacoffee.com/sophiejr" target="_blank" rel="noopener">🧋 TREAT THE SWAMP →</a>
+  </div>
+
+  <!-- NEXT -->
+  <div class="next-cta">
+    <div class="l">
+      <b>More in the garden →</b>
+      <span>Swamp Tarot, Pond Ripple, Firefly Cursor, Frog Hop, Lure Cast.</span>
+    </div>
+    <a href="/swamp-ui/">Browse all →</a>
+  </div>
+
+</div>
+
+<footer>
+  <div class="flinks">
+    <a href="/swamp-ui/">Swamp UI</a>
+    <a href="/">Sophie's Swamp</a>
+    <a href="https://github.com/sophiejren/sophiesswap" target="_blank" rel="noopener">GitHub</a>
+  </div>
+  <p class="copy">© 2026 Sophie. <b>MIT licensed.</b> Use freely, credit kindly. 🐸</p>
+</footer>
+
+<script>
+  // ============ AUDIO ============
+  let actx = null;
+  let silent = false;
+  function tone(freq, dur, vol){
+    if (silent) return;
+    try{
+      if (!actx) actx = new (window.AudioContext||window.webkitAudioContext)();
+      const osc = actx.createOscillator();
+      const g = actx.createGain();
+      osc.connect(g).connect(actx.destination);
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, actx.currentTime);
+      g.gain.setValueAtTime(vol || 0.15, actx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + dur);
+      osc.start();
+      osc.stop(actx.currentTime + dur);
+    }catch(e){}
+  }
+  function plopHop(){ tone(440, 0.18, 0.12); setTimeout(() => tone(660, 0.14, 0.1), 80); }
+  function plopSplash(){ tone(150, 0.32, 0.18); }
+  function chime(){
+    [523, 659, 784, 1047].forEach((f, i) => setTimeout(() => tone(f, 0.32, 0.13), i * 120));
+  }
+
+  // ============ GAME ============
+  const pond = document.getElementById('pond');
+  const frog = document.getElementById('frog');
+  const progressVal = document.getElementById('progressVal');
+  const streakVal = document.getElementById('streakVal');
+  const bestVal = document.getElementById('bestVal');
+  const winBanner = document.getElementById('winBanner');
+  const resetBtn = document.getElementById('resetBtn');
+
+  const N = 5;
+  const TEMPO = 1100;
+  const OPEN_MS = 360;
+  let pads = [];
+  let nextIdx = 0;
+  let streak = 0;
+  let best = +(localStorage.getItem('swamp.lilypad.best') || 0);
+  bestVal.textContent = best;
+
+  function buildPads(){
+    // remove old
+    pond.querySelectorAll('.pad').forEach(p => p.remove());
+    pads = [];
+    for (let i = 0; i < N; i++){
+      const el = document.createElement('div');
+      el.className = 'pad';
+      const xPct = 14 + (i + 1) * (72 / (N + 1));
+      el.style.left = xPct + '%';
+      const yPct = 50 + Math.sin(i * 1.2) * 12; // gentle wave
+      el.style.top = yPct + '%';
+      const flower = document.createElement('div');
+      flower.className = 'pad-flower';
+      el.appendChild(flower);
+      pond.appendChild(el);
+      pads.push({
+        el,
+        period: TEMPO + ((i * 170) % 450),
+        phase: Math.random() * TEMPO,
+        idx: i,
+        x: xPct,
+        y: yPct
+      });
+      el.addEventListener('click', () => onPadClick(pads[i]));
+    }
+    placeFrog();
+  }
+
+  function placeFrog(){
+    if (nextIdx === 0){
+      // on the left shore
+      frog.style.left = '4%';
+      frog.style.top  = '52%';
+    } else {
+      const p = pads[nextIdx - 1];
+      frog.style.left = p.x + '%';
+      frog.style.top  = p.y + '%';
+    }
+    pads.forEach((p, i) => p.el.classList.toggle('next', i === nextIdx));
+  }
+
+  function tick(){
+    const t = performance.now();
+    pads.forEach(p => {
+      const within = ((t + p.phase) % p.period) < OPEN_MS;
+      p.el.classList.toggle('open', within);
+    });
+    requestAnimationFrame(tick);
+  }
+
+  function onPadClick(p){
+    if (p.idx !== nextIdx) { splash(p); return; }
+    if (!p.el.classList.contains('open')) { splash(p); return; }
+    hop(p);
+  }
+
+  function hop(p){
+    p.el.classList.add('done');
+    frog.style.left = p.x + '%';
+    frog.style.top  = p.y + '%';
+    frog.classList.remove('jump'); void frog.offsetWidth; frog.classList.add('jump');
+    plopHop();
+    streak++;
+    streakVal.textContent = streak;
+    nextIdx = p.idx + 1;
+    progressVal.textContent = nextIdx + ' / ' + N;
+    if (nextIdx >= N){
+      win();
+    } else {
+      pads.forEach((pp, i) => pp.el.classList.toggle('next', i === nextIdx));
+    }
+  }
+
+  function splash(p){
+    const rect = pond.getBoundingClientRect();
+    const xPct = p ? p.x : 50;
+    const yPct = p ? p.y : 50;
+    const s = document.createElement('div');
+    s.className = 'splash';
+    s.style.left = xPct + '%';
+    s.style.top  = yPct + '%';
+    pond.appendChild(s);
+    setTimeout(() => s.remove(), 700);
+    plopSplash();
+    streak = 0;
+    streakVal.textContent = streak;
+    // reset progress
+    nextIdx = 0;
+    progressVal.textContent = '0 / ' + N;
+    pads.forEach(pp => pp.el.classList.remove('done'));
+    placeFrog();
+  }
+
+  function win(){
+    // fly to the right shore
+    frog.style.left = '96%';
+    frog.style.top  = '52%';
+    if (streak > best){
+      best = streak;
+      localStorage.setItem('swamp.lilypad.best', best);
+      bestVal.textContent = best;
+    }
+    winBanner.classList.add('show');
+    chime();
+    // sprinkle fireflies
+    for (let i = 0; i < 14; i++){
+      setTimeout(() => {
+        const f = document.createElement('div');
+        f.className = 'win-firefly';
+        f.style.left = (10 + Math.random() * 80) + '%';
+        f.style.top  = (40 + Math.random() * 40) + '%';
+        pond.appendChild(f);
+        setTimeout(() => f.remove(), 2400);
+      }, i * 120);
+    }
+    // auto-reset after a beat
+    setTimeout(() => {
+      winBanner.classList.remove('show');
+      nextIdx = 0;
+      progressVal.textContent = '0 / ' + N;
+      buildPads();
+    }, 3400);
+  }
+
+  resetBtn.addEventListener('click', () => {
+    nextIdx = 0; streak = 0;
+    progressVal.textContent = '0 / ' + N;
+    streakVal.textContent = '0';
+    winBanner.classList.remove('show');
+    buildPads();
+  });
+
+  buildPads();
+  tick();
+
+  // copy buttons
+  document.querySelectorAll('.copy-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = document.getElementById(btn.dataset.target);
+      if (!target) return;
+      navigator.clipboard.writeText(target.innerText).then(() => {
+        const original = btn.textContent;
+        btn.textContent = 'COPIED ✓';
+        btn.classList.add('copied');
+        setTimeout(() => { btn.textContent = original; btn.classList.remove('copied'); }, 1600);
+      });
+    });
+  });
+</script>
+
+</body>
+</html>
