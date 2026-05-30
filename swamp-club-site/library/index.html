@@ -4,10 +4,10 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>The Library · Sophie's Swamp</title>
-<meta name="description" content="Books and papers Sophie is reading or has read. Starts with the LOOMUS Distill reading list — Sutton, Christiano, Jaynes, Popper, Solow, and friends." />
+<meta name="description" content="Books I keep handing to people. 100+ titles across seven wormholes — evolution, cognition, cog science, silicon valley, AI, companies, learning. Borrowed from the LOOMUS Library." />
 
 <meta property="og:title" content="The Library · Sophie's Swamp" />
-<meta property="og:description" content="Books and papers behind the seven pillars of LOOMUS Distill, and other things on Sophie's shelf." />
+<meta property="og:description" content="Books I keep handing to people. 100+ titles across seven wormholes. Start with the eight Cornerstones." />
 <meta property="og:image" content="https://sophieren.com/images/og-image.png" />
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />
@@ -16,30 +16,34 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Caveat:wght@600;700&family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Caveat:wght@600;700&family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
 
 <style>
   :root{
-    --ink:#08130e;--paper:#0f1f1a;--cream:#f3eedd;--line:rgba(243,238,221,.12);
+    --ink:#08130e;--paper:#0f1f1a;--cream:#f3eedd;
+    --line:rgba(243,238,221,.12);--line2:rgba(243,238,221,.06);
     --neon-cyan:#52ffe0;--neon-yellow:#ffd23f;--neon-lime:#b6ff5b;
-    --neon-pink:#ff6b9d;--neon-orange:#ff8a3d;--muted:#86a596;
+    --neon-pink:#ff6b9d;--neon-orange:#ff8a3d;
+    --neon-violet:#b89bff;--neon-mint:#7fffb8;
+    --muted:#86a596;
   }
   *{box-sizing:border-box;margin:0;padding:0;}
   html{scroll-behavior:smooth;}
   body{
     background:
-      radial-gradient(ellipse at 20% 0%,rgba(82,255,224,.06) 0%,transparent 55%),
+      radial-gradient(ellipse at 20% 0%,rgba(82,255,224,.05) 0%,transparent 55%),
       radial-gradient(ellipse at 80% 100%,rgba(255,210,63,.04) 0%,transparent 60%),
       var(--ink);
-    color:var(--cream);font-family:'Space Grotesk',sans-serif;line-height:1.65;
+    color:var(--cream);font-family:'Space Grotesk',sans-serif;line-height:1.6;
     min-height:100vh;padding-bottom:90px;
   }
   a{color:inherit;text-decoration:none;}
   ::selection{background:var(--neon-cyan);color:var(--ink);}
 
+  /* === topbar === */
   .topbar{
-    display:flex;justify-content:space-between;align-items:center;
-    padding:22px 30px;border-bottom:1px solid var(--line);
+    display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;
+    padding:20px 28px;border-bottom:1px solid var(--line);
   }
   .topbar a{
     font-family:'Caveat',cursive;font-size:18px;opacity:.7;
@@ -47,14 +51,15 @@
   }
   .topbar a:hover{opacity:1;color:var(--neon-cyan);}
 
-  .hero{max-width:780px;margin:60px auto 50px;padding:0 28px;text-align:center;}
+  /* === hero === */
+  .hero{max-width:780px;margin:60px auto 40px;padding:0 28px;text-align:center;}
   .hero .kicker{
     font-family:'Bungee',sans-serif;font-size:11px;letter-spacing:3px;
     color:var(--neon-cyan);margin-bottom:16px;
   }
   .hero h1{
     font-family:'Bungee',sans-serif;
-    font-size:clamp(40px,7vw,68px);line-height:1.05;
+    font-size:clamp(40px,7vw,72px);line-height:1.05;
     color:var(--cream);letter-spacing:-1px;margin-bottom:18px;
   }
   .hero h1 em{color:var(--neon-yellow);font-style:italic;}
@@ -62,64 +67,216 @@
     font-family:'Caveat',cursive;font-size:24px;color:var(--neon-cyan);
     margin-bottom:14px;
   }
-  .hero .lede{font-size:16.5px;color:var(--cream);opacity:.85;max-width:580px;margin:0 auto;line-height:1.7;}
+  .hero .lede{
+    font-size:16px;color:var(--cream);opacity:.85;
+    max-width:580px;margin:0 auto 28px;line-height:1.7;
+  }
   .hero .lede em{color:var(--neon-cyan);font-style:italic;}
+  .hero .lede a{color:var(--neon-cyan);border-bottom:1px dashed rgba(82,255,224,.4);}
 
-  /* === section === */
-  section.shelf{max-width:880px;margin:60px auto 0;padding:0 28px;}
+  /* === surprise button === */
+  .surprise-btn{
+    display:inline-flex;align-items:center;gap:10px;
+    font-family:'Bungee',sans-serif;font-size:13px;letter-spacing:2px;
+    color:var(--ink);background:var(--neon-yellow);
+    padding:14px 22px;border:none;border-radius:999px;
+    cursor:pointer;transition:all .15s;
+    box-shadow:0 0 0 0 rgba(255,210,63,0);
+  }
+  .surprise-btn:hover{
+    transform:translateY(-2px);
+    box-shadow:0 6px 0 0 rgba(255,210,63,.18),0 0 30px rgba(255,210,63,.25);
+  }
+  .surprise-btn:active{transform:translateY(0);}
+  .surprise-btn .dice{font-size:18px;animation:dice 3s ease-in-out infinite;}
+  @keyframes dice{0%,90%,100%{transform:rotate(0);}94%{transform:rotate(15deg);}97%{transform:rotate(-15deg);}}
+
+  /* === cornerstones === */
+  .cornerstones{max-width:1100px;margin:50px auto 0;padding:0 28px;}
+  .cornerstones .head{
+    display:flex;align-items:baseline;gap:14px;margin-bottom:18px;
+    border-bottom:1px solid var(--line);padding-bottom:14px;
+  }
+  .cornerstones .head h3{
+    font-family:'Bungee',sans-serif;font-size:14px;letter-spacing:2px;
+    color:var(--cream);
+  }
+  .cornerstones .head .note{
+    font-family:'Caveat',cursive;font-size:18px;color:var(--neon-yellow);opacity:.9;
+  }
+  .cornerstone-row{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+    gap:14px;
+  }
+  .corner{
+    background:linear-gradient(180deg,rgba(255,210,63,.08) 0%,rgba(8,19,14,.85) 100%);
+    border:1px solid rgba(255,210,63,.25);border-radius:14px;
+    padding:18px 18px 16px;
+    display:flex;flex-direction:column;gap:8px;
+    transition:all .2s;cursor:pointer;
+    position:relative;overflow:hidden;
+  }
+  .corner::before{
+    content:"★";position:absolute;top:10px;right:12px;
+    color:var(--neon-yellow);font-size:14px;opacity:.85;
+  }
+  .corner:hover{
+    transform:translateY(-3px);
+    border-color:rgba(255,210,63,.55);
+    box-shadow:0 8px 24px rgba(0,0,0,.4),0 0 28px rgba(255,210,63,.1);
+  }
+  .corner .c-cat{
+    font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1.5px;
+    color:var(--muted);text-transform:uppercase;
+  }
+  .corner .c-title{
+    font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:16px;
+    color:var(--cream);line-height:1.25;
+  }
+  .corner .c-title em{color:var(--neon-yellow);font-style:italic;}
+  .corner .c-author{
+    font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);
+  }
+  .corner .c-why{
+    font-family:'Caveat',cursive;font-size:16.5px;color:var(--cream);opacity:.9;
+    line-height:1.35;margin-top:auto;padding-top:6px;
+  }
+
+  /* === quick category nav === */
+  .cat-nav{
+    position:sticky;top:0;z-index:40;
+    background:rgba(8,19,14,.88);
+    backdrop-filter:blur(14px) saturate(160%);
+    -webkit-backdrop-filter:blur(14px) saturate(160%);
+    border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+    margin-top:60px;padding:14px 28px;
+    display:flex;justify-content:center;gap:16px;flex-wrap:wrap;
+    font-family:'JetBrains Mono',monospace;font-size:12px;
+  }
+  .cat-nav a{
+    color:var(--muted);letter-spacing:1px;
+    padding:5px 11px;border-radius:999px;border:1px solid transparent;
+    transition:all .15s;
+  }
+  .cat-nav a:hover{color:var(--cream);border-color:var(--line);}
+  .cat-nav a .roman{font-weight:600;}
+  .cat-nav a .nm{margin-left:6px;opacity:.7;}
+
+  /* === shelves === */
+  section.shelf{max-width:1100px;margin:60px auto 0;padding:0 28px;scroll-margin-top:80px;}
   .shelf-head{
-    display:flex;align-items:center;gap:14px;margin-bottom:24px;
+    display:flex;align-items:baseline;gap:14px;margin-bottom:8px;flex-wrap:wrap;
   }
   .shelf-head h2{
-    font-family:'Bungee',sans-serif;font-size:22px;color:var(--cream);
+    font-family:'Bungee',sans-serif;font-size:24px;color:var(--cream);
     letter-spacing:.3px;line-height:1.1;
   }
-  .shelf-head h2 em{color:var(--neon-yellow);font-style:italic;}
-  .shelf-head .pillar{
-    font-family:'JetBrains Mono',monospace;font-size:11px;
-    letter-spacing:1.5px;color:var(--muted);
-    padding:5px 10px;border:1px solid var(--line);border-radius:6px;
-    flex-shrink:0;
+  .shelf-head h2 em{font-style:italic;}
+  .shelf-head .roman{
+    font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--muted);
+    letter-spacing:1.5px;
   }
-  .shelf-intro{font-size:15px;color:var(--cream);opacity:.75;margin-bottom:22px;line-height:1.7;}
-  .shelf-intro em{color:var(--neon-cyan);font-style:italic;}
+  .shelf-head .count{
+    margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:11px;
+    color:var(--muted);letter-spacing:1px;
+  }
+  .shelf-tag{
+    font-family:'Caveat',cursive;font-size:20px;color:var(--cream);opacity:.7;
+    margin-bottom:24px;padding-left:2px;
+  }
 
-  .book-list{display:flex;flex-direction:column;gap:14px;}
+  .book-grid{
+    display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));
+    gap:12px;
+  }
   .book{
-    background:linear-gradient(180deg,rgba(15,31,26,.6) 0%,rgba(8,19,14,.85) 100%);
-    border:1px solid var(--line);border-radius:14px;
-    padding:20px 22px;
-    display:grid;grid-template-columns:1fr auto;gap:14px;align-items:start;
-    transition:all .2s;
+    background:linear-gradient(180deg,rgba(15,31,26,.55) 0%,rgba(8,19,14,.85) 100%);
+    border:1px solid var(--line);border-radius:12px;
+    padding:16px 18px;
+    display:flex;flex-direction:column;gap:6px;
+    transition:all .15s;cursor:pointer;
+    position:relative;
   }
   .book:hover{
-    border-color:rgba(82,255,224,.3);
     transform:translateY(-2px);
+    background:linear-gradient(180deg,rgba(15,31,26,.7) 0%,rgba(8,19,14,.9) 100%);
   }
-  .book .book-main{}
   .book .b-title{
-    font-family:'Space Grotesk',sans-serif;font-size:17px;font-weight:700;
-    color:var(--cream);line-height:1.3;margin-bottom:5px;
+    font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:15px;
+    color:var(--cream);line-height:1.3;
   }
-  .book .b-title em{color:var(--neon-yellow);font-style:italic;font-weight:600;}
-  .book .b-meta{
-    font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);
-    letter-spacing:.4px;margin-bottom:10px;
+  .book .b-title em{font-style:italic;font-weight:500;}
+  .book .b-star{
+    color:var(--neon-yellow);font-size:11px;margin-right:4px;
+  }
+  .book .b-author{
+    font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--muted);
+    letter-spacing:.5px;
   }
   .book .b-why{
-    font-family:'Caveat',cursive;font-size:18px;color:var(--cream);opacity:.95;
-    line-height:1.4;
+    font-family:'Caveat',cursive;font-size:16px;color:var(--cream);opacity:.85;
+    line-height:1.35;
   }
-  .book .b-why em{color:var(--neon-cyan);font-style:italic;}
-  .book .b-link{
-    font-family:'Bungee',sans-serif;font-size:9px;letter-spacing:1.5px;
-    color:var(--neon-cyan);
-    padding:6px 12px;border:1px solid rgba(82,255,224,.35);border-radius:999px;
-    white-space:nowrap;transition:all .15s;
-    align-self:start;
+  .book .b-why em{font-style:italic;}
+
+  /* === modal === */
+  .modal-bg{
+    position:fixed;inset:0;z-index:100;
+    background:rgba(8,19,14,.78);
+    backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+    display:none;align-items:center;justify-content:center;
+    padding:24px;
+    animation:fadeIn .2s ease;
   }
-  .book .b-link:hover{background:rgba(82,255,224,.12);}
-  .book .b-link.free::before{content:"FREE · ";color:var(--neon-lime);}
+  .modal-bg.open{display:flex;}
+  @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+  .modal-card{
+    background:linear-gradient(180deg,rgba(15,31,26,.95) 0%,rgba(8,19,14,.98) 100%);
+    border:1px solid rgba(255,210,63,.3);border-radius:18px;
+    padding:34px 30px 26px;max-width:480px;width:100%;
+    text-align:center;
+    box-shadow:0 0 60px rgba(0,0,0,.5),0 0 80px rgba(255,210,63,.06);
+    animation:pop .35s cubic-bezier(.2,1.2,.4,1);
+  }
+  @keyframes pop{from{opacity:0;transform:scale(.9) translateY(8px);}to{opacity:1;transform:scale(1);}}
+  .modal-card .m-kicker{
+    font-family:'Bungee',sans-serif;font-size:10px;letter-spacing:2.5px;
+    color:var(--neon-yellow);margin-bottom:16px;
+  }
+  .modal-card .m-cat{
+    font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);
+    letter-spacing:1.5px;margin-bottom:10px;
+  }
+  .modal-card .m-title{
+    font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:24px;
+    color:var(--cream);line-height:1.2;margin-bottom:8px;
+  }
+  .modal-card .m-title em{color:var(--neon-yellow);font-style:italic;}
+  .modal-card .m-author{
+    font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);
+    margin-bottom:18px;
+  }
+  .modal-card .m-why{
+    font-family:'Caveat',cursive;font-size:22px;color:var(--cream);
+    line-height:1.4;margin-bottom:24px;padding:0 6px;
+  }
+  .modal-card .m-why em{color:var(--neon-cyan);font-style:italic;}
+  .modal-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+  .m-btn{
+    font-family:'Bungee',sans-serif;font-size:11px;letter-spacing:1.5px;
+    padding:11px 18px;border-radius:999px;border:none;cursor:pointer;
+    transition:all .15s;
+  }
+  .m-btn.primary{background:var(--neon-yellow);color:var(--ink);}
+  .m-btn.primary:hover{transform:translateY(-2px);box-shadow:0 4px 14px rgba(255,210,63,.25);}
+  .m-btn.ghost{background:transparent;color:var(--cream);border:1px solid var(--line);}
+  .m-btn.ghost:hover{border-color:var(--neon-cyan);color:var(--neon-cyan);}
+  .m-close{
+    position:absolute;top:14px;right:18px;
+    background:none;border:none;color:var(--muted);font-size:22px;cursor:pointer;
+    transition:color .15s;
+  }
+  .m-close:hover{color:var(--cream);}
 
   /* === footer === */
   footer{
@@ -131,12 +288,16 @@
 
   /* === mobile === */
   @media (max-width:680px){
-    .topbar{padding:18px;}
-    .hero{margin:40px auto 30px;}
+    .topbar{padding:16px;}
+    .topbar a{font-size:15px;}
+    .hero{margin:35px auto 25px;}
     section.shelf{margin:40px auto 0;}
-    .shelf-head{flex-wrap:wrap;}
-    .book{grid-template-columns:1fr;}
-    .book .b-link{justify-self:start;}
+    .book-grid{grid-template-columns:1fr;}
+    .cornerstone-row{grid-template-columns:1fr;}
+    .cat-nav{gap:8px;padding:10px 14px;}
+    .cat-nav a{padding:4px 9px;}
+    .cat-nav a .nm{display:none;}
+    .shelf-head .count{margin-left:0;}
   }
 </style>
 <!--
@@ -146,248 +307,303 @@
 -->
 <!-- <script data-goatcounter="https://MYCODE.goatcounter.com/count"
         async src="//gc.zgo.at/count.js"></script> -->
-
 </head>
 <body>
 
 <nav class="topbar">
   <a href="/">&larr; back to the swamp</a>
-  <a href="https://loomus.ai/distill" target="_blank">read the Playbook &rarr;</a>
+  <a href="https://loomus.ai/library" target="_blank">full library at LOOMUS &rarr;</a>
 </nav>
 
 <header class="hero">
-  <div class="kicker">SOPHIE&rsquo;S READING SHELF</div>
+  <div class="kicker">BOOKS I KEEP HANDING TO PEOPLE</div>
   <h1>The <em>Library</em></h1>
-  <p class="sub">books and papers worth a corner of your brain.</p>
+  <p class="sub">100&plus; books across seven wormholes.</p>
   <p class="lede">
-    Sophie reads <em>across</em>: cognitive science, reinforcement learning, philosophy of science, 1950s economics, Toyota factory floors, modern AI papers. This is what&rsquo;s on the shelf. Start with the LOOMUS Distill reading list (the 11 below) &mdash; each one underwrites one pillar of the <a href="/playbook/" style="color:var(--neon-cyan);">Playbook</a>.
+    These are the books I&rsquo;d hand to anyone who asked &mdash; pulled from the <a href="https://loomus.ai/library" target="_blank">LOOMUS Library</a>, where the canonical version lives. Start with the eight <em>Cornerstones</em> below. The rest is still up for argument.
   </p>
+  <button class="surprise-btn" id="surpriseBtn"><span class="dice">&#x1F3B2;</span>SURPRISE ME</button>
 </header>
 
-<!-- ============ NETWORK VALUE (Pillar I) ============ -->
-<section class="shelf">
-  <div class="shelf-head">
-    <h2>I &middot; <em>Network Value</em></h2>
-    <span class="pillar">PILLAR I</span>
+<!-- ============ CORNERSTONES ============ -->
+<section class="cornerstones">
+  <div class="head">
+    <h3>CORNERSTONES</h3>
+    <span class="note">if you only read eight &mdash; these.</span>
   </div>
-  <p class="shelf-intro">Three competing laws of how networks scale. Metcalfe (1995) said N&sup2;. Briscoe et al (2006) argued N log N. Reed (1999) went further: groups form, so 2^N. Each describes a different layer of the same phenomenon.</p>
-
-  <div class="book-list">
-    <div class="book">
-      <div class="book-main">
-        <div class="b-title">Metcalfe&rsquo;s Law: A Network&rsquo;s Value Grows as N&sup2;</div>
-        <div class="b-meta">Robert Metcalfe &middot; 1995</div>
-        <div class="b-why"><em>the classic.</em> short, foundational, often misquoted &mdash; everyone should read the actual claim before invoking it.</div>
-      </div>
-      <a class="b-link" href="https://en.wikipedia.org/wiki/Metcalfe%27s_law" target="_blank">REFERENCE &rarr;</a>
-    </div>
-
-    <div class="book">
-      <div class="book-main">
-        <div class="b-title">Metcalfe&rsquo;s Law is Wrong</div>
-        <div class="b-meta">Briscoe, Odlyzko, Tilly &middot; IEEE Spectrum 2006</div>
-        <div class="b-why">a sharper corrective: V &prop; N log N. <em>Worth reading specifically to argue with.</em></div>
-      </div>
-      <a class="b-link free" href="https://www.dtc.umn.edu/~odlyzko/doc/metcalfe.pdf" target="_blank">PDF &rarr;</a>
-    </div>
-
-    <div class="book">
-      <div class="book-main">
-        <div class="b-title">That Sneaky Exponential&mdash;Beyond Metcalfe&rsquo;s Law</div>
-        <div class="b-meta">David P. Reed &middot; 1999</div>
-        <div class="b-why">Reed&rsquo;s Law: groups form within networks, so value scales <em>2^N</em>. The deepest of the three.</div>
-      </div>
-      <a class="b-link free" href="https://www.reed.com/dpr/locus/gfn/reedslaw.html" target="_blank">ESSAY &rarr;</a>
-    </div>
-  </div>
+  <div class="cornerstone-row" id="cornerstones"></div>
 </section>
 
-<!-- ============ BAYESIAN (Pillar II) ============ -->
-<section class="shelf">
-  <div class="shelf-head">
-    <h2>II &middot; <em>Bayesian Inference</em></h2>
-    <span class="pillar">PILLAR II</span>
-  </div>
-  <p class="shelf-intro">Knowing is not boolean. It is a distribution. Jaynes is the cult classic; once you read it, frequentist statistics never quite recovers.</p>
+<!-- ============ QUICK NAV ============ -->
+<nav class="cat-nav" id="catNav"></nav>
 
-  <div class="book-list">
-    <div class="book">
-      <div class="book-main">
-        <div class="b-title">Probability Theory: The Logic of Science</div>
-        <div class="b-meta">E. T. Jaynes &middot; Cambridge UP &middot; 2003 (posthumous)</div>
-        <div class="b-why">the textbook for people who want to <em>actually think Bayesian</em>, not just calculate. dense, gorgeous, life-altering.</div>
-      </div>
-      <a class="b-link" href="https://www.cambridge.org/9780521592710" target="_blank">BOOK &rarr;</a>
-    </div>
+<!-- ============ SHELVES (rendered by JS) ============ -->
+<main id="shelves"></main>
 
-    <div class="book">
-      <div class="book-main">
-        <div class="b-title">An Essay towards solving a Problem in the Doctrine of Chances</div>
-        <div class="b-meta">Thomas Bayes &middot; 1763</div>
-        <div class="b-why">the original. 21 pages. <em>Read it for the historical chills.</em></div>
-      </div>
-      <a class="b-link free" href="https://web.archive.org/web/20110410085940/http://www.stat.ucla.edu/history/essay.pdf" target="_blank">PDF &rarr;</a>
+<!-- ============ MODAL ============ -->
+<div class="modal-bg" id="modalBg" role="dialog" aria-modal="true" aria-labelledby="mTitle">
+  <div class="modal-card">
+    <button class="m-close" id="mClose" aria-label="Close">&times;</button>
+    <div class="m-kicker">&#x1F3B2; ONE BOOK, FRESH FROM THE SHELF</div>
+    <div class="m-cat" id="mCat"></div>
+    <div class="m-title" id="mTitle"></div>
+    <div class="m-author" id="mAuthor"></div>
+    <div class="m-why" id="mWhy"></div>
+    <div class="modal-actions">
+      <a class="m-btn primary" id="mOpen" target="_blank">OPEN AT LOOMUS &rarr;</a>
+      <button class="m-btn ghost" id="mAgain">ANOTHER ONE</button>
     </div>
   </div>
-</section>
-
-<!-- ============ BANDIT (Pillar III) ============ -->
-<section class="shelf">
-  <div class="shelf-head">
-    <h2>III &middot; <em>Multi-Armed Bandit</em></h2>
-    <span class="pillar">PILLAR III</span>
-  </div>
-  <p class="shelf-intro">The bible (Lattimore-Szepesv&aacute;ri, free) plus the original UCB paper. If you played Mushroom Bog &mdash; this is where UCB came from.</p>
-
-  <div class="book-list">
-    <div class="book">
-      <div class="book-main">
-        <div class="b-title">Bandit Algorithms</div>
-        <div class="b-meta">Lattimore &amp; Szepesv&aacute;ri &middot; Cambridge UP &middot; 2020</div>
-        <div class="b-why">the comprehensive modern reference. <em>Free PDF.</em> intimidating, then quietly addictive.</div>
-      </div>
-      <a class="b-link free" href="https://tor-lattimore.com/downloads/book/book.pdf" target="_blank">PDF &rarr;</a>
-    </div>
-
-    <div class="book">
-      <div class="book-main">
-        <div class="b-title">Finite-Time Analysis of the Multiarmed Bandit Problem</div>
-        <div class="b-meta">Auer, Cesa-Bianchi, Fischer &middot; 2002</div>
-        <div class="b-why">the original UCB paper. <em>You played this algorithm in the Mushroom Bog.</em> read it after.</div>
-      </div>
-      <a class="b-link free" href="https://homes.di.unimi.it/cesa-bianchi/Pubblicazioni/ml-02.pdf" target="_blank">PDF &rarr;</a>
-    </div>
-  </div>
-</section>
-
-<!-- ============ RL / RLHF (Pillar IV) ============ -->
-<section class="shelf">
-  <div class="shelf-head">
-    <h2>IV &middot; <em>Reinforcement Learning &amp; RLHF</em></h2>
-    <span class="pillar">PILLAR IV</span>
-  </div>
-  <p class="shelf-intro">Sutton &amp; Barto for the foundation; Christiano for the leap to learning from human preferences; Ouyang for the production system that became ChatGPT.</p>
-
-  <div class="book-list">
-    <div class="book">
-      <div class="book-main">
-        <div class="b-title">Reinforcement Learning: An Introduction <em>(2nd ed.)</em></div>
-        <div class="b-meta">Sutton &amp; Barto &middot; 2018</div>
-        <div class="b-why">the textbook. <em>Free online.</em> if you read one book about how machines learn from feedback, this is it.</div>
-      </div>
-      <a class="b-link free" href="http://incompleteideas.net/book/the-book-2nd.html" target="_blank">FREE &rarr;</a>
-    </div>
-
-    <div class="book">
-      <div class="book-main">
-        <div class="b-title">Deep Reinforcement Learning from Human Preferences</div>
-        <div class="b-meta">Christiano, Leike et al &middot; NeurIPS 2017</div>
-        <div class="b-why">the paper that made <em>RLHF</em> possible. teaching an agent from "I like this one better" instead of a hand-coded reward.</div>
-      </div>
-      <a class="b-link free" href="https://arxiv.org/abs/1706.03741" target="_blank">ARXIV &rarr;</a>
-    </div>
-
-    <div class="book">
-      <div class="book-main">
-        <div class="b-title">Training Language Models to Follow Instructions <em>(InstructGPT)</em></div>
-        <div class="b-meta">Ouyang et al &middot; OpenAI &middot; 2022</div>
-        <div class="b-why">OpenAI&rsquo;s blueprint for how a raw LM became actually useful. the engineering version of Christiano&rsquo;s idea.</div>
-      </div>
-      <a class="b-link free" href="https://arxiv.org/abs/2203.02155" target="_blank">ARXIV &rarr;</a>
-    </div>
-  </div>
-</section>
-
-<!-- ============ FALSIFIABILITY (Pillar V) ============ -->
-<section class="shelf">
-  <div class="shelf-head">
-    <h2>V &middot; <em>Falsifiability</em></h2>
-    <span class="pillar">PILLAR V</span>
-  </div>
-  <p class="shelf-intro">Popper is 90 years old and still surgical. The line between knowledge and belief is whether a claim can be proven wrong &mdash; not whether it&rsquo;s convincing.</p>
-
-  <div class="book-list">
-    <div class="book">
-      <div class="book-main">
-        <div class="b-title">The Logic of Scientific Discovery</div>
-        <div class="b-meta">Karl Popper &middot; 1934</div>
-        <div class="b-why">the founding text on what counts as <em>knowledge</em> vs <em>belief</em>. still painful to AI/ML researchers in the right way.</div>
-      </div>
-      <a class="b-link" href="https://en.wikipedia.org/wiki/The_Logic_of_Scientific_Discovery" target="_blank">REFERENCE &rarr;</a>
-    </div>
-  </div>
-</section>
-
-<!-- ============ COMPOUNDING (Pillar VI) ============ -->
-<section class="shelf">
-  <div class="shelf-head">
-    <h2>VI &middot; <em>Compounding</em></h2>
-    <span class="pillar">PILLAR VI</span>
-  </div>
-  <p class="shelf-intro">Two unlikely siblings: Solow&rsquo;s 1956 econ paper that introduced compounding growth to mainstream economics, and Toyota&rsquo;s kaizen &mdash; small steps, no stopping &mdash; expressed as a manufacturing philosophy.</p>
-
-  <div class="book-list">
-    <div class="book">
-      <div class="book-main">
-        <div class="b-title">A Contribution to the Theory of Economic Growth</div>
-        <div class="b-meta">Robert Solow &middot; QJE &middot; 1956</div>
-        <div class="b-why">the paper that gave economics <em>compounding growth</em>. Solow won the Nobel for it. 38 pages, then time does the rest.</div>
-      </div>
-      <a class="b-link" href="https://en.wikipedia.org/wiki/Solow%E2%80%93Swan_model" target="_blank">REFERENCE &rarr;</a>
-    </div>
-
-    <div class="book">
-      <div class="book-main">
-        <div class="b-title">Toyota Production System: Beyond Large-Scale Production</div>
-        <div class="b-meta">Taiichi Ohno &middot; 1988</div>
-        <div class="b-why">where <em>kaizen</em> came from. tiny steps, no stopping. arguably the most important business book ever written.</div>
-      </div>
-      <a class="b-link" href="https://en.wikipedia.org/wiki/Toyota_Production_System" target="_blank">REFERENCE &rarr;</a>
-    </div>
-  </div>
-</section>
-
-<!-- ============ CONSTITUTIONAL AI (Pillar VII) ============ -->
-<section class="shelf">
-  <div class="shelf-head">
-    <h2>VII &middot; <em>Constitutional AI</em></h2>
-    <span class="pillar">PILLAR VII</span>
-  </div>
-  <p class="shelf-intro">Anthropic&rsquo;s line of work: give the model a constitution (principles), not just examples. ReST closes the loop &mdash; models train themselves on their own best outputs.</p>
-
-  <div class="book-list">
-    <div class="book">
-      <div class="book-main">
-        <div class="b-title">Constitutional AI: Harmlessness from AI Feedback</div>
-        <div class="b-meta">Bai, Kadavath et al &middot; Anthropic &middot; 2022</div>
-        <div class="b-why">how Claude was shaped. <em>principles before content.</em> the manifesto.</div>
-      </div>
-      <a class="b-link free" href="https://arxiv.org/abs/2212.08073" target="_blank">ARXIV &rarr;</a>
-    </div>
-
-    <div class="book">
-      <div class="book-main">
-        <div class="b-title">Reinforced Self-Training (ReST) for Language Modeling</div>
-        <div class="b-meta">Gulcehre et al &middot; 2023</div>
-        <div class="b-why">closing the loop: models train themselves on their own best outputs. the obvious next step.</div>
-      </div>
-      <a class="b-link free" href="https://arxiv.org/abs/2308.08998" target="_blank">ARXIV &rarr;</a>
-    </div>
-  </div>
-</section>
-
-<!-- ============ MORE SHELVES (placeholder for future categories) ============ -->
-<section class="shelf">
-  <div class="shelf-head">
-    <h2>+ <em>more shelves, soon</em></h2>
-    <span class="pillar">ROLLING</span>
-  </div>
-  <p class="shelf-intro">cognitive science, learning theory, philosophy of curiosity, agent design, taste &mdash; rolling additions as i remember them. <em>send me yours &rarr; <a href="/#contact" style="color:var(--neon-cyan);">leave a letter</a>.</em></p>
-</section>
+</div>
 
 <footer>
-  <p>shelved with care &middot; <a href="/">sophieren.com</a> &middot; rolling forever</p>
+  <p>borrowed from <a href="https://loomus.ai/library" target="_blank">loomus.ai/library</a> &middot; shelved with care &middot; <a href="/">sophieren.com</a></p>
 </footer>
+
+<script>
+/* ============ DATA ============ */
+
+const CATEGORIES = [
+  {id:"I",   name:"Evolution",      tag:"Intelligence is a four-billion-year stack of survival hacks.",      color:"#b6ff5b"},
+  {id:"II",  name:"Cognition",      tag:"Cognition is the brain&rsquo;s continuous bet on what happens next.", color:"#52ffe0"},
+  {id:"III", name:"Cog Science",    tag:"Cognitive science was built by stitching six fields into one.",      color:"#ffd23f"},
+  {id:"IV",  name:"Silicon Valley", tag:"Silicon Valley was not a miracle. It was a system.",                  color:"#ff8a3d"},
+  {id:"V",   name:"AI",             tag:"AI is the only invention that asks who we are while we build it.",  color:"#ff6b9d"},
+  {id:"VI",  name:"Companies",      tag:"Companies rise and fall by the same few mechanisms.",                color:"#b89bff"},
+  {id:"VII", name:"Learning",       tag:"Learning is what you pay for, not what you receive.",                color:"#7fffb8"},
+];
+
+const BOOKS = [
+  // ===== I · Evolution =====
+  {cat:"I", title:"A Brief History of <em>Intelligence</em>",                author:"Max Bennett",                          why:"Five evolutionary breakthroughs from worm to poet &mdash; and why LLMs only got the last one.",                                    url:"https://loomus.ai/books-brief-history-intelligence",   star:true},
+  {cat:"I", title:"The Deep History of Ourselves",                            author:"Joseph LeDoux · 2019",            why:"Four billion years of nervous-system evolution, entered through <em>survival circuits</em> instead of cognitive breakthroughs.",  url:"https://loomus.ai/books-deep-history-ourselves"},
+  {cat:"I", title:"Other Minds",                                              author:"Peter Godfrey-Smith · 2016",      why:"The octopus as a natural control experiment &mdash; mind has arisen on Earth at least <em>twice</em>.",                            url:"https://loomus.ai/books-other-minds-godfrey-smith"},
+  {cat:"I", title:"The Secret of Our Success",                                author:"Joseph Henrich · 2015",           why:"Human intelligence lives mostly outside any one skull &mdash; in the <em>cumulative transmission of culture</em>.",                url:"https://loomus.ai/books-secret-of-our-success"},
+  {cat:"I", title:"The Evolution of Agency",                                  author:"Michael Tomasello · 2022",        why:"The real axis for the evolution of mind isn&rsquo;t intelligence &mdash; it&rsquo;s <em>agency</em>.",                                url:"https://loomus.ai/books-evolution-of-agency"},
+  {cat:"I", title:"The Vital Question",                                       author:"Nick Lane · 2015",                why:"Before there were neurons, there were <em>energy budgets</em>. Life is constrained by mitochondria.",                              url:"https://loomus.ai/books-vital-question-lane"},
+  {cat:"I", title:"The Selfish Gene",                                         author:"Richard Dawkins · 1976",          why:"Bodies are survival machines built by genes &mdash; one principle re-explains altruism, kinship, even culture.",                  url:"https://loomus.ai/books-the-selfish-gene"},
+  {cat:"I", title:"Darwin&rsquo;s Dangerous Idea",                            author:"Daniel Dennett · 1995",           why:"Natural selection isn&rsquo;t a biological claim. It&rsquo;s a <em>universal acid</em> &mdash; an algorithm for complexity itself.", url:"https://loomus.ai/books-darwins-dangerous-idea"},
+  {cat:"I", title:"An Immense World",                                         author:"Ed Yong · 2022",                  why:"Every species lives inside its own sensory bubble. There is no general intelligence detached from a body.",                       url:"https://loomus.ai/books-an-immense-world"},
+  {cat:"I", title:"Metazoa",                                                  author:"Peter Godfrey-Smith · 2020",      why:"Subjective experience grows gradually as nervous systems do &mdash; no miracle moment, just a continuum.",                          url:"https://loomus.ai/books-metazoa-animal-minds"},
+  {cat:"I", title:"Behave",                                                   author:"Robert Sapolsky · 2017",          why:"Every act is the joint product of hormones, circuits, childhood, culture, and genes &mdash; operating on different clocks.",       url:"https://loomus.ai/books-behave-sapolsky"},
+  {cat:"I", title:"The Mind of a Bee",                                        author:"Lars Chittka · 2022",             why:"A million-neuron brain can count, recognize faces, use tools. <em>Minimum viable intelligence</em> is shockingly small.",         url:"https://loomus.ai/books-mind-of-bee"},
+  {cat:"I", title:"Cognitive Gadgets",                                        author:"Cecilia Heyes · 2018",            why:"Imitation, mind-reading, language &mdash; not innate instincts. Culture installs them, one generation at a time.",                url:"https://loomus.ai/books-cognitive-gadgets-heyes"},
+  {cat:"I", title:"Sentience",                                                author:"Nicholas Humphrey · 2022",        why:"Feeling is not a byproduct of the brain. It&rsquo;s a <em>functional invention</em>, designed to make organisms care.",            url:"https://loomus.ai/books-sentience-nicholas-humphrey"},
+  {cat:"I", title:"The Ancient Origins of Consciousness",                     author:"Feinberg &amp; Mallatt · 2016",   why:"Consciousness has a birth certificate: the Cambrian, 500 million years ago, when image-forming eyes appeared.",                  url:"https://loomus.ai/books-ancient-origins-consciousness"},
+  {cat:"I", title:"Sapiens",                                                  author:"Yuval Noah Harari",                    why:"70,000 years of human power, built on <em>shared fiction</em>. Why we dominated &mdash; and what it cost.",                       url:"https://loomus.ai/books-sapiens-human-history"},
+
+  // ===== II · Cognition =====
+  {cat:"II", title:"A Thousand <em>Brains</em>",                              author:"Jeff Hawkins",                         why:"150,000 cortical columns. Each one a learner. <em>All voting at once</em>.",                                                       url:"https://loomus.ai/books-thousand-brains-hawkins",      star:true},
+  {cat:"II", title:"On Intelligence",                                         author:"Jeff Hawkins · 2004",             why:"The neocortex is one unified <em>memory&ndash;prediction</em> framework. Intelligence is constant prediction.",                  url:"https://loomus.ai/books-on-intelligence-hawkins"},
+  {cat:"II", title:"The Society of Mind",                                     author:"Marvin Minsky · 1986",            why:"Mind is built from many small agents, none intelligent on its own &mdash; intelligence is what emerges.",                          url:"https://loomus.ai/books-society-of-mind"},
+  {cat:"II", title:"How the Mind Works",                                      author:"Steven Pinker · 1997",            why:"The mind as a <em>computational organ</em> &mdash; evolution designed it to solve specific adaptive problems.",                   url:"https://loomus.ai/books-how-mind-works"},
+  {cat:"II", title:"The Experience Machine",                                  author:"Andy Clark · 2023",               why:"Perception is the brain&rsquo;s <em>controlled hallucination</em>, corrected by sensory input.",                                  url:"https://loomus.ai/books-experience-machine-clark"},
+  {cat:"II", title:"Consciousness and the Brain",                             author:"Stanislas Dehaene · 2014",        why:"Information enters consciousness only when broadcast across the whole cortical network.",                                         url:"https://loomus.ai/books-consciousness-and-brain"},
+  {cat:"II", title:"Being You",                                               author:"Anil Seth · 2021",                why:"Even the sense that <em>you</em> exist is a hallucination the brain makes about its own body.",                                   url:"https://loomus.ai/books-being-you-seth"},
+  {cat:"II", title:"I Am a Strange Loop",                                     author:"Douglas Hofstadter · 2007",       why:"The self is a symbol system recursing on itself &mdash; a <em>loop pattern</em>, not an entity.",                                 url:"https://loomus.ai/books-i-am-strange-loop"},
+  {cat:"II", title:"The Brain from Inside Out",                               author:"György Buzsáki · 2019", why:"The brain isn&rsquo;t a passive receiver. It&rsquo;s a self-active system assigning meaning to inputs.",                          url:"https://loomus.ai/books-brain-from-inside-out"},
+  {cat:"II", title:"How Emotions Are Made",                                   author:"Lisa Feldman Barrett · 2017",     why:"Emotions aren&rsquo;t universal fingerprints &mdash; the brain <em>constructs</em> them moment by moment.",                       url:"https://loomus.ai/books-how-emotions-are-made"},
+  {cat:"II", title:"Descartes&rsquo; Error",                                  author:"Antonio Damasio · 1994",          why:"Reason cannot function without emotion and the body. Cognition is somatic.",                                                      url:"https://loomus.ai/books-descartes-error-damasio"},
+  {cat:"II", title:"The Hidden Spring",                                       author:"Mark Solms · 2021",               why:"Consciousness comes from the brainstem, not the cortex &mdash; and its essence is <em>feeling</em>, not thought.",                url:"https://loomus.ai/books-hidden-spring-solms"},
+  {cat:"II", title:"Livewired",                                               author:"David Eagleman · 2020",           why:"The brain isn&rsquo;t hardware. It&rsquo;s a living material that rewires itself to fit body and world.",                          url:"https://loomus.ai/books-livewired-eagleman"},
+  {cat:"II", title:"Phantoms in the Brain",                                   author:"V. S. Ramachandran · 1998",       why:"Reverse-engineer the brain through the bizarre ways it breaks &mdash; phantom limbs, denial, mistaken identity.",                 url:"https://loomus.ai/books-phantoms-in-the-brain"},
+  {cat:"II", title:"The Master and His Emissary",                             author:"Iain McGilchrist · 2009",         why:"Left and right hemispheres aren&rsquo;t different functions &mdash; they&rsquo;re two ways of <em>attending to</em> the world.",  url:"https://loomus.ai/books-master-and-emissary"},
+
+  // ===== III · Cog Science =====
+  {cat:"III", title:"Models of the <em>Mind</em>",                            author:"Grace Lindsay",                        why:"Every era reads the brain in its <em>newest math</em>. Transformers are the latest &mdash; not the last.",                       url:"https://loomus.ai/books-models-of-the-mind",            star:true},
+  {cat:"III", title:"The Computer and the Brain",                             author:"John von Neumann · 1958",         why:"The first systematic side-by-side of brain and computer. The brain as a <em>digital&ndash;analog hybrid</em>.",                  url:"https://loomus.ai/books-computer-and-brain"},
+  {cat:"III", title:"The Mind&rsquo;s New Science",                           author:"Howard Gardner · 1985",           why:"The classic history of how psychology, computer science, linguistics, philosophy, and neuroscience fused into one field.",         url:"https://loomus.ai/books-minds-new-science"},
+  {cat:"III", title:"The Embodied Mind",                                      author:"Varela, Thompson &amp; Rosch · 1991", why:"Cognition isn&rsquo;t completed inside the head &mdash; it&rsquo;s <em>enacted</em> through the coupling of body and environment.", url:"https://loomus.ai/books-embodied-mind-varela"},
+  {cat:"III", title:"Gödel, Escher, Bach",                               author:"Douglas Hofstadter · 1979",       why:"How does a self-referential system give rise to meaning and a self? The <em>strange loop</em>.",                                  url:"https://loomus.ai/books-godel-escher-bach"},
+  {cat:"III", title:"Cybernetics",                                            author:"Norbert Wiener · 1948",           why:"Machines, animals, societies &mdash; all unified by one principle: <em>feedback</em>.",                                           url:"https://loomus.ai/books-cybernetics-wiener"},
+  {cat:"III", title:"The Sciences of the Artificial",                         author:"Herbert Simon · 1969",            why:"Economies, organizations, minds &mdash; all complex systems may share one set of design principles.",                              url:"https://loomus.ai/books-sciences-of-artificial"},
+  {cat:"III", title:"Mind as Machine",                                        author:"Margaret Boden · 2006",           why:"The most exhaustive history of the field &mdash; two volumes, every core idea traced to its source.",                              url:"https://loomus.ai/books-mind-as-machine"},
+  {cat:"III", title:"What Computers Still Can&rsquo;t Do",                    author:"Hubert Dreyfus · 1992",           why:"AI&rsquo;s most famous critic argued the body, skill, and context cannot be formalized &mdash; and today&rsquo;s AI still grapples with that.", url:"https://loomus.ai/books-what-computers-cant-do"},
+  {cat:"III", title:"The Modularity of Mind",                                 author:"Jerry Fodor · 1983",              why:"Part of the mind runs on specialized sealed modules; part doesn&rsquo;t &mdash; and the dividing line defined a decades-long debate.", url:"https://loomus.ai/books-modularity-of-mind"},
+  {cat:"III", title:"Consciousness Explained",                                author:"Daniel Dennett · 1991",           why:"No Cartesian theater. Many <em>parallel drafts</em>, no central place where consciousness happens.",                                url:"https://loomus.ai/books-consciousness-explained-dennett"},
+  {cat:"III", title:"Metaphors We Live By",                                   author:"Lakoff &amp; Johnson · 1980",     why:"Metaphor isn&rsquo;t rhetorical decoration &mdash; it&rsquo;s the basic structure of thought, grounded in the body.",              url:"https://loomus.ai/books-metaphors-we-live-by"},
+  {cat:"III", title:"The Computational Brain",                                author:"Churchland &amp; Sejnowski · 1992", why:"To understand the brain, honor both the biological detail and the abstract principles of computation.",                            url:"https://loomus.ai/books-computational-brain"},
+  {cat:"III", title:"The Information",                                        author:"James Gleick · 2011",             why:"Information had to be <em>invented</em> as a concept &mdash; it became the bedrock of computing, communication, and cognitive science.", url:"https://loomus.ai/books-the-information-gleick"},
+  {cat:"III", title:"Vehicles",                                               author:"Valentino Braitenberg · 1984",    why:"Simple wiring, viewed from outside, looks like complex psychology. The most elegant lesson in over-attributing intelligence.",   url:"https://loomus.ai/books-vehicles-braitenberg"},
+
+  // ===== IV · Silicon Valley =====
+  {cat:"IV", title:"The <em>Code</em>",                                       author:"Margaret O&rsquo;Mara · 2019",    why:"The definitive history. The Valley was never a market miracle &mdash; it was <em>Cold War money, Stanford, VC, and immigration</em>.", url:"https://loomus.ai/books-the-code",                     star:true},
+  {cat:"IV", title:"The Idea Factory",                                        author:"Jon Gertner · 2012",              why:"Bell Labs produced the transistor, information theory, the laser. <em>What soil makes that keep happening?</em>",                url:"https://loomus.ai/books-idea-factory-bell-labs"},
+  {cat:"IV", title:"Dealers of Lightning",                                    author:"Michael Hiltzik · 1999",          why:"Xerox PARC invented the GUI, the mouse, Ethernet &mdash; and commercialized almost none of it.",                                  url:"https://loomus.ai/books-dealers-of-lightning"},
+  {cat:"IV", title:"What the Dormouse Said",                                  author:"John Markoff · 2005",             why:"The personal computer grew out of psychedelics and the antiwar movement. <em>Technology is never neutral.</em>",                 url:"https://loomus.ai/books-what-dormouse-said"},
+  {cat:"IV", title:"Chip War",                                                author:"Chris Miller · 2022",             why:"Whoever controls the most advanced computing power controls the modern world.",                                                    url:"https://loomus.ai/books-chip-war-miller"},
+  {cat:"IV", title:"The Dream Machine",                                       author:"M. Mitchell Waldrop · 2001",      why:"J. C. R. Licklider &mdash; the spiritual father of the internet, and the man who funded the impractical.",                          url:"https://loomus.ai/books-dream-machine-licklider"},
+  {cat:"IV", title:"Where Wizards Stay Up Late",                              author:"Hafner &amp; Lyon · 1996",        why:"How the ARPANET was actually built &mdash; engineers solving the problem of getting different computers to talk.",                 url:"https://loomus.ai/books-where-wizards-stay-up-late"},
+  {cat:"IV", title:"Hackers",                                                 author:"Steven Levy · 1984",              why:"Three generations of hackers and the ethic they built &mdash; <em>information should be free, authority distrusted</em>.",          url:"https://loomus.ai/books-hackers-steven-levy"},
+  {cat:"IV", title:"Regional Advantage",                                      author:"AnnaLee Saxenian · 1994",         why:"Why did Silicon Valley succeed and Route 128 fail? Culture and organizational structure.",                                          url:"https://loomus.ai/books-regional-advantage-saxenian"},
+  {cat:"IV", title:"Crystal Fire",                                            author:"Riordan &amp; Hoddeson · 1997",   why:"The 1947 transistor breakthrough at Bell Labs &mdash; and how Shockley carried the fuse to California.",                            url:"https://loomus.ai/books-crystal-fire-transistor"},
+  {cat:"IV", title:"Troublemakers",                                           author:"Leslie Berlin · 2017",            why:"The crucial seven years (1969&ndash;1976) when the Valley became the Valley we know.",                                              url:"https://loomus.ai/books-troublemakers-leslie-berlin"},
+  {cat:"IV", title:"The Soul of a New Machine",                               author:"Tracy Kidder · 1981",             why:"What &lsquo;building a machine&rsquo; actually looks like on the ground &mdash; exhaustion, obsession, near-religious devotion.",   url:"https://loomus.ai/books-soul-new-machine"},
+  {cat:"IV", title:"Fire in the Valley",                                      author:"Freiberger &amp; Swaine · 1984",  why:"The Genesis of the PC industry &mdash; Altair to Apple to IBM PC, and the small companies that didn&rsquo;t make it.",            url:"https://loomus.ai/books-fire-in-the-valley"},
+  {cat:"IV", title:"Valley of Genius",                                        author:"Adam Fisher · 2018",              why:"Pure oral history &mdash; hundreds of voices, no narrator. Listen for the <em>recurring melodies</em> of Valley culture.",         url:"https://loomus.ai/books-valley-of-genius"},
+
+  // ===== V · AI =====
+  {cat:"V", title:"The Coming <em>Wave</em>",                                 author:"Mustafa Suleyman",                     why:"Catastrophe, dystopia, or the <em>narrow path</em>. Pick one &mdash; and build it.",                                                url:"https://loomus.ai/books-the-coming-wave",              star:true},
+  {cat:"V", title:"Life <em>3.0</em>",                                        author:"Max Tegmark",                          why:"A wide-angle look at how AI could <em>reshape</em> work, society, and meaning.",                                                    url:"https://loomus.ai/books-life-3-0-tegmark",             star:true},
+  {cat:"V", title:"Superintelligence",                                        author:"Nick Bostrom · 2014",             why:"Systematic reasoning through the intelligence explosion and the <em>control problem</em>. Defined the AI-safety field.",         url:"https://loomus.ai/books-superintelligence-bostrom"},
+  {cat:"V", title:"Human Compatible",                                         author:"Stuart Russell · 2019",           why:"The author of the standard AI textbook declares the standard paradigm wrong &mdash; and proposes the correction.",                 url:"https://loomus.ai/books-human-compatible-russell"},
+  {cat:"V", title:"The Alignment Problem",                                    author:"Brian Christian · 2020",          why:"Translating human values to machines &mdash; at once a technical and a philosophical problem. The best introduction.",              url:"https://loomus.ai/books-alignment-problem-christian"},
+  {cat:"V", title:"AI: A Guide for Thinking Humans",                          author:"Melanie Mitchell · 2019",         why:"What current AI lacks isn&rsquo;t compute. It&rsquo;s <em>understanding</em>.",                                                    url:"https://loomus.ai/books-ai-thinking-humans"},
+  {cat:"V", title:"Genius Makers",                                            author:"Cade Metz · 2021",                why:"How deep learning moved from academic fringe to center of the world &mdash; Hinton, LeCun, Bengio, Hassabis.",                     url:"https://loomus.ai/books-genius-makers-cade-metz"},
+  {cat:"V", title:"The Book of Why",                                          author:"Pearl &amp; Mackenzie · 2018",    why:"ML is stuck at correlation. Real intelligence depends on <em>causation</em> &mdash; and we need a mathematics for it.",            url:"https://loomus.ai/books-book-of-why"},
+  {cat:"V", title:"The Worlds I See",                                         author:"Fei-Fei Li · 2023",               why:"The creator of ImageNet on what human values we actually want AI to serve.",                                                       url:"https://loomus.ai/books-worlds-i-see"},
+  {cat:"V", title:"The Master Algorithm",                                     author:"Pedro Domingos · 2015",           why:"Five tribes of ML &mdash; symbolists, connectionists, evolutionaries, Bayesians, analogizers. <em>Is there one master algorithm beneath them all?</em>", url:"https://loomus.ai/books-master-algorithm"},
+  {cat:"V", title:"Rebooting AI",                                             author:"Marcus &amp; Davis · 2019",       why:"Deep learning&rsquo;s sharpest critics: pattern-matching alone will never reach genuine understanding.",                            url:"https://loomus.ai/books-rebooting-ai"},
+  {cat:"V", title:"The Deep Learning Revolution",                             author:"Terrence Sejnowski · 2018",       why:"Insider history of connectionism &mdash; the victory of <em>learning from the brain</em> over hand-designed rules.",              url:"https://loomus.ai/books-deep-learning-revolution"},
+  {cat:"V", title:"The Myth of Artificial Intelligence",                      author:"Erik Larson · 2021",              why:"<em>Abduction</em> &mdash; the leap to the best explanation &mdash; is the core of human intelligence, and we cannot make machines do it.", url:"https://loomus.ai/books-myth-artificial-intelligence"},
+  {cat:"V", title:"Possible Minds",                                           author:"ed. John Brockman · 2019",        why:"Twenty-five thinkers, twenty-five answers &mdash; the same AI question carved into completely different shapes.",                  url:"https://loomus.ai/books-possible-minds-brockman"},
+  {cat:"V", title:"Why Machines Learn",                                       author:"Anil Ananthaswamy · 2024",        why:"The mathematics of machine learning, beautifully &mdash; what the algorithms are actually doing in high-dimensional space.",      url:"https://loomus.ai/books-why-machines-learn"},
+  {cat:"V", title:"The Technological Singularity",                            author:"Murray Shanahan · 2015",          why:"By what routes might superhuman intelligence appear &mdash; and what has been exaggerated?",                                       url:"https://loomus.ai/books-technological-singularity-shanahan"},
+  {cat:"V", title:"Nexus",                                                    author:"Yuval Noah Harari · 2024",        why:"Information networks have always functioned to <em>connect</em>, not to find truth &mdash; and AI is the first node that decides for itself.", url:"https://loomus.ai/books-nexus-harari-information"},
+  {cat:"V", title:"A Brief History of <em>AI</em>",                           author:"Michael Wooldridge",                   why:"Seventy years. Three winters. One stubborn dream &mdash; and most generations <em>forgot the last two</em>.",                       url:"https://loomus.ai/books-a-brief-history-of-ai"},
+
+  // ===== VI · Companies =====
+  {cat:"VI", title:"The Innovator&rsquo;s Dilemma",                           author:"Clayton Christensen · 1997",      why:"Why excellent companies get disrupted &mdash; by doing exactly what made them excellent.",                                          url:"https://loomus.ai/books-innovators-dilemma-christensen", star:true},
+  {cat:"VI", title:"Zero to One",                                             author:"Peter Thiel · 2014",              why:"The essence of a startup is going from 0 to 1. <em>Competition is for losers.</em>",                                                url:"https://loomus.ai/books-zero-to-one"},
+  {cat:"VI", title:"The Power Law",                                           author:"Sebastian Mallaby · 2022",        why:"VC behaves the way it does because returns follow a <em>power law</em> &mdash; a tiny number of deals make the whole industry.",  url:"https://loomus.ai/books-power-law-mallaby"},
+  {cat:"VI", title:"The Everything Store",                                    author:"Brad Stone · 2013",               why:"Amazon as a case study in starting from first principles and <em>not wavering for decades</em>.",                                  url:"https://loomus.ai/books-everything-store-bezos"},
+  {cat:"VI", title:"The Innovators",                                          author:"Walter Isaacson · 2014",          why:"Major innovation is almost never the lone hero. It&rsquo;s <em>collaboration and relay</em>, over two hundred years.",             url:"https://loomus.ai/books-the-innovators-isaacson"},
+  {cat:"VI", title:"Competitive Strategy",                                    author:"Michael Porter · 1980",           why:"Whether a firm makes money depends on industry structure, not the firm itself. Strategy as analyzable principle.",                  url:"https://loomus.ai/books-competitive-strategy-outsiders"},
+  {cat:"VI", title:"Good Strategy Bad Strategy",                              author:"Richard Rumelt · 2011",           why:"Real strategy is a <em>diagnosis, a guiding policy, and a set of coherent actions</em> &mdash; not a pile of goals.",              url:"https://loomus.ai/books-good-strategy-bad-strategy"},
+  {cat:"VI", title:"Only the Paranoid Survive",                               author:"Andy Grove · 1996",               why:"The <em>strategic inflection point</em> &mdash; when an order-of-magnitude change makes the old logic stop working.",              url:"https://loomus.ai/books-only-paranoid-survive"},
+  {cat:"VI", title:"The Outsiders",                                           author:"William Thorndike · 2012",        why:"Eight CEOs who treated themselves as capital allocators, not operators &mdash; and beat their peers for decades.",                  url:"https://loomus.ai/books-outsiders-ceo-capital"},
+  {cat:"VI", title:"Loonshots",                                               author:"Safi Bahcall · 2019",             why:"Whether an organization smothers its crazy ideas depends not on culture slogans but on a few structural parameters.",                url:"https://loomus.ai/books-loonshots-bahcall"},
+  {cat:"VI", title:"Scale",                                                   author:"Geoffrey West · 2017",            why:"From organisms to cities to companies &mdash; many features follow precise <em>power laws</em> as they scale.",                    url:"https://loomus.ai/books-scale-west-complexity"},
+  {cat:"VI", title:"The Founders",                                            author:"Jimmy Soni · 2022",               why:"The early PayPal crew &mdash; how a near-failed payments company forged the PayPal Mafia.",                                          url:"https://loomus.ai/books-the-founders-paypal"},
+  {cat:"VI", title:"Crossing the Chasm",                                      author:"Geoffrey Moore · 1991",           why:"Early adopters and pragmatic mainstream customers want different things &mdash; <em>most products die crossing the gap</em>.",      url:"https://loomus.ai/books-crossing-the-chasm"},
+  {cat:"VI", title:"Creativity, Inc.",                                        author:"Ed Catmull · 2014",               why:"How Pixar designs the institutional soil where creativity can happen <em>continuously</em>, not by luck.",                          url:"https://loomus.ai/books-creativity-inc-catmull"},
+  {cat:"VI", title:"Elon Musk",                                               author:"Walter Isaacson · 2023",          why:"First-principles thinking in practice &mdash; and an honest record of its costs.",                                                  url:"https://loomus.ai/books-elon-musk-isaacson"},
+  {cat:"VI", title:"Antifragile",                                             author:"Nassim Nicholas Taleb",                why:"Volatility is not the enemy &mdash; it is the <em>fuel</em>. Three tiers, one design principle.",                                   url:"https://loomus.ai/books-antifragile-taleb"},
+
+  // ===== VII · Learning =====
+  {cat:"VII", title:"The Story of <em>Art</em>",                              author:"E. H. Gombrich",                       why:"<em>Schema, match, correct, pass on.</em> A 30,000-year recursive engine &mdash; still running.",                                  url:"https://loomus.ai/books-story-of-art",                 star:true},
+  {cat:"VII", title:"Thinking, Fast and Slow",                                author:"Daniel Kahneman · 2011",          why:"Two systems &mdash; fast intuition and slow reasoning. Most judgments are dominated by the intuitive one, and they <em>fail systematically</em>.", url:"https://loomus.ai/books-thinking-fast-slow"},
+  {cat:"VII", title:"How We Learn",                                           author:"Stanislas Dehaene · 2020",        why:"Four pillars: attention, active engagement, error feedback, consolidation. The most actionable book on this list.",                url:"https://loomus.ai/books-how-we-learn"},
+  {cat:"VII", title:"Surfaces and Essences",                                  author:"Hofstadter &amp; Sander · 2013",  why:"Analogy is the core engine of thought &mdash; every concept, every act of understanding, is at bottom an analogy.",                url:"https://loomus.ai/books-surfaces-and-essences"},
+  {cat:"VII", title:"Peak",                                                   author:"Anders Ericsson · 2016",          why:"Expertise isn&rsquo;t talent. It&rsquo;s <em>deliberate practice</em> repeatedly reshaping the mental representations in the brain.", url:"https://loomus.ai/books-peak-deliberate-practice"},
+  {cat:"VII", title:"The Enigma of Reason",                                   author:"Mercier &amp; Sperber · 2017",    why:"Reasoning didn&rsquo;t evolve to find truth alone. It evolved to <em>persuade others and justify oneself</em> within a group.",   url:"https://loomus.ai/books-enigma-of-reason"},
+  {cat:"VII", title:"The Beginning of Infinity",                              author:"David Deutsch · 2011",            why:"What drives all progress is <em>good explanations</em> &mdash; hard to vary, reaching far beyond what prompted them.",             url:"https://loomus.ai/books-beginning-of-infinity"},
+  {cat:"VII", title:"The Knowledge Illusion",                                 author:"Sloman &amp; Fernbach · 2017",    why:"We think we understand far more than we do. Knowledge lives <em>across the community</em>, not in any one head.",                 url:"https://loomus.ai/books-knowledge-illusion"},
+  {cat:"VII", title:"Make It Stick",                                          author:"Brown, Roediger &amp; McDaniel · 2014", why:"Rereading is nearly useless. Retrieval, spacing, and interleaving &mdash; <em>desirable difficulty</em> &mdash; are what work.", url:"https://loomus.ai/books-make-it-stick"},
+  {cat:"VII", title:"Mindstorms",                                             author:"Seymour Papert · 1980",           why:"Knowledge isn&rsquo;t transmitted. It&rsquo;s built by learners as they build something real with their own hands.",               url:"https://loomus.ai/books-mindstorms-papert-learning"},
+  {cat:"VII", title:"The Scientist in the Crib",                              author:"Gopnik, Meltzoff &amp; Kuhl · 1999", why:"Babies are the most powerful learning machines we know. They learn the way scientists do &mdash; theory, experiment, revision.", url:"https://loomus.ai/books-scientist-in-crib"},
+  {cat:"VII", title:"Range",                                                  author:"David Epstein · 2019",            why:"The more <em>unkind</em> the learning environment, the more breadth beats specialization.",                                        url:"https://loomus.ai/books-range-david-epstein"},
+  {cat:"VII", title:"Sources of Power",                                       author:"Gary Klein · 1998",               why:"Real experts barely compare options. They <em>pattern-recognize</em> what to do, then test with mental simulation.",               url:"https://loomus.ai/books-sources-of-power-klein"},
+  {cat:"VII", title:"Superforecasting",                                       author:"Tetlock &amp; Gardner · 2015",    why:"Ordinary people with the right habits forecast better than intelligence experts. <em>Good judgment is learnable.</em>",            url:"https://loomus.ai/books-superforecasting-tetlock"},
+  {cat:"VII", title:"Thinking in Systems",                                    author:"Donella Meadows · 2008",          why:"Stocks, flows, feedback loops, delays &mdash; the underlying language for understanding any complex system.",                      url:"https://loomus.ai/books-thinking-in-systems"},
+];
+
+/* ============ RENDER ============ */
+
+function render(){
+  // Cornerstones
+  const csRow = document.getElementById('cornerstones');
+  const csBooks = BOOKS.filter(b=>b.star);
+  csRow.innerHTML = csBooks.map(b=>{
+    const cat = CATEGORIES.find(c=>c.id===b.cat);
+    return `<div class="corner" data-url="${b.url}" style="--accent:${cat.color};">
+      <div class="c-cat">${cat.id} &middot; ${cat.name}</div>
+      <div class="c-title">${b.title}</div>
+      <div class="c-author">${b.author}</div>
+      <div class="c-why">${b.why}</div>
+    </div>`;
+  }).join('');
+
+  // Quick nav
+  const nav = document.getElementById('catNav');
+  nav.innerHTML = CATEGORIES.map(c=>`
+    <a href="#cat-${c.id}" style="--accent:${c.color}"><span class="roman">${c.id}</span><span class="nm">${c.name}</span></a>
+  `).join('');
+
+  // Shelves
+  const shelves = document.getElementById('shelves');
+  shelves.innerHTML = CATEGORIES.map(c=>{
+    const list = BOOKS.filter(b=>b.cat===c.id);
+    return `<section class="shelf" id="cat-${c.id}">
+      <div class="shelf-head">
+        <h2 style="color:${c.color}">${c.id} &middot; <em>${c.name}</em></h2>
+        <span class="count">${list.length} books</span>
+      </div>
+      <p class="shelf-tag">${c.tag}</p>
+      <div class="book-grid">
+        ${list.map(b=>`
+          <div class="book" data-url="${b.url}" style="--accent:${c.color}">
+            <div class="b-title">${b.star?'<span class="b-star">★</span>':''}${b.title}</div>
+            <div class="b-author">${b.author}</div>
+            <div class="b-why">${b.why}</div>
+          </div>
+        `).join('')}
+      </div>
+    </section>`;
+  }).join('');
+
+  // Hover border tint per category (uses --accent)
+  document.querySelectorAll('.book, .corner').forEach(el=>{
+    el.addEventListener('mouseenter',()=>{
+      const c = el.style.getPropertyValue('--accent') || 'rgba(82,255,224,.4)';
+      el.style.borderColor = c;
+      el.style.boxShadow = `0 8px 24px rgba(0,0,0,.35), 0 0 24px ${c}33`;
+    });
+    el.addEventListener('mouseleave',()=>{
+      el.style.borderColor = '';
+      el.style.boxShadow = '';
+    });
+    el.addEventListener('click',()=>{
+      const url = el.dataset.url;
+      if(url) window.open(url,'_blank');
+    });
+  });
+
+  // Quick-nav hover tint
+  document.querySelectorAll('.cat-nav a').forEach(el=>{
+    el.addEventListener('mouseenter',()=>{
+      const c = el.style.getPropertyValue('--accent');
+      el.style.borderColor = c;
+      el.style.color = c;
+    });
+    el.addEventListener('mouseleave',()=>{
+      el.style.borderColor = '';
+      el.style.color = '';
+    });
+  });
+}
+
+/* ============ SURPRISE ME ============ */
+
+const modal = document.getElementById('modalBg');
+function pickRandom(){
+  return BOOKS[Math.floor(Math.random()*BOOKS.length)];
+}
+function showRandom(){
+  const b = pickRandom();
+  const cat = CATEGORIES.find(c=>c.id===b.cat);
+  document.getElementById('mCat').textContent = `${cat.id} · ${cat.name}`;
+  document.getElementById('mCat').style.color = cat.color;
+  document.getElementById('mTitle').innerHTML = b.title;
+  document.getElementById('mAuthor').textContent = b.author;
+  document.getElementById('mWhy').innerHTML = b.why;
+  document.getElementById('mOpen').href = b.url;
+  modal.classList.add('open');
+}
+function closeModal(){modal.classList.remove('open');}
+
+/* ============ WIRE UP ============ */
+
+render();
+document.getElementById('surpriseBtn').addEventListener('click',showRandom);
+document.getElementById('mAgain').addEventListener('click',showRandom);
+document.getElementById('mClose').addEventListener('click',closeModal);
+modal.addEventListener('click',e=>{if(e.target===modal)closeModal();});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape')closeModal();
+  if(e.key==='r' && !modal.classList.contains('open'))showRandom();
+});
+</script>
 
 </body>
 </html>
