@@ -1,0 +1,18 @@
+# Netlify build & function configuration for sophieren.com
+#
+# Publish dir: swamp-club-site/   (the static site that goes live)
+# Functions:   netlify/functions/  (serverless endpoints, e.g. /.netlify/functions/ask-little-sophie)
+
+[build]
+  publish = "swamp-club-site"
+  functions = "netlify/functions"
+  command = "echo build"
+
+[functions]
+  node_bundler = "esbuild"
+
+# Pretty URL: /api/ask-little-sophie  →  /.netlify/functions/ask-little-sophie
+[[redirects]]
+  from = "/api/ask-little-sophie"
+  to = "/.netlify/functions/ask-little-sophie"
+  status = 200
