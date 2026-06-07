@@ -1548,6 +1548,27 @@
         <span class="m-title">little sophie</span>
         <span class="m-sub">CURIOUS AGENT</span>
       </a>
+      <a href="cyber-kitty/index.html" class="m-portal">
+        <span class="m-icon" aria-hidden="true">
+          <svg width="60" height="60" viewBox="0 0 48 48" fill="none">
+            <!-- glow -->
+            <ellipse cx="24" cy="26" rx="15" ry="13" fill="#ff4d8d" opacity=".12"/>
+            <!-- pixel cat head -->
+            <path d="M14 16 l0 -6 l5 0 l0 4" stroke="#ff4d8d" stroke-width="1.6" fill="none"/>
+            <path d="M34 16 l0 -6 l-5 0 l0 4" stroke="#ff4d8d" stroke-width="1.6" fill="none"/>
+            <rect x="13" y="14" width="22" height="16" rx="6" fill="#0a0f0c" stroke="#ff4d8d" stroke-width="1.6"/>
+            <circle cx="20" cy="22" r="1.6" fill="#52ffe0"/>
+            <circle cx="28" cy="22" r="1.6" fill="#52ffe0"/>
+            <path d="M22 25 q2 2 4 0" stroke="#ff8a3d" stroke-width="1.2" fill="none"/>
+            <!-- music note -->
+            <path d="M30 40 l0 -8 l7 -2 l0 8" stroke="#ffd23f" stroke-width="1.6" fill="none"/>
+            <circle cx="28.5" cy="40" r="2.2" fill="#ffd23f"/>
+            <circle cx="35.5" cy="38" r="2.2" fill="#ffd23f"/>
+          </svg>
+        </span>
+        <span class="m-title">cyber kitty</span>
+        <span class="m-sub">3 SONGS ♫</span>
+      </a>
     </div>
 
     <!-- mobile-only: small welcome trigger -->
@@ -1819,6 +1840,61 @@
       </g>
     </g>
 
+
+    <!-- ============ PORTAL: CYBER KITTY — the cat radio (ground floor of the glass house) ============ -->
+    <style>
+      .cr-glow{animation:cr-breathe 3.2s ease-in-out infinite}
+      @keyframes cr-breathe{0%,100%{opacity:.5}50%{opacity:.95}}
+      .cr-bar{transform-box:fill-box;transform-origin:center bottom;animation:cr-eq .85s ease-in-out infinite}
+      @keyframes cr-eq{0%,100%{transform:scaleY(.3)}50%{transform:scaleY(1)}}
+      .cr-note{transform-box:fill-box;transform-origin:center;animation:cr-float 3.2s ease-in-out infinite}
+      @keyframes cr-float{0%{opacity:0;transform:translate(0px,8px)}30%{opacity:.95}100%{opacity:0;transform:translate(10px,-30px)}}
+      .cr-eye{animation:cr-blink 4.5s steps(1,end) infinite}
+      @keyframes cr-blink{0%,93%,100%{opacity:1}96%{opacity:.12}}
+      @media (prefers-reduced-motion: reduce){.cr-glow,.cr-bar,.cr-note,.cr-eye{animation:none}}
+    </style>
+    <a href="cyber-kitty/index.html" class="scene-portal" aria-label="Cyber Kitty — the cat radio (3 songs)">
+      <g transform="translate(733, 548) scale(0.48)">
+        <defs>
+          <radialGradient id="crGlow" cx="50%" cy="48%" r="55%">
+            <stop offset="0%" stop-color="#ff4d8d" stop-opacity=".55"/>
+            <stop offset="55%" stop-color="#ff4d8d" stop-opacity=".14"/>
+            <stop offset="100%" stop-color="#ff4d8d" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+        <ellipse class="cr-glow" cx="0" cy="-3" rx="120" ry="95" fill="url(#crGlow)"/>
+        <ellipse cx="0" cy="94" rx="86" ry="11" fill="rgba(0,0,0,.4)"/>
+        <path d="M-80 -46 L-84 -88 L-46 -60 Z" fill="#1a120e" stroke="#ff4d8d" stroke-width="2.4"/>
+        <path d="M80 -46 L84 -88 L46 -60 Z" fill="#1a120e" stroke="#ff4d8d" stroke-width="2.4"/>
+        <path d="M-76 -52 L-78 -76 L-54 -60 Z" fill="#ff4d8d" opacity=".5"/>
+        <path d="M76 -52 L78 -76 L54 -60 Z" fill="#ff4d8d" opacity=".5"/>
+        <rect x="-92" y="-60" width="184" height="120" rx="18" fill="#2a1c12" stroke="#5a4030" stroke-width="2"/>
+        <rect x="-92" y="-60" width="184" height="120" rx="18" fill="none" stroke="#ff4d8d" stroke-width="1.4" opacity=".55"/>
+        <rect x="-84" y="-52" width="168" height="104" rx="13" fill="#0c0a08"/>
+        <circle cx="-42" cy="0" r="34" fill="#0a0a0a" stroke="#3a2a1e" stroke-width="2"/>
+        <circle cx="-42" cy="0" r="34" fill="none" stroke="#52ffe0" stroke-width="1.2" opacity=".5"/>
+        <g stroke="#1f5238" stroke-width="2">
+          <line x1="-68" y1="-10" x2="-16" y2="-10"/><line x1="-70" y1="0" x2="-14" y2="0"/><line x1="-68" y1="10" x2="-16" y2="10"/>
+        </g>
+        <circle cx="-42" cy="0" r="9" fill="#ffd23f"/>
+        <circle class="cr-eye" cx="-42" cy="0" r="4" fill="#fff7d8"/>
+        <rect x="0" y="-30" width="80" height="42" rx="7" fill="#06120d" stroke="#1f5238" stroke-width="1.6"/>
+        <g>
+          <rect class="cr-bar" x="10" y="-22" width="9" height="28" rx="2" fill="#52ffe0" style="animation-delay:0s"/>
+          <rect class="cr-bar" x="24" y="-22" width="9" height="28" rx="2" fill="#b6ff5b" style="animation-delay:.18s"/>
+          <rect class="cr-bar" x="38" y="-22" width="9" height="28" rx="2" fill="#52ffe0" style="animation-delay:.36s"/>
+          <rect class="cr-bar" x="52" y="-22" width="9" height="28" rx="2" fill="#ffd23f" style="animation-delay:.12s"/>
+          <rect class="cr-bar" x="66" y="-22" width="9" height="28" rx="2" fill="#ff4d8d" style="animation-delay:.28s"/>
+        </g>
+        <circle cx="12" cy="34" r="9" fill="#1a120e" stroke="#52ffe0" stroke-width="1.6"/>
+        <circle cx="40" cy="34" r="9" fill="#1a120e" stroke="#ff4d8d" stroke-width="1.6"/>
+        <rect x="56" y="26" width="22" height="16" rx="4" fill="#1a120e" stroke="#b6ff5b" stroke-width="1.4"/>
+        <g class="cr-note" fill="#ffd23f"><circle cx="94" cy="-64" r="4"/><rect x="97" y="-80" width="2.4" height="18"/></g>
+        <g class="cr-note" fill="#52ffe0" style="animation-delay:1.2s"><circle cx="112" cy="-50" r="3.4"/><rect x="114.6" y="-64" width="2" height="16"/></g>
+        <text x="0" y="90" text-anchor="middle" class="portal-label" font-family="Caveat, cursive" font-size="40" fill="#52ffe0" font-weight="700">cyber kitty &rarr;</text>
+        <text x="0" y="112" text-anchor="middle" class="portal-sub" font-family="Space Grotesk, sans-serif" font-size="15" letter-spacing="1.2" fill="#ff4d8d">3 SONGS &#9834;</text>
+      </g>
+    </a>
 
     <!-- ============ PORTAL 1: OUTDOOR KITCHEN with cauldron (left of pool) ============ -->
     <a href="cognitive-recipes.html" class="scene-portal" aria-label="Cognitive Recipes — the outdoor kitchen" id="kitchenPortal">
@@ -2327,6 +2403,16 @@
         </button>
         <span>But memory behaves more like weather.</span>
       </p>
+      <script>
+        /* weather auto-cycle — isolated so it survives any other script error */
+        (function(){
+          var w=document.querySelector('.weather-ico');
+          if(!w) return;
+          function next(){ w.dataset.w=(parseInt(w.dataset.w||'0',10)+1)%4; }
+          w.addEventListener('click',next);
+          setInterval(next,2800);
+        })();
+      </script>
       <p>Things disappear for years. Then one smell, one sentence, one image &mdash; and suddenly the entire world returns.</p>
       <p>So this little corner of the internet became my swamp: a place for strange ideas, AI dreams, startup chaos, learning science, human stories, and all the thoughts that refuse to stay buried.</p>
       <p>I'm also obsessively passionate about cooking &mdash; especially fusion cuisine. Maybe because the brain itself feels like a kind of fusion system.</p>
@@ -3602,16 +3688,8 @@
   });
 })();
 
-/* ============ welcome weather (auto-cycling) ============ */
-(function(){
-  const w=document.querySelector('.weather-ico');
-  if(!w) return;
-  function next(){ w.dataset.w=(parseInt(w.dataset.w||'0',10)+1)%4; }
-  w.addEventListener('click',next);
-  if(!window.matchMedia('(prefers-reduced-motion:reduce)').matches){
-    setInterval(next,1200);
-  }
-})();
+/* welcome weather auto-cycle moved to an isolated inline script next to the icon
+   (so it can't be killed by an upstream JS error). */
 
 /* ============ toast ============ */
 function toast(msg){
