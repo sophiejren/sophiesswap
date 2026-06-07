@@ -256,13 +256,13 @@
 <script>
 /* ===== EDIT: songs live here. Drop mp3 in ./audio/, cover in ./covers/, add a row. ===== */
 const TRACKS = [
-  { title:"Curious Engine", ep:"Cyber Kitty · EP2", sub:"keep it running.",
+  { id:"curious-engine", title:"Curious Engine", ep:"Cyber Kitty · EP2", sub:"keep it running.",
     src:"audio/curious-engine.mp3", art:"covers/curious-engine.jpg",
     accent:"#ff4d8d", soft:"rgba(255,77,141,.16)" },
-  { title:"Rabbit Hole", ep:"Curiosity · EP1", sub:"go deeper.",
+  { id:"rabbit-hole", title:"Rabbit Hole", ep:"Curiosity · EP1", sub:"go deeper.",
     src:"audio/rabbit-hole.mp3", art:"covers/rabbit-hole.jpg",
     accent:"#b388ff", soft:"rgba(179,136,255,.20)" },
-  { title:"Sacred Question", ep:"Curiosity · EP1", sub:"ask again.",
+  { id:"sacred-question", title:"Sacred Question", ep:"Curiosity · EP1", sub:"ask again.",
     src:"audio/sacred-question.mp3", art:"covers/sacred-question.jpg",
     accent:"#ffd23f", soft:"rgba(255,210,63,.16)",
     lyrics:[
@@ -287,6 +287,8 @@ function load(i,autoplay){
   rs.setProperty('--accent-soft',t.soft);
   $('art').src=t.art; $('ep').textContent=t.ep; $('title').textContent=t.title; $('sub').textContent=t.sub;
   audio.src=t.src;
+  try{ history.replaceState(null,'','#'+t.id); }catch(e){}
+  updateShare();
   if(autoplay) audio.play();
   sync();
 }
@@ -311,20 +313,24 @@ $('prev').onclick=()=>{ if(audio.currentTime>3) audio.currentTime=0; else load(i
   sc.addEventListener('pointercancel',()=>dragging=false);
 })();
 
-// ===== share =====
-const SHARE_URL="https://sophieren.com/cyber-kitty/";
-const SHARE_TXT="Cyber Kitty — three songs I made. The answer is cheap, the question is sacred. Ask again. ♫";
-$('waBtn').href="https://wa.me/?text="+encodeURIComponent(SHARE_TXT+" "+SHARE_URL);
-$('xBtn').href="https://twitter.com/intent/tweet?text="+encodeURIComponent(SHARE_TXT)+"&url="+encodeURIComponent(SHARE_URL);
+// ===== share (per-song: each track gets its own deep link) =====
+const PAGE = location.origin + location.pathname;   // e.g. https://sophieren.com/cyber-kitty/
+function curURL(){ return PAGE + '#' + TRACKS[idx].id; }
+function curTXT(){ return 'Cyber Kitty — “' + TRACKS[idx].title + '”. The answer is cheap, the question is sacred. Ask again. ♫'; }
+function updateShare(){
+  $('waBtn').href = "https://wa.me/?text=" + encodeURIComponent(curTXT()+" "+curURL());
+  $('xBtn').href  = "https://twitter.com/intent/tweet?text=" + encodeURIComponent(curTXT()) + "&url=" + encodeURIComponent(curURL());
+}
 $('shareBtn').onclick=async()=>{
-  if(navigator.share){ try{ await navigator.share({title:"Cyber Kitty",text:SHARE_TXT,url:SHARE_URL}); }catch(e){} }
+  const data={title:"Cyber Kitty — "+TRACKS[idx].title, text:curTXT(), url:curURL()};
+  if(navigator.share){ try{ await navigator.share(data); }catch(e){} }
   else { copyLink(); }
 };
 function copyLink(){
   const done=()=>{const t=$('copyTxt'),b=$('copyBtn');t.textContent="Copied ✓";b.classList.add('copied');
     setTimeout(()=>{t.textContent="Copy link";b.classList.remove('copied');},1800);};
-  if(navigator.clipboard){navigator.clipboard.writeText(SHARE_URL).then(done).catch(done);}
-  else{const i=document.createElement('input');i.value=SHARE_URL;document.body.appendChild(i);i.select();
+  if(navigator.clipboard){navigator.clipboard.writeText(curURL()).then(done).catch(done);}
+  else{const i=document.createElement('input');i.value=curURL();document.body.appendChild(i);i.select();
     try{document.execCommand('copy');}catch(e){} i.remove(); done();}
 }
 $('copyBtn').onclick=copyLink;
@@ -369,7 +375,9 @@ for(let i=0;i<14;i++){
   f.style.opacity=.25+Math.random()*.4;document.body.appendChild(f);
 }
 
-load(0,false);
+// open to the shared song if the URL has a #track-id, else the first
+const startIdx=Math.max(0, TRACKS.findIndex(t=>t.id===location.hash.replace('#','')));
+load(startIdx,false);
 </script>
 </body>
 </html>
