@@ -229,6 +229,10 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>
       Share
     </button>
+    <button class="sbtn" id="igBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none"/></svg>
+      IG Story
+    </button>
     <button class="sbtn" id="copyBtn">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
       <span id="copyTxt">Copy link</span>
@@ -334,6 +338,31 @@ function copyLink(){
     try{document.execCommand('copy');}catch(e){} i.remove(); done();}
 }
 $('copyBtn').onclick=copyLink;
+
+// ===== Instagram: share the current song's Story image (IG Stories needs an image, not a link) =====
+function storyURL(){ return PAGE + 'share/ig-story-' + TRACKS[idx].id + '.png'; }
+$('igBtn').onclick=async()=>{
+  const url=storyURL();
+  try{
+    const resp=await fetch(url); const blob=await resp.blob();
+    const file=new File([blob], 'cyber-kitty-'+TRACKS[idx].id+'.png', {type:'image/png'});
+    // mobile: native share sheet — pick Instagram → Stories (needs the IG app installed)
+    if(navigator.canShare && navigator.canShare({files:[file]})){
+      await navigator.share({files:[file], title:'Cyber Kitty — '+TRACKS[idx].title});
+      return;
+    }
+    // desktop / unsupported: download the Story image, then post it from the IG phone app
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);
+    a.download='cyber-kitty-'+TRACKS[idx].id+'-story.png';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+    const b=$('igBtn'); b.classList.add('copied');
+    setTimeout(()=>b.classList.remove('copied'),1800);
+  }catch(e){
+    window.open(url,'_blank','noopener');
+  }
+};
 
 function sync(){
   document.querySelectorAll('.row').forEach((r,n)=>{
