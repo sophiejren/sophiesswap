@@ -176,15 +176,38 @@
   /* ============ MOBILE LAYOUT — replace SVG scene with portal grid ============ */
   .mobile-portals{display:none;}
   .mobile-welcome-trigger{display:none;}
+  /* desktop: wrapper is transparent to layout — scene behaves exactly as before */
+  .scene-pan{display:contents;}
+  .m-view-toggle{display:none;}
+  .swipe-hint{display:none;}
 
   @media (max-width:760px){
-    /* Hide the wide SVG scene */
-    .story-scene{display:none !important;}
-    /* Hide the wooden welcome sign (it's inside SVG, hidden anyway) */
+    /* ---- WORLD VIEW (default on mobile): the swamp scene as a horizontal swipe strip ---- */
+    .scene-pan{
+      display:block !important;
+      position:absolute; left:0; right:0; bottom:0;
+      height:74svh;
+      overflow-x:auto; overflow-y:hidden;
+      -webkit-overflow-scrolling:touch;
+      white-space:nowrap; font-size:0;
+      z-index:4; scrollbar-width:none;
+    }
+    .scene-pan::-webkit-scrollbar{height:0;}
+    .story-scene{
+      display:inline-block !important;
+      position:static !important;
+      height:74svh !important;
+      width:calc(74svh * 1.6471) !important;   /* exact 1400:850 ratio -> swipe stops at the edges, no blank */
+      bottom:auto !important; left:auto !important; right:auto !important;
+      vertical-align:bottom;
+    }
+    /* no hover on touch -> keep portal labels visible */
+    .story-scene .portal-label{opacity:1 !important;}
+    .story-scene .portal-sub{opacity:.8 !important;}
 
-    /* Show portal grid */
+    /* ---- MENU VIEW (toggled via the top button): the portal card grid ---- */
     .mobile-portals{
-      display:grid;
+      display:none;
       grid-template-columns:1fr 1fr;
       gap:12px;
       width:90%;max-width:420px;
@@ -192,6 +215,28 @@
       bottom:90px;
       transform:translateX(-50%);
       z-index:5;
+    }
+    body.menu-view .scene-pan{display:none !important;}
+    body.menu-view .swipe-hint{display:none !important;}
+    body.menu-view .mobile-portals{display:grid;}
+    body:not(.menu-view) .mobile-welcome-trigger{display:none !important;}
+
+    /* view toggle (top-right) + swipe hint */
+    .m-view-toggle{
+      display:inline-flex;align-items:center;gap:6px;
+      position:absolute;top:16px;right:14px;z-index:30;
+      background:rgba(8,19,16,.6);border:1px solid rgba(82,255,224,.35);
+      border-radius:999px;padding:8px 15px;
+      color:var(--neon-cyan);font-family:'Space Grotesk',sans-serif;
+      font-size:12px;letter-spacing:.06em;cursor:pointer;backdrop-filter:blur(4px);
+    }
+    .m-view-toggle:active{transform:scale(.96);}
+    .swipe-hint{
+      display:block;
+      position:absolute;left:50%;bottom:16px;transform:translateX(-50%);z-index:7;
+      font-family:'Space Grotesk',sans-serif;font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+      color:var(--cream);background:rgba(0,0,0,.4);padding:7px 14px;border-radius:20px;
+      pointer-events:none;transition:opacity .6s;
     }
     .m-portal{
       background:linear-gradient(180deg,rgba(15,46,34,.85) 0%,rgba(8,19,16,.95) 100%);
@@ -1593,7 +1638,11 @@
     <span class="b-tagline">if you found this,<br>you belong here.</span>
   </a>
 
-  <!-- INTERACTIVE SCENE — 4 clickable portals + 3 wandering cats -->
+  <!-- mobile view toggle: swamp world <-> menu list -->
+  <button class="m-view-toggle" id="mViewToggle" type="button" aria-label="Switch between the swamp world and the menu list">&#9776; menu</button>
+
+  <!-- INTERACTIVE SCENE — 4 clickable portals + 3 wandering cats (mobile: horizontal swipe strip) -->
+  <div class="scene-pan" id="scenePan">
   <svg class="story-scene" viewBox="0 0 1400 850" preserveAspectRatio="xMidYMax meet"
        aria-label="A modern glass house in the swamp with an outdoor pool, kitchen, desk, and mailbox — each a portal to a part of the site.">
 
@@ -2331,8 +2380,25 @@
       </g>
     </g>
   </svg>
+  </div><!-- /.scene-pan -->
+  <div class="swipe-hint">swipe to explore &#8644;</div>
 
   <div class="scroll-cue">scroll<span style="font-size:16px">&darr;</span></div>
+
+  <script>
+    /* mobile: world <-> menu toggle + center the swipe strip on the house */
+    (function(){
+      var tb=document.getElementById('mViewToggle');
+      var pan=document.getElementById('scenePan');
+      if(tb){ tb.addEventListener('click',function(){
+        var menu=document.body.classList.toggle('menu-view');
+        tb.innerHTML = menu ? '⌂ swamp' : '☰ menu';
+      }); }
+      function centerPan(){ if(pan && pan.scrollWidth>pan.clientWidth){ pan.scrollLeft=(pan.scrollWidth-pan.clientWidth)*0.5; } }
+      window.addEventListener('load',centerPan); setTimeout(centerPan,400);
+      if(pan){ pan.addEventListener('scroll',function(){ var h=document.querySelector('.swipe-hint'); if(h) h.style.opacity='0'; },{once:true}); }
+    })();
+  </script>
 </header>
 
 <!-- ============ scene-triggered modals ============ -->
