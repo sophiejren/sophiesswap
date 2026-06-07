@@ -169,6 +169,13 @@
   .sbtn.primary:hover,.sbtn.primary:active{filter:brightness(1.08);color:var(--ink)}
   .sbtn.copied{border-color:var(--neon-lime);color:var(--neon-lime)}
 
+  /* "tap to play" cue shown when arriving from a shared song link */
+  .taphint{position:fixed;left:50%;bottom:30px;transform:translateX(-50%);z-index:60;
+    font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink);
+    background:var(--accent);padding:13px 22px;border-radius:30px;font-weight:700;cursor:pointer;
+    box-shadow:0 0 30px -4px var(--accent);animation:taphint-pulse 1.4s ease-in-out infinite}
+  @keyframes taphint-pulse{0%,100%{transform:translateX(-50%) scale(1)}50%{transform:translateX(-50%) scale(1.05)}}
+
   /* ===== mobile ===== */
   body{-webkit-tap-highlight-color:transparent}
   @media(max-width:600px){
@@ -405,8 +412,24 @@ for(let i=0;i<14;i++){
 }
 
 // open to the shared song if the URL has a #track-id, else the first
-const startIdx=Math.max(0, TRACKS.findIndex(t=>t.id===location.hash.replace('#','')));
+const arrivedId=location.hash.replace('#','');
+const arrived=TRACKS.some(t=>t.id===arrivedId);
+const startIdx=Math.max(0, TRACKS.findIndex(t=>t.id===arrivedId));
 load(startIdx,false);
+
+// arrived from a shared song link → try to play; if the browser blocks autoplay,
+// show a "tap to play" cue and start on the first tap anywhere.
+if(arrived){
+  audio.play().catch(()=>{
+    const hint=document.createElement('div');
+    hint.className='taphint'; hint.textContent='▶ tap to play';
+    document.body.appendChild(hint);
+    const start=()=>{ audio.play().catch(()=>{}); };
+    hint.addEventListener('click',start);
+    document.addEventListener('pointerdown',start,{once:true});
+    audio.addEventListener('play',()=>hint.remove(),{once:true});
+  });
+}
 </script>
 </body>
 </html>
