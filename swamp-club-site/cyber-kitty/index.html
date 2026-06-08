@@ -155,6 +155,40 @@
   footer .home{display:inline-block;margin-top:18px;font-family:'Caveat',cursive;font-size:19px;
                color:var(--neon-cyan);text-decoration:none;letter-spacing:0;opacity:.85}
   footer .home:hover{opacity:1}
+  footer .plats{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin:16px 0 6px}
+  .plat{display:inline-flex;align-items:center;gap:6px;font-family:'Space Grotesk',sans-serif;font-size:13px;
+        letter-spacing:.04em;text-decoration:none;padding:9px 16px;border-radius:30px;transition:.2s}
+  .plat.yt{color:#ff4d4d;border:1px solid rgba(255,77,77,.4)}
+  .plat.yt:hover{background:rgba(255,77,77,.12);border-color:#ff4d4d}
+  .plat.am{color:#fc6b9c;border:1px solid rgba(252,107,156,.4)}
+  .plat.am:hover{background:rgba(252,107,156,.12);border-color:#fc6b9c}
+
+  /* ===== comments ===== */
+  .comments{margin-top:40px;border-top:1px solid var(--line);padding-top:26px}
+  .c-head{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+  .c-title{font-family:'Caveat',cursive;font-size:24px;color:var(--accent);transition:color .9s}
+  .c-for{font-size:12px;color:var(--muted);letter-spacing:.04em}
+  .c-form{display:flex;flex-direction:column;gap:10px;margin-bottom:22px}
+  .c-name,.c-body{width:100%;background:rgba(243,238,221,.04);border:1px solid var(--line);border-radius:12px;
+    color:var(--cream);font-family:'Space Grotesk',sans-serif;font-size:14px;padding:11px 14px;resize:vertical;
+    transition:border-color .2s;-webkit-appearance:none}
+  .c-name{max-width:240px}
+  .c-body{min-height:54px;line-height:1.5}
+  .c-name:focus,.c-body:focus{outline:none;border-color:var(--accent)}
+  .c-name::placeholder,.c-body::placeholder{color:#6f6a60}
+  .c-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .c-status{font-size:12px;color:var(--muted);min-height:16px}
+  .c-post{background:var(--accent);color:var(--ink);border:none;font-family:'Space Grotesk',sans-serif;font-weight:700;
+    font-size:13px;letter-spacing:.04em;padding:11px 22px;border-radius:30px;cursor:pointer;
+    box-shadow:0 0 24px -6px var(--accent);transition:transform .15s,background .9s,box-shadow .9s}
+  .c-post:hover{transform:scale(1.04)} .c-post:disabled{opacity:.5;cursor:default;transform:none}
+  .c-list{display:flex;flex-direction:column;gap:12px}
+  .c-empty{color:var(--muted);font-family:'Caveat',cursive;font-size:18px;padding:8px 2px}
+  .c-item{background:rgba(243,238,221,.03);border:1px solid var(--line);border-left:2px solid var(--accent);
+    border-radius:0 12px 12px 0;padding:11px 14px}
+  .c-meta{font-size:11px;color:var(--muted);letter-spacing:.04em;margin-bottom:5px}
+  .c-meta b{color:var(--accent);font-weight:500;transition:color .9s}
+  .c-text{font-size:14px;line-height:1.6;color:#e4ddd0;white-space:pre-wrap;word-break:break-word}
 
   /* ===== share bar ===== */
   .share{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;align-items:center;margin:26px 0 4px}
@@ -256,9 +290,31 @@
 
   <div class="list" id="list"></div>
 
+  <!-- per-song anonymous comments -->
+  <section class="comments">
+    <div class="c-head">
+      <span class="c-title">swamp notes</span>
+      <span class="c-for" id="cFor"></span>
+    </div>
+    <form class="c-form" id="cForm" autocomplete="off">
+      <input class="c-name" id="cName" maxlength="40" placeholder="nickname (optional)">
+      <textarea class="c-body" id="cBody" maxlength="500" rows="2" placeholder="leave an anonymous note about this song…"></textarea>
+      <input type="text" id="cTrap" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;opacity:0;height:0;width:0">
+      <div class="c-row">
+        <span class="c-status" id="cStatus"></span>
+        <button class="c-post" id="cPost" type="submit">post ♫</button>
+      </div>
+    </form>
+    <div class="c-list" id="cList"></div>
+  </section>
+
   <footer>
     THE ANSWER IS CHEAP.&nbsp; <b>THE QUESTION IS SACRED.</b>&nbsp; ASK AGAIN.
-    <br><a class="home" href="../index.html">↩ wander back into the swamp</a>
+    <div class="plats">
+      <a class="plat yt" href="https://www.youtube.com/channel/UCppShKS_HBoPcMk1yhEt_QA" target="_blank" rel="noopener">▶ YouTube</a>
+      <a class="plat am" href="https://music.apple.com/us/artist/cyber-kitty/6777592763" target="_blank" rel="noopener">♪ Apple Music</a>
+    </div>
+    <a class="home" href="../index.html">↩ wander back into the swamp</a>
   </footer>
 </div>
 
@@ -303,6 +359,7 @@ function load(i,autoplay){
   audio.src=t.src;
   try{ history.replaceState(null,'','#'+t.id); }catch(e){}
   updateShare();
+  loadComments(t.id);
   if(autoplay) audio.play();
   sync();
 }
@@ -348,6 +405,45 @@ function copyLink(){
     try{document.execCommand('copy');}catch(e){} i.remove(); done();}
 }
 $('copyBtn').onclick=copyLink;
+
+// ===== anonymous per-song comments (Supabase) =====
+const SB_URL="https://nfcpqwamlykhggsrcsjb.supabase.co";
+const SB_KEY="sb_publishable_Bc5UTKf0onjSH9wGmgAh7w_UHQArMK-";
+const SB_H={apikey:SB_KEY, Authorization:"Bearer "+SB_KEY};
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function ago(iso){ const s=Math.max(0,(Date.now()-new Date(iso).getTime())/1000);
+  if(s<60)return'just now'; const m=s/60; if(m<60)return Math.floor(m)+'m ago';
+  const h=m/60; if(h<24)return Math.floor(h)+'h ago'; const d=h/24;
+  if(d<30)return Math.floor(d)+'d ago'; return new Date(iso).toLocaleDateString(); }
+async function loadComments(songId){
+  $('cFor').textContent='on “'+TRACKS[idx].title+'”';
+  const list=$('cList'); list.dataset.song=songId;
+  try{
+    const r=await fetch(`${SB_URL}/rest/v1/cyber_kitty_comments?song_id=eq.${encodeURIComponent(songId)}&select=name,body,created_at&order=created_at.desc&limit=100`,{headers:SB_H});
+    const data=await r.json();
+    if(list.dataset.song!==songId) return; // a newer song was selected
+    if(!Array.isArray(data)||!data.length){ list.innerHTML='<div class="c-empty">no notes yet — be the first ♫</div>'; return; }
+    list.innerHTML=data.map(c=>`<div class="c-item"><div class="c-meta"><b>${esc(c.name||'anonymous')}</b> · ${ago(c.created_at)}</div><div class="c-text">${esc(c.body)}</div></div>`).join('');
+  }catch(e){ list.innerHTML='<div class="c-empty">couldn’t load notes right now.</div>'; }
+}
+$('cForm').addEventListener('submit',async e=>{
+  e.preventDefault();
+  if($('cTrap').value) return;                 // honeypot
+  const body=$('cBody').value.trim(); if(!body){ $('cBody').focus(); return; }
+  const name=($('cName').value.trim()||'anonymous').slice(0,40);
+  const songId=TRACKS[idx].id;
+  $('cPost').disabled=true; $('cStatus').textContent='posting…';
+  try{
+    const r=await fetch(`${SB_URL}/rest/v1/cyber_kitty_comments`,{method:'POST',
+      headers:{...SB_H,'Content-Type':'application/json',Prefer:'return=minimal'},
+      body:JSON.stringify({song_id:songId,name,body:body.slice(0,500)})});
+    if(!r.ok) throw 0;
+    $('cBody').value=''; $('cStatus').textContent='posted ✓ thank you';
+    setTimeout(()=>{$('cStatus').textContent='';},2600);
+    if(TRACKS[idx].id===songId) loadComments(songId);
+  }catch(err){ $('cStatus').textContent='failed — try again'; }
+  $('cPost').disabled=false;
+});
 
 // ===== Instagram: share the current song's Story image (IG Stories needs an image, not a link) =====
 function storyURL(){ return PAGE + 'share/ig-story-' + TRACKS[idx].id + '.png'; }
