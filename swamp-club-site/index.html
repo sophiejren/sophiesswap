@@ -186,7 +186,7 @@
     .scene-pan{
       display:block !important;
       position:absolute; left:0; right:0; bottom:0;
-      height:74svh;
+      height:74vh; height:74svh;
       overflow-x:auto; overflow-y:hidden;
       -webkit-overflow-scrolling:touch;
       white-space:nowrap; font-size:0;
@@ -200,8 +200,8 @@
     .story-scene{
       display:inline-block !important;
       position:static !important;
-      height:74svh !important;
-      width:calc(74svh * 1.8060) !important;   /* ratio == cropped viewBox (1210:670). CSS ratio and viewBox ratio match -> no empty band */
+      height:74vh !important; height:74svh !important;
+      width:calc(74vh * 1.8060) !important; width:calc(74svh * 1.8060) !important;   /* vh fallback for older Safari; ratio == cropped viewBox (1210:670) -> no empty band */
       bottom:auto !important; left:auto !important; right:auto !important;
       vertical-align:bottom;
     }
