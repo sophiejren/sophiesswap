@@ -687,13 +687,13 @@ TRACKS.forEach((t,n)=>{
     <div class="rinfo">
       <div class="rtitle">${t.title}</div>
       <div class="rep">${t.ep} · ${t.sub}</div>
-      ${t.lyrics?'<button class="lyrbtn">Lyrics</button>':''}
+      ${t.lyricsTimed?'<button class="lyrbtn">Lyrics</button>':''}
     </div>
     <div class="eq"><span></span><span></span><span></span></div>
     <div class="rdur" data-dur>—:—</div>`;
   row.querySelector('.num').onclick=row.querySelector('.rart').onclick=row.querySelector('.rtitle').onclick=
     ()=>{ if(n===idx){playing?audio.pause():audio.play();} else load(n,true); };
-  if(t.lyrics){
+  if(t.lyricsTimed){
     const ly=document.createElement('div');ly.className='lyrics';
     ly.innerHTML=t.lyrics.map((line,i)=>{const s=String(line).trim();
       return `<p class="lyr-line${s?'':' blank'}" data-i="${i}">${s?s.replace(/[&<>]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m])):'&nbsp;'}</p>`;}).join('');
