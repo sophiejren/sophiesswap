@@ -95,13 +95,9 @@
   h1 .k{color:var(--accent);transition:color .9s}
   .lead{color:var(--muted);font-size:12px;letter-spacing:.34em;text-transform:uppercase}
   .scribble{font-family:'Caveat',cursive;color:var(--neon-lime);font-size:19px;margin-top:8px;opacity:.85}
-  .hero-cat{display:block;width:min(320px,76vw);margin:4px auto 16px;border-radius:18px;
-    -webkit-mask-image:radial-gradient(125% 86% at 50% 40%, #000 58%, transparent 100%);
-    mask-image:radial-gradient(125% 86% at 50% 40%, #000 58%, transparent 100%);
-    filter:drop-shadow(0 14px 50px var(--accent-soft));transition:filter .9s}
-  .footer-logo{display:block;width:96px;margin:6px auto 16px;border-radius:14px;opacity:.92;
-    -webkit-mask-image:radial-gradient(130% 90% at 50% 45%, #000 60%, transparent 100%);
-    mask-image:radial-gradient(130% 90% at 50% 45%, #000 60%, transparent 100%)}
+  .hero-cat{display:block;width:min(330px,80vw);margin:0 auto 6px;
+    filter:drop-shadow(0 10px 42px var(--accent-soft));transition:filter .9s}
+  .footer-logo{display:block;width:160px;margin:6px auto 12px;mix-blend-mode:screen;opacity:.95}
   @media (prefers-reduced-motion: no-preference){
     .hero-cat{animation:heroFloat 6s ease-in-out infinite}
     .is-playing .hero-cat{animation:heroFloat 4s ease-in-out infinite, heroGlow 2.6s ease-in-out infinite}
@@ -340,7 +336,7 @@
   <a class="back" href="../index.html">&larr; back to the swamp</a>
 
   <header>
-    <img class="hero-cat" src="logo/hero-cat.jpg" alt="Cyber Kitty — a cyber cat rising from the swamp" />
+    <img class="hero-cat" src="logo/hero-cat.png" alt="Cyber Kitty — a cyber cat rising from the swamp" />
     <h1><span class="k">CYBER</span> KITTY</h1>
     <div class="lead">a curiosity engine · keep it running</div>
     <div class="scribble">four songs i made at 2:42 in the morning ♫</div>
