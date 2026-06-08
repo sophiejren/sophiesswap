@@ -201,7 +201,7 @@
       display:inline-block !important;
       position:static !important;
       height:74svh !important;
-      width:calc(74svh * 1.5220) !important;   /* matches the mobile cropped viewBox ratio (1210:795) -> no letterbox blank */
+      width:calc(74svh * 1.8060) !important;   /* ratio == cropped viewBox (1210:670). CSS ratio and viewBox ratio match -> no empty band */
       bottom:auto !important; left:auto !important; right:auto !important;
       vertical-align:bottom;
     }
@@ -2396,7 +2396,7 @@
       var pan=document.getElementById('scenePan');
       var scene=document.querySelector('.story-scene');
       var FULL='0 0 1400 850';
-      var CROP={x:150,y:55,w:1210,h:795};   /* trims the empty far-left & far-right swamp */
+      var CROP={x:150,y:180,w:1210,h:670};   /* trims empty sky (top) + empty far-left/right swamp */
       var mq=window.matchMedia('(max-width:760px)');
       var userScrolled=false;
 
@@ -2411,13 +2411,9 @@
         if(!scene||!pan) return;
         if(mq.matches){
           scene.setAttribute('viewBox', CROP.x+' '+CROP.y+' '+CROP.w+' '+CROP.h);
-          var h=pan.clientHeight||0;
-          scene.style.setProperty('width', (h*CROP.w/CROP.h)+'px', 'important');
-          scene.style.setProperty('height', h+'px', 'important');
           if(!userScrolled) centerPan();
         } else {
           scene.setAttribute('viewBox', FULL);
-          scene.style.removeProperty('width'); scene.style.removeProperty('height');
         }
       }
 
