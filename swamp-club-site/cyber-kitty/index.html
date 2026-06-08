@@ -289,6 +289,34 @@
     transform:translate(-50%,-50%);animation:notePop 1.1s ease-out forwards;text-shadow:0 0 10px var(--accent-soft)}
   @keyframes notePop{0%{opacity:0;transform:translate(-50%,-50%) scale(.5)}
     20%{opacity:1}100%{opacity:0;transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) scale(1.1)}}
+
+  /* ===== beat-reactive (—beat 0..1 set by JS audio analyser) ===== */
+  .art img{transform:scale(calc(1 + var(--beat,0) * 0.05));transition:transform .07s linear}
+  @media (prefers-reduced-motion: reduce){ .art img{transform:none !important} }
+
+  /* ===== sticky mini-player ===== */
+  .mini{position:fixed;left:0;right:0;bottom:0;z-index:200;display:flex;align-items:center;gap:12px;
+        padding:10px 16px;background:rgba(10,18,14,.92);backdrop-filter:blur(10px);border-top:1px solid var(--line);
+        transform:translateY(130%);transition:transform .35s cubic-bezier(.2,.8,.3,1);max-width:760px;margin:0 auto}
+  .mini.show{transform:none}
+  .mini-art{width:44px;height:44px;border-radius:8px;object-fit:cover;flex:none;box-shadow:0 0 0 1px var(--line);cursor:pointer}
+  .mini-info{flex:1;min-width:0}
+  .mini-title{font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .mini-sub{font-size:11px;color:var(--muted)}
+  .mini-btn{width:42px;height:42px;border-radius:50%;border:none;background:var(--accent);color:var(--ink);
+            font-size:15px;cursor:pointer;flex:none;box-shadow:0 0 20px -6px var(--accent);transition:background .9s,transform .15s}
+  .mini-btn:active{transform:scale(.92)}
+  .mini-prog{position:absolute;left:0;right:0;bottom:0;height:3px;background:rgba(243,238,221,.08)}
+  .mini-fill{height:100%;width:0;background:var(--accent);transition:background .9s}
+
+  /* ===== share-a-lyric card ===== */
+  .lshare{position:fixed;inset:0;z-index:300;display:none;align-items:center;justify-content:center;
+          background:rgba(4,8,6,.82);backdrop-filter:blur(6px);padding:20px}
+  .lshare.open{display:flex}
+  .lshare-inner{max-width:420px;width:100%;display:flex;flex-direction:column;gap:14px;align-items:center}
+  .lshare canvas{width:100%;max-width:340px;border-radius:18px;box-shadow:0 24px 70px -20px var(--accent)}
+  .lshare-actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+  .lyr-line{cursor:pointer}
 </style>
 </head>
 <body>
@@ -384,6 +412,29 @@
     </div>
     <a class="home" href="../index.html">↩ wander back into the swamp</a>
   </footer>
+</div>
+
+<!-- sticky mini-player (shows when the main player scrolls away) -->
+<div class="mini" id="mini">
+  <img class="mini-art" id="miniArt" alt="">
+  <div class="mini-info">
+    <div class="mini-title" id="miniTitle"></div>
+    <div class="mini-sub" id="miniSub"></div>
+  </div>
+  <button class="mini-btn" id="miniPlay" aria-label="Play / pause">&#9654;</button>
+  <div class="mini-prog"><div class="mini-fill" id="miniFill"></div></div>
+</div>
+
+<!-- share-a-lyric card -->
+<div class="lshare" id="lshare" role="dialog" aria-label="Share a lyric">
+  <div class="lshare-inner">
+    <canvas id="lcanvas" width="1080" height="1080"></canvas>
+    <div class="lshare-actions">
+      <button class="sbtn primary" id="lShareBtn">Share</button>
+      <button class="sbtn" id="lSaveBtn">Save image</button>
+      <button class="sbtn" id="lCloseBtn">Close</button>
+    </div>
+  </div>
 </div>
 
 <audio id="audio"></audio>
@@ -527,6 +578,7 @@ function load(i,autoplay){
   try{ history.replaceState(null,'','#'+t.id); }catch(e){}
   updateShare();
   loadComments(t.id);
+  updateMini(); updateMediaSession();
   if(autoplay) audio.play();
   sync();
 }
@@ -698,6 +750,7 @@ TRACKS.forEach((t,n)=>{
     ly.innerHTML=t.lyrics.map((line,i)=>{const s=String(line).trim();
       return `<p class="lyr-line${s?'':' blank'}" data-i="${i}">${s?s.replace(/[&<>]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m])):'&nbsp;'}</p>`;}).join('');
     lyricsPanels[n]=ly;
+    ly.addEventListener('click',e=>{const l=e.target.closest('.lyr-line');if(l&&!l.classList.contains('blank'))shareLyric(l.textContent.trim());});
     const btn=row.querySelector('.lyrbtn');
     btn.onclick=e=>{e.stopPropagation();const open=ly.classList.toggle('open');btn.textContent=open?'Hide lyrics':'Lyrics';if(open)highlightLyrics(true);};
     list.appendChild(row);list.appendChild(ly);
@@ -705,6 +758,82 @@ TRACKS.forEach((t,n)=>{
   const a=new Audio();a.preload='metadata';a.src=t.src;
   a.addEventListener('loadedmetadata',()=>{row.querySelector('[data-dur]').textContent=fmt(a.duration);});
 });
+
+// ===== (1) beat-reactive visualizer (Web Audio) =====
+let actx, analyser, srcNode, freqData, rafBeat;
+function initAudioCtx(){
+  if(actx) return;
+  try{
+    actx=new (window.AudioContext||window.webkitAudioContext)();
+    srcNode=actx.createMediaElementSource(audio);
+    srcNode.connect(actx.destination);                 // sound path (guaranteed)
+    analyser=actx.createAnalyser(); analyser.fftSize=64; analyser.smoothingTimeConstant=.82;
+    srcNode.connect(analyser);                          // analysis tap
+    freqData=new Uint8Array(analyser.frequencyBinCount);
+  }catch(e){ analyser=null; }
+}
+const reduceMo=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+function beatLoop(){
+  if(!analyser) return;
+  analyser.getByteFrequencyData(freqData);
+  let s=0,n=Math.min(8,freqData.length); for(let i=0;i<n;i++) s+=freqData[i];
+  const v=Math.min(1,(s/n)/175);
+  document.documentElement.style.setProperty('--beat', reduceMo?0:v.toFixed(3));
+  rafBeat=requestAnimationFrame(beatLoop);
+}
+
+// ===== (2) Media Session — lock screen / control center =====
+function updateMediaSession(){
+  if(!('mediaSession' in navigator)) return;
+  const t=TRACKS[idx];
+  try{ navigator.mediaSession.metadata=new MediaMetadata({title:t.title,artist:'Cyber Kitty',album:t.ep,
+    artwork:[{src:new URL(t.art,location.href).href,sizes:'512x512',type:'image/jpeg'}]}); }catch(e){}
+  const H=navigator.mediaSession.setActionHandler.bind(navigator.mediaSession);
+  try{H('play',()=>audio.play());H('pause',()=>audio.pause());
+    H('previoustrack',()=>{ if(audio.currentTime>3)audio.currentTime=0; else load(idx-1,true); });
+    H('nexttrack',()=>load(idx+1,true));
+    H('seekto',e=>{ if(e.seekTime!=null) audio.currentTime=e.seekTime; });}catch(e){}
+}
+
+// ===== (3) sticky mini-player =====
+const mini=$('mini');
+$('miniPlay').onclick=()=>playing?audio.pause():audio.play();
+$('miniArt').onclick=()=>document.querySelector('.now').scrollIntoView({behavior:'smooth',block:'center'});
+function updateMini(){ $('miniArt').src=TRACKS[idx].art; $('miniTitle').textContent=TRACKS[idx].title; $('miniSub').textContent=TRACKS[idx].ep; }
+(function(){ const now=document.querySelector('.now');
+  if('IntersectionObserver' in window){
+    new IntersectionObserver(es=>es.forEach(e=>mini.classList.toggle('show', !e.isIntersecting && !!audio.src)),{threshold:0}).observe(now);
+  }
+})();
+
+// shared play/pause side-effects for the new widgets
+audio.addEventListener('play',()=>{ initAudioCtx(); if(actx&&actx.state==='suspended')actx.resume(); cancelAnimationFrame(rafBeat); beatLoop();
+  $('miniPlay').innerHTML='&#10073;&#10073;'; if('mediaSession' in navigator)navigator.mediaSession.playbackState='playing'; });
+audio.addEventListener('pause',()=>{ cancelAnimationFrame(rafBeat); document.documentElement.style.setProperty('--beat','0');
+  $('miniPlay').innerHTML='&#9654;'; if('mediaSession' in navigator)navigator.mediaSession.playbackState='paused'; });
+audio.addEventListener('timeupdate',()=>{ $('miniFill').style.width=(audio.currentTime/audio.duration*100||0)+'%'; });
+
+// ===== (4) share a lyric line as a card =====
+function shareLyric(text){
+  const t=TRACKS[idx], cv=$('lcanvas'), x=cv.getContext('2d'), W=1080,H=1080;
+  const g=x.createLinearGradient(0,0,0,H); g.addColorStop(0,'#0c0a12'); g.addColorStop(1,'#06080a'); x.fillStyle=g; x.fillRect(0,0,W,H);
+  const rad=x.createRadialGradient(W/2,H*0.42,40,W/2,H*0.42,580); rad.addColorStop(0,t.accent+'4d'); rad.addColorStop(1,'rgba(0,0,0,0)'); x.fillStyle=rad; x.fillRect(0,0,W,H);
+  x.textAlign='center';
+  x.fillStyle=t.accent; x.font='600 30px "Space Grotesk",system-ui,sans-serif'; x.fillText('=^..^=   CYBER KITTY', W/2, 130);
+  x.fillStyle='#f3eedd'; x.font='700 60px "Space Grotesk",system-ui,sans-serif';
+  const words=text.replace(/^[“"]|[”"]$/g,'').split(' '); let line='',rows=[]; const maxW=W-180;
+  words.forEach(w=>{ const tt=line?line+' '+w:w; if(x.measureText(tt).width>maxW){rows.push(line);line=w;} else line=tt; }); if(line)rows.push(line);
+  const lh=82, sY=H/2-(rows.length-1)*lh/2;
+  rows.forEach((ln,i)=>x.fillText((i===0?'“':'')+ln+(i===rows.length-1?'”':''), W/2, sY+i*lh));
+  x.fillStyle=t.accent; x.font='500 30px "Space Grotesk",system-ui,sans-serif'; x.fillText('— '+t.title, W/2, H-160);
+  x.fillStyle='#86a596'; x.font='400 24px "Space Grotesk",system-ui,sans-serif'; x.fillText('sophieren.com/cyber-kitty', W/2, H-108);
+  $('lshare').classList.add('open');
+}
+$('lCloseBtn').onclick=()=>$('lshare').classList.remove('open');
+$('lshare').addEventListener('click',e=>{ if(e.target===$('lshare')) $('lshare').classList.remove('open'); });
+$('lSaveBtn').onclick=()=>{ const a=document.createElement('a'); a.href=$('lcanvas').toDataURL('image/png'); a.download='cyber-kitty-lyric.png'; document.body.appendChild(a); a.click(); a.remove(); };
+$('lShareBtn').onclick=()=>{ $('lcanvas').toBlob(async b=>{ const f=new File([b],'cyber-kitty-lyric.png',{type:'image/png'});
+  if(navigator.canShare&&navigator.canShare({files:[f]})){ try{await navigator.share({files:[f],title:'Cyber Kitty'});}catch(e){} } else $('lSaveBtn').click(); }); };
 
 // fireflies
 for(let i=0;i<14;i++){
