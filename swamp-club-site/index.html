@@ -191,13 +191,17 @@
       -webkit-overflow-scrolling:touch;
       white-space:nowrap; font-size:0;
       z-index:4; scrollbar-width:none;
+      touch-action:pan-x;          /* horizontal swipe stays in the world; vertical scrolls the page */
+      scroll-behavior:smooth;      /* smooth programmatic nudge/center (user swipes stay 1:1) */
+      overscroll-behavior-x:contain;
     }
     .scene-pan::-webkit-scrollbar{height:0;}
+    .story-scene .scene-portal:active{opacity:.6;}   /* quick tap feedback */
     .story-scene{
       display:inline-block !important;
       position:static !important;
       height:74svh !important;
-      width:calc(74svh * 1.6471) !important;   /* exact 1400:850 ratio -> swipe stops at the edges, no blank */
+      width:calc(74svh * 1.5220) !important;   /* matches the mobile cropped viewBox ratio (1210:795) -> no letterbox blank */
       bottom:auto !important; left:auto !important; right:auto !important;
       vertical-align:bottom;
     }
@@ -1612,7 +1616,7 @@
           </svg>
         </span>
         <span class="m-title">cyber kitty</span>
-        <span class="m-sub">3 SONGS ♫</span>
+        <span class="m-sub">4 SONGS ♫</span>
       </a>
     </div>
 
@@ -1941,7 +1945,7 @@
         <g class="cr-note" fill="#ffd23f"><circle cx="94" cy="-64" r="4"/><rect x="97" y="-80" width="2.4" height="18"/></g>
         <g class="cr-note" fill="#52ffe0" style="animation-delay:1.2s"><circle cx="112" cy="-50" r="3.4"/><rect x="114.6" y="-64" width="2" height="16"/></g>
         <text x="0" y="90" text-anchor="middle" class="portal-label" font-family="Caveat, cursive" font-size="40" fill="#52ffe0" font-weight="700">cyber kitty &rarr;</text>
-        <text x="0" y="112" text-anchor="middle" class="portal-sub" font-family="Space Grotesk, sans-serif" font-size="15" letter-spacing="1.2" fill="#ff4d8d">3 SONGS &#9834;</text>
+        <text x="0" y="112" text-anchor="middle" class="portal-sub" font-family="Space Grotesk, sans-serif" font-size="15" letter-spacing="1.2" fill="#ff4d8d">4 SONGS &#9834;</text>
       </g>
     </a>
 
@@ -2386,17 +2390,51 @@
   <div class="scroll-cue">scroll<span style="font-size:16px">&darr;</span></div>
 
   <script>
-    /* mobile: world <-> menu toggle + center the swipe strip on the house */
+    /* mobile: world <-> menu toggle, crop the scene to its core (no empty edges), swipe polish */
     (function(){
       var tb=document.getElementById('mViewToggle');
       var pan=document.getElementById('scenePan');
+      var scene=document.querySelector('.story-scene');
+      var FULL='0 0 1400 850';
+      var CROP={x:150,y:55,w:1210,h:795};   /* trims the empty far-left & far-right swamp */
+      var mq=window.matchMedia('(max-width:760px)');
+      var userScrolled=false;
+
       if(tb){ tb.addEventListener('click',function(){
         var menu=document.body.classList.toggle('menu-view');
         tb.innerHTML = menu ? '⌂ swamp' : '☰ menu';
       }); }
-      function centerPan(){ if(pan && pan.scrollWidth>pan.clientWidth){ pan.scrollLeft=(pan.scrollWidth-pan.clientWidth)*0.5; } }
-      window.addEventListener('load',centerPan); setTimeout(centerPan,400);
-      if(pan){ pan.addEventListener('scroll',function(){ var h=document.querySelector('.swipe-hint'); if(h) h.style.opacity='0'; },{once:true}); }
+
+      function centerPan(){ if(pan && pan.scrollWidth>pan.clientWidth){ var s=pan.style.scrollBehavior; pan.style.scrollBehavior='auto'; pan.scrollLeft=(pan.scrollWidth-pan.clientWidth)*0.5; pan.style.scrollBehavior=s; } }
+
+      function applyScene(){
+        if(!scene||!pan) return;
+        if(mq.matches){
+          scene.setAttribute('viewBox', CROP.x+' '+CROP.y+' '+CROP.w+' '+CROP.h);
+          var h=pan.clientHeight||0;
+          scene.style.setProperty('width', (h*CROP.w/CROP.h)+'px', 'important');
+          scene.style.setProperty('height', h+'px', 'important');
+          if(!userScrolled) centerPan();
+        } else {
+          scene.setAttribute('viewBox', FULL);
+          scene.style.removeProperty('width'); scene.style.removeProperty('height');
+        }
+      }
+
+      function nudge(){ if(userScrolled||!mq.matches||!pan||pan.scrollWidth<=pan.clientWidth) return;
+        var b=pan.scrollLeft; pan.scrollTo({left:b+48,behavior:'smooth'});
+        setTimeout(function(){ if(!userScrolled) pan.scrollTo({left:b,behavior:'smooth'}); },680); }
+      function hideHint(){ var h=document.querySelector('.swipe-hint'); if(h) h.style.opacity='0'; }
+
+      if(pan){
+        pan.addEventListener('pointerdown',function(){ userScrolled=true; });
+        pan.addEventListener('scroll',function(){ userScrolled=true; hideHint(); },{once:true});
+      }
+      window.addEventListener('load',function(){ applyScene(); setTimeout(nudge,900); });
+      window.addEventListener('resize',applyScene);
+      if(mq.addEventListener) mq.addEventListener('change',function(){ userScrolled=false; applyScene(); });
+      setTimeout(applyScene,300);
+      setTimeout(hideHint,5000);
     })();
   </script>
 </header>
