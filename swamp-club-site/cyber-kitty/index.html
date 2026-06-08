@@ -155,13 +155,20 @@
   footer .home{display:inline-block;margin-top:18px;font-family:'Caveat',cursive;font-size:19px;
                color:var(--neon-cyan);text-decoration:none;letter-spacing:0;opacity:.85}
   footer .home:hover{opacity:1}
-  footer .plats{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin:16px 0 6px}
-  .plat{display:inline-flex;align-items:center;gap:6px;font-family:'Space Grotesk',sans-serif;font-size:13px;
-        letter-spacing:.04em;text-decoration:none;padding:9px 16px;border-radius:30px;transition:.2s}
-  .plat.yt{color:#ff4d4d;border:1px solid rgba(255,77,77,.4)}
-  .plat.yt:hover{background:rgba(255,77,77,.12);border-color:#ff4d4d}
-  .plat.am{color:#fc6b9c;border:1px solid rgba(252,107,156,.4)}
-  .plat.am:hover{background:rgba(252,107,156,.12);border-color:#fc6b9c}
+  footer .plats{display:flex;gap:10px;justify-content:center;align-items:center;flex-wrap:wrap;margin:18px 0 8px}
+  .plats-lbl{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted)}
+  .plat{display:inline-flex;align-items:center;gap:9px;font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:500;
+        color:var(--cream);text-decoration:none;background:rgba(243,238,221,.05);border:1px solid var(--line);
+        padding:10px 16px;border-radius:13px;transition:transform .15s,background .2s,border-color .2s}
+  .plat svg{width:21px;height:21px;flex:none;display:block}
+  .plat:hover{background:rgba(243,238,221,.1);transform:translateY(-1px)}
+  .plat.yt:hover{border-color:rgba(255,0,51,.6)}
+  .plat.am:hover{border-color:rgba(250,46,99,.6)}
+  @media(max-width:560px){
+    footer .plats{flex-direction:column;align-items:stretch;gap:10px;max-width:280px;margin-left:auto;margin-right:auto}
+    .plats-lbl{text-align:center;margin-bottom:2px}
+    .plat{justify-content:center;font-size:15px;padding:13px 16px}
+  }
 
   /* ===== comments ===== */
   .comments{margin-top:40px;border-top:1px solid var(--line);padding-top:26px}
@@ -192,6 +199,8 @@
     border-radius:0 12px 12px 0;padding:11px 14px}
   .c-meta{font-size:11px;color:var(--muted);letter-spacing:.04em;margin-bottom:5px}
   .c-meta b{color:var(--accent);font-weight:500;transition:color .9s}
+  .c-song{display:inline-block;font-size:10px;letter-spacing:.04em;color:var(--accent);
+    background:var(--accent-soft);padding:2px 8px;border-radius:20px;margin-left:4px;vertical-align:1px;transition:.9s}
   .c-text{font-size:14px;line-height:1.6;color:#e4ddd0;white-space:pre-wrap;word-break:break-word}
 
   /* ===== share bar ===== */
@@ -318,8 +327,15 @@
   <footer>
     THE ANSWER IS CHEAP.&nbsp; <b>THE QUESTION IS SACRED.</b>&nbsp; ASK AGAIN.
     <div class="plats">
-      <a class="plat yt" href="https://www.youtube.com/channel/UCppShKS_HBoPcMk1yhEt_QA" target="_blank" rel="noopener">▶ YouTube</a>
-      <a class="plat am" href="https://music.apple.com/us/artist/cyber-kitty/6777592763" target="_blank" rel="noopener">♪ Apple Music</a>
+      <span class="plats-lbl">listen on</span>
+      <a class="plat yt" href="https://www.youtube.com/channel/UCppShKS_HBoPcMk1yhEt_QA" target="_blank" rel="noopener" aria-label="Cyber Kitty on YouTube">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="1.5" y="5" width="21" height="14" rx="4.4" fill="#FF0033"/><path d="M10 8.6l6.2 3.4L10 15.4z" fill="#fff"/></svg>
+        <span>YouTube</span>
+      </a>
+      <a class="plat am" href="https://music.apple.com/us/artist/cyber-kitty/6777592763" target="_blank" rel="noopener" aria-label="Cyber Kitty on Apple Music">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="amg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FB5C74"/><stop offset="1" stop-color="#FA2E63"/></linearGradient></defs><rect x="2" y="2" width="20" height="20" rx="5.4" fill="url(#amg)"/><path d="M15.6 6.7l-6 1.5a.8.8 0 0 0-.6.8v5.2a1.7 1.7 0 1 0 1.2 1.6V10l5-1.25v3.1a1.7 1.7 0 1 0 1.2 1.6V7.5a.8.8 0 0 0-.8-.8z" fill="#fff"/></svg>
+        <span>Apple Music</span>
+      </a>
     </div>
     <a class="home" href="../index.html">↩ wander back into the swamp</a>
   </footer>
@@ -432,7 +448,8 @@ async function loadComments(songId){
     const data=await r.json();
     if(list.dataset.song!==songId) return; // a newer song was selected
     if(!Array.isArray(data)||!data.length){ list.innerHTML='<div class="c-empty">no notes yet — be the first ♫</div>'; return; }
-    list.innerHTML=data.map(c=>`<div class="c-item"><div class="c-meta"><b>${esc(c.name||'anonymous')}</b> · ${ago(c.created_at)}</div><div class="c-text">${esc(c.body)}</div></div>`).join('');
+    const stitle=(TRACKS.find(t=>t.id===songId)||{}).title||songId;
+    list.innerHTML=data.map(c=>`<div class="c-item"><div class="c-meta"><b>${esc(c.name||'anonymous')}</b> · ${ago(c.created_at)} <span class="c-song">♫ ${esc(stitle)}</span></div><div class="c-text">${esc(c.body)}</div></div>`).join('');
   }catch(e){ list.innerHTML='<div class="c-empty">couldn’t load notes right now.</div>'; }
 }
 $('cForm').addEventListener('submit',async e=>{
