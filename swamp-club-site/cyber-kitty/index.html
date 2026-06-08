@@ -144,12 +144,18 @@
   .lyrbtn{margin-top:7px;font-family:'Space Grotesk',sans-serif;font-size:10px;letter-spacing:.18em;text-transform:uppercase;
           color:var(--accent);background:none;border:1px solid var(--line);padding:4px 11px;border-radius:20px;cursor:pointer;transition:.2s}
   .lyrbtn:hover{background:var(--accent-soft)}
-  .lyrics{display:none;white-space:pre-wrap;font-size:13.5px;line-height:1.9;color:#d6e0da;
-          padding:18px 16px;margin:8px 2px 0;border-left:2px solid var(--accent);
-          background:rgba(243,238,221,.025);border-radius:0 11px 11px 0}
-  .lyrics.open{display:block}
-  .lyrics .lbl{color:var(--accent);font-size:11px;letter-spacing:.2em;text-transform:uppercase;display:block;margin:15px 0 3px}
-  .lyrics .lbl:first-child{margin-top:0}
+  .lyrics{display:none;max-height:300px;overflow-y:auto;scroll-behavior:smooth;
+          padding:16px 18px;margin:8px 2px 0;border-left:2px solid var(--accent);
+          background:rgba(243,238,221,.025);border-radius:0 12px 12px 0;scrollbar-width:thin}
+  .lyrics::-webkit-scrollbar{width:5px}
+  .lyrics::-webkit-scrollbar-thumb{background:var(--accent-soft);border-radius:4px}
+  .lyrics.open{display:block;animation:lyrPanel .45s ease both}
+  @keyframes lyrPanel{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+  .lyr-line{font-size:15px;line-height:1.7;color:#aeb8b2;opacity:.4;margin:0;padding:3.5px 0;
+            transition:opacity .45s,color .45s,transform .45s,text-shadow .45s;transform-origin:left center}
+  .lyr-line.sung{opacity:.62}
+  .lyr-line.active{opacity:1;color:var(--accent);transform:scale(1.05);font-weight:500;text-shadow:0 0 16px var(--accent-soft)}
+  .lyr-line.blank{padding:5px 0}
 
   footer{text-align:center;margin-top:54px;color:var(--muted);font-size:12px;letter-spacing:.2em;line-height:2.1}
   footer b{color:var(--accent);font-weight:400;transition:color .9s}
@@ -387,23 +393,153 @@
 const TRACKS = [
   { id:"curious-engine", title:"Curious Engine", ep:"Cyber Kitty · EP2", sub:"keep it running.",
     src:"audio/curious-engine.mp3", art:"covers/curious-engine.jpg",
-    accent:"#ff4d8d", soft:"rgba(255,77,141,.16)" },
+    accent:"#ff4d8d", soft:"rgba(255,77,141,.16)",
+    lyrics:`I wanted to build one agent, just one
+One became ten, ten became a hundred
+Then I stopped counting
+One question, one idea
+One late night, one tab open
+One rabbit hole, one more thought
+One more system, one more world
+The tools became teams
+The teams became worlds
+The words became questions
+The questions became everything
+Curiosity engine, curiosity engine
+Keep it running. Keep it running
+Everybody wants the answer
+Everybody wants certainty
+Everybody wants the map
+Nobody wants the forest
+The strange idea that feels like validation
+Changes everything anyway
+But evolution never asked for permission
+It just kept exploring
+One agent needed memory
+Memory needed context
+Context needed a graph
+The graphs needed nodes and nodes
+Needed edges, needed integrity
+Integrity needed me to read first
+What if intelligence isn't the destination?
+What if curiosity is the engine?
+You can keep it running
+I found the question, I followed the question
+I found the world, I built the world
+The world changed me
+And somehow, the engine kept running`.split("\n") },
   { id:"rabbit-hole", title:"Rabbit Hole", ep:"Curiosity · EP1", sub:"go deeper.",
     src:"audio/rabbit-hole.mp3", art:"covers/rabbit-hole.jpg",
-    accent:"#b388ff", soft:"rgba(179,136,255,.20)" },
+    accent:"#b388ff", soft:"rgba(179,136,255,.20)",
+    lyrics:`At first you think you're following the question
+Then one day you discover
+The question has been following you
+Don't ever rush — go deeper
+Go deeper, go deeper
+I forgot what I was looking for
+Go deeper
+Grab it all, grab it all
+Follow it, follow it
+Follow it, follow it
+One became ten, ten became a hundred
+A hundred became a universe
+Every answer opened the door, every door
+Opened another, until I forgot which door I came through
+I wanted one thing, just one
+But curiosity never stops at one
+Every answer became another question
+Every ending became a beginning
+The deeper I went, the larger the world became
+What if the rabbit hole isn't a path?
+What if I wasn't lost?
+I was exploring
+No, I wasn't lost — I was exploring
+I wanted to build one agent
+Just one. A simple one
+Then one agent became ten
+Ten became fifty, fifty became hundreds
+And somehow they started building each other
+I wasn't looking for this
+I was just following the question
+All I need is — text needed memory
+Memory needed retrieval
+Retrieval needed evaluations
+Evaluation needed another change
+And another life, and another life
+Every solution opened a door
+Every door became a world
+Every world I've seen, another question
+One more floor became a system
+Became an ecosystem
+The map kept changing
+Curiosity kept pulling me forward
+I thought I was one of those agents
+I was wrong
+The agents were building the world
+You realize there is no bottom — only deeper`.split("\n") },
   { id:"unwritten-future", title:"The Unwritten Future", ep:"Curiosity · EP1", sub:"begin anyway.",
     src:"audio/unwritten-future.mp3", art:"covers/unwritten-future.jpg",
     accent:"#5ec8ff", soft:"rgba(94,200,255,.18)" },
   { id:"sacred-question", title:"Sacred Question", ep:"Curiosity · EP1", sub:"ask again.",
     src:"audio/sacred-question.mp3", art:"covers/sacred-question.jpg",
     accent:"#ffd23f", soft:"rgba(255,210,63,.16)",
-    lyrics:[
-      ["Intro","The answer is cheap\nEveryone has one\nThe answer is cheap\nThe question is sacred\nSacred Question\nAsk again"],
-      ["Verse 1","The world became a mirror\nReflecting what we know\nEvery answer came faster\nEvery question let go\nBut evolution was never built on certainty\nIt was built on curiosity"],
-      ["Spoken Word","What if curiosity matters more than intelligence\nWhat if answers are not the destination\nWhat if questions are\nBecause answers end conversations\nQuestions create worlds"],
-      ["Build","Evolution was never searching for a place to finally land\nIt was opening hidden doorways\nNo machine could predict it\nNo map could contain it\nNo answer could become it"],
-      ["Outro","The answer is cheap\nThe question is sacred\nAsk again"]
-    ] }
+    lyrics:`The answer is cheap
+Everyone has one
+The answer is cheap
+The answer is cheap
+The question is sacred
+The question is sacred
+Sacred Question
+Ask again
+Ask again
+The question is sacred
+Ask again
+Ask again
+Again
+Ask again
+The question is sacred
+The question is sacred
+Sacred Question
+The question is sacred
+Ask again
+The world became a mirror
+Reflecting what we know
+Every answer came faster
+Every question let go
+Information kept growing
+Faster than we could see
+But evolution was never built on certainty
+It was built on curiosity
+What if curiosity matters more than intelligence
+What if answers are not the destination
+What if questions are
+Because answers end conversations
+Questions create worlds
+Evolution was never searching for a place to finally land
+It was opening hidden doorways
+No machine could predict it
+No map could contain it
+No answer could become it
+The question is sacred
+The question is sacred
+Ask again
+Ask again
+Ask again
+Ask again
+The question is sacred
+What if curiosity is more important than intelligence
+What if
+Ask again
+Ask again
+The answer is cheap
+The question is sacred
+Ask again
+Ask again
+Ask again
+Ask again
+The answer is cheap
+The question is sacred
+Ask again`.split("\n") }
 ];
 
 const audio=document.getElementById('audio');
@@ -430,7 +566,23 @@ audio.addEventListener('pause',()=>{playing=false;$('toggle').innerHTML='&#9654;
 audio.addEventListener('timeupdate',()=>{
   $('fill').style.width=(audio.currentTime/audio.duration*100||0)+'%';
   $('cur').textContent=fmt(audio.currentTime); $('dur').textContent=fmt(audio.duration);
+  highlightLyrics(false);
 });
+// follow-along lyrics: highlight the line at the current playback position (and auto-scroll within the panel)
+const lyricsPanels=[];
+function highlightLyrics(snap){
+  const ly=lyricsPanels[idx];
+  if(!ly||!ly.classList.contains('open')||!audio.duration) return;
+  const lines=ly.querySelectorAll('.lyr-line');
+  if(!lines.length) return;
+  let ai=Math.floor(audio.currentTime/audio.duration*lines.length);
+  ai=Math.max(0,Math.min(lines.length-1,ai));
+  if(ly.dataset.ai==ai && !snap) return;
+  ly.dataset.ai=ai;
+  lines.forEach((l,i)=>{ l.classList.toggle('active',i===ai); l.classList.toggle('sung',i<ai); });
+  const el=lines[ai];
+  ly.scrollTop = el.offsetTop - ly.clientHeight/2 + el.offsetHeight/2;
+}
 audio.addEventListener('ended',()=>load(idx+1,true));
 $('toggle').onclick=()=>playing?audio.pause():audio.play();
 $('next').onclick=()=>load(idx+1,true);
@@ -571,8 +723,11 @@ TRACKS.forEach((t,n)=>{
     ()=>{ if(n===idx){playing?audio.pause():audio.play();} else load(n,true); };
   if(t.lyrics){
     const ly=document.createElement('div');ly.className='lyrics';
-    ly.innerHTML=t.lyrics.map(([l,x])=>`<span class="lbl">[${l}]</span>${x}`).join('\n\n');
-    row.querySelector('.lyrbtn').onclick=e=>{e.stopPropagation();ly.classList.toggle('open');};
+    ly.innerHTML=t.lyrics.map((line,i)=>{const s=String(line).trim();
+      return `<p class="lyr-line${s?'':' blank'}" data-i="${i}">${s?s.replace(/[&<>]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m])):'&nbsp;'}</p>`;}).join('');
+    lyricsPanels[n]=ly;
+    const btn=row.querySelector('.lyrbtn');
+    btn.onclick=e=>{e.stopPropagation();const open=ly.classList.toggle('open');btn.textContent=open?'Hide lyrics':'Lyrics';if(open)highlightLyrics(true);};
     list.appendChild(row);list.appendChild(ly);
   } else list.appendChild(row);
   const a=new Audio();a.preload='metadata';a.src=t.src;
