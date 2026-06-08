@@ -394,40 +394,7 @@ const TRACKS = [
   { id:"curious-engine", title:"Curious Engine", ep:"Cyber Kitty · EP2", sub:"keep it running.",
     src:"audio/curious-engine.mp3", art:"covers/curious-engine.jpg",
     accent:"#ff4d8d", soft:"rgba(255,77,141,.16)",
-    lyrics:`I wanted to build one agent, just one
-One became ten, ten became a hundred
-Then I stopped counting
-One question, one idea
-One late night, one tab open
-One rabbit hole, one more thought
-One more system, one more world
-The tools became teams
-The teams became worlds
-The words became questions
-The questions became everything
-Curiosity engine, curiosity engine
-Keep it running. Keep it running
-Everybody wants the answer
-Everybody wants certainty
-Everybody wants the map
-Nobody wants the forest
-The strange idea that feels like validation
-Changes everything anyway
-But evolution never asked for permission
-It just kept exploring
-One agent needed memory
-Memory needed context
-Context needed a graph
-The graphs needed nodes and nodes
-Needed edges, needed integrity
-Integrity needed me to read first
-What if intelligence isn't the destination?
-What if curiosity is the engine?
-You can keep it running
-I found the question, I followed the question
-I found the world, I built the world
-The world changed me
-And somehow, the engine kept running`.split("\n") },
+    lyricsTimed:[[1.67,"I wanted to build one agent,"],[3.24,"Just one"],[4.26,"One became ten"],[9.03,"Ten became a hundred"],[13.85,"Then I stopped counting"],[13.85,""],[15.99,"One question"],[17.23,"One idea"],[18.36,"One late night"],[19.89,"One tab open"],[20.91,"One rabbit hole"],[22.06,"One more thought"],[25.65,"One more system"],[27.22,"One more world"],[27.22,""],[29.3,"I thought I was building tools"],[30.19,"The tools became teams"],[31.37,"The teams became worlds"],[32.35,"The worlds became questions"],[34.89,"The questions became everything"],[34.89,""],[37.93,"Curiosity engine"],[42.57,"Curiosity engine"],[45.03,"Curiosity engine"],[45.03,""],[50.54,"Keep it running"],[51.57,"Keep it running"],[51.57,""],[53.11,"Ruuuunniiiiingggggg…"],[53.11,""],[56.21,"Keep it running"],[56.21,""],[58.29,"Everybody wants the answer"],[60.08,"Everybody wants certainty"],[62.43,"Everybody wants the map"],[64.6,"Nobody wants the forest"],[66.18,"Nobody wants the orphan edge"],[68.29,"the node that points to nothing"],[70.59,"the strange idea that fails validation"],[72.63,"and that changes everything anyway"],[72.63,""],[74.98,"But evolution never asked for permission"],[77.94,"It just kept exploring"],[77.94,""],[80.04,"One agent needed memory"],[82.48,"Memory needed context"],[84.25,"Context needed a graph"],[86.26,"The graphs needed nodes"],[88.36,"And nodes"],[90.22,"Needed edges,"],[91.43,"The edges needed integrity"],[93.08,"Integrity needed me to read first"],[95.17,"and reading first built worlds"],[95.17,""],[98.11,"Curiosity engine"],[100.01,"Curiosity engine"],[100.01,""],[102.78,"Keep it running,"],[104.58,"Orient…"],[104.58,""],[107.85,"Everybody wants the answer"],[109.8,"Everybody wants certainty"],[112.09,"Everybody wants the map"],[114.36,"Nobody wants the forest"],[117.16,"Nobody wants the orphan edge"],[119.16,"the node that points to nothing"],[121.11,"The strange idea that feels like validation"],[123.97,"Changes everything anyway"],[126.84,"But evolution never asked for permission"],[128.84,"It just kept exploring"],[128.84,""],[131.13,"Keep Asking:"],[131.13,""],[132.37,"What if intelligence isn't the destination?"],[132.37,""],[136.27,"What if curiosity…"],[136.27,""],[142.32,"Is the engine?"],[142.32,""],[147.35,"Keep keep it running"],[152.35,"Keep it running"],[152.35,""],[152.94,"I wanted one answer"],[153.78,"I found the question"],[154.11,"I followed the question"],[154.49,"I found the world"],[155.01,"I built the world"],[156.15,"The world changed me"],[156.79,"And somehow,"],[158.01,"The engine kept running"],[158.01,""],[159.4,"Ask again"],[160.67,"Go deeper"],[162.67,"Follow the question"],[162.67,""],[163.7,"I found the world"],[164.79,"I built the world"],[166.54,"The world changed me"],[168.19,"And somehow,"],[169.45,"The engine kept running"],[169.45,""],[170.3,"Ask now"],[171.69,"Go deeper"],[172.76,"Begin anyway"],[172.76,""],[174.85,"Keep it runningggggg…"],[175.93,"Keep it runningggggg…"],[175.93,""],[188.57,"Reuse, don't rebuild"],[194.04,"Resue, don't rebuild"],[194.04,""],[194.59,"What if build efficiency"],[196.64,"Is the reuse rate"],[197.33,"Ninty minutes"],[198.61,"Folding down to ten"],[200.19,"The same fire"],[201.77,"Just running in parallel"],[201.77,""],[203.43,"Keep it running"],[206.55,"Session watcher went red"],[208.29,"I kept going"],[209.32,"I said stop building"],[212.19,"Then I build the thing that says stop"],[212.19,""],[213.89,"Keep it running"],[214.82,"Keep it running"],[214.82,""],[215.76,"I wanted one answer"],[217.15,"I found a question"],[218.2,"I followed the question into a window"],[219.76,"I closed the window"],[221.03,"And left a note for whoever opened it next"],[223.75,"The note was also me"],[223.75,""],[226.11,"Ask again"],[226.97,"Go deeper"],[229.19,"Orient anyway"],[230.08,"Become it"],[230.08,""],[235.65,"Keep it running…"]] },
   { id:"rabbit-hole", title:"Rabbit Hole", ep:"Curiosity · EP1", sub:"go deeper.",
     src:"audio/rabbit-hole.mp3", art:"covers/rabbit-hole.jpg",
     accent:"#b388ff", soft:"rgba(179,136,255,.20)",
@@ -541,6 +508,8 @@ The answer is cheap
 The question is sacred
 Ask again`.split("\n") }
 ];
+// tracks with tapped timestamps store [time,line] pairs -> derive parallel lyrics + lt
+TRACKS.forEach(t=>{ if(t.lyricsTimed){ t.lyrics=t.lyricsTimed.map(x=>x[1]); t.lt=t.lyricsTimed.map(x=>x[0]); } });
 
 const audio=document.getElementById('audio');
 const rs=document.documentElement.style;
@@ -571,15 +540,18 @@ audio.addEventListener('timeupdate',()=>{
 // follow-along lyrics: highlight the line at the current playback position (and auto-scroll within the panel)
 const lyricsPanels=[];
 function highlightLyrics(snap){
-  const ly=lyricsPanels[idx];
+  const t=TRACKS[idx], ly=lyricsPanels[idx];
   if(!ly||!ly.classList.contains('open')||!audio.duration) return;
   const lines=ly.querySelectorAll('.lyr-line');
   if(!lines.length) return;
-  let ai=Math.floor(audio.currentTime/audio.duration*lines.length);
+  let ai;
+  if(t.lt && t.lt.length){ const c=audio.currentTime; ai=0; for(let i=0;i<t.lt.length;i++){ if(t.lt[i]<=c) ai=i; else break; } }
+  else ai=Math.floor(audio.currentTime/audio.duration*lines.length);
   ai=Math.max(0,Math.min(lines.length-1,ai));
+  while(ai>0 && lines[ai].classList.contains('blank')) ai--;   // never park on a blank spacer
   if(ly.dataset.ai==ai && !snap) return;
   ly.dataset.ai=ai;
-  lines.forEach((l,i)=>{ l.classList.toggle('active',i===ai); l.classList.toggle('sung',i<ai); });
+  lines.forEach((l,i)=>{ l.classList.toggle('active',i===ai); l.classList.toggle('sung',i<ai && !l.classList.contains('blank')); });
   const el=lines[ai];
   ly.scrollTop = el.offsetTop - ly.clientHeight/2 + el.offsetHeight/2;
 }

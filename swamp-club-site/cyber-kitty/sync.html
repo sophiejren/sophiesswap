@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cyber Kitty — Lyric Sync (private tool)</title>
+<meta name="robots" content="noindex">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Caveat:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root{--accent:#ff4d8d;--accent-soft:rgba(255,77,141,.18);--bg:#0b1310;--cream:#f3eedd;--muted:#86a596;--line:rgba(243,238,221,.12)}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Space Grotesk',system-ui,sans-serif;background:var(--bg);color:var(--cream);line-height:1.5;
+       min-height:100vh;padding:24px 18px 160px;max-width:760px;margin:0 auto}
+  h1{font-family:'Caveat',cursive;font-size:30px;color:var(--accent)}
+  .sub{color:var(--muted);font-size:13px;margin:4px 0 18px}
+  .bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:14px}
+  select,button,input[type=range]{font-family:inherit}
+  select{background:#13201a;color:var(--cream);border:1px solid var(--line);border-radius:10px;padding:9px 12px;font-size:14px}
+  .btn{background:rgba(243,238,221,.06);color:var(--cream);border:1px solid var(--line);border-radius:10px;
+       padding:9px 14px;font-size:13px;cursor:pointer;transition:.15s}
+  .btn:hover{border-color:var(--accent)} .btn:active{transform:scale(.96)}
+  .btn.primary{background:var(--accent);color:#0b0b0b;border-color:var(--accent);font-weight:700}
+  .row{display:flex;align-items:center;gap:12px;margin:10px 0}
+  .scrub{flex:1;height:8px;border-radius:8px;background:rgba(243,238,221,.1);position:relative;cursor:pointer}
+  .fill{position:absolute;left:0;top:0;bottom:0;width:0;background:var(--accent);border-radius:8px}
+  .time{font-size:12px;color:var(--muted);min-width:84px;text-align:right;font-variant-numeric:tabular-nums}
+  .speed{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted)}
+  .tapwrap{position:sticky;top:0;background:linear-gradient(180deg,var(--bg) 70%,transparent);padding:8px 0 12px;z-index:5}
+  .tap{width:100%;padding:20px;border-radius:16px;border:2px solid var(--accent);background:var(--accent-soft);
+       color:var(--cream);font-size:18px;font-weight:700;letter-spacing:.04em;cursor:pointer;transition:.1s}
+  .tap:active{transform:scale(.98);background:var(--accent);color:#0b0b0b}
+  .hint{font-size:12px;color:var(--muted);text-align:center;margin-top:6px}
+  .lines{margin-top:16px;border-top:1px solid var(--line)}
+  .ln{display:flex;gap:12px;align-items:baseline;padding:7px 4px;border-bottom:1px solid rgba(243,238,221,.05);transition:.2s}
+  .ln .t{font-size:11px;color:var(--muted);min-width:52px;font-variant-numeric:tabular-nums}
+  .ln .tx{font-size:15px;color:#9aa6a0}
+  .ln.done .tx{color:var(--cream)} .ln.done .t{color:var(--accent)}
+  .ln.next{background:var(--accent-soft);border-radius:8px}
+  .ln.next .tx{color:var(--accent);font-weight:700;font-size:16px}
+  .out{margin-top:20px}
+  textarea{width:100%;min-height:120px;background:#0d1712;color:#bfe6d4;border:1px solid var(--line);border-radius:12px;
+           padding:12px;font-family:ui-monospace,Menlo,monospace;font-size:12px;line-height:1.5}
+  .editbox{margin:10px 0;border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:rgba(243,238,221,.02)}
+  .editbox summary{cursor:pointer;font-size:13px;color:var(--accent);font-weight:500}
+  .editbox textarea{margin:10px 0;min-height:180px;font-size:13px;color:var(--cream);line-height:1.55}
+  .foot{position:fixed;left:0;right:0;bottom:0;background:#0d1712;border-top:1px solid var(--line);padding:12px 16px;
+        display:flex;gap:10px;justify-content:center;flex-wrap:wrap;max-width:760px;margin:0 auto}
+  .k{font-family:ui-monospace,monospace;background:rgba(243,238,221,.08);padding:1px 6px;border-radius:5px;font-size:12px}
+</style>
+</head>
+<body>
+  <h1>Lyric Sync ✦ Cyber Kitty</h1>
+  <p class="sub">Play the song, and tap <span class="k">TAP</span> (or press <span class="k">Space</span>) exactly when each line starts.
+     Tip: set speed to 0.75× for easier tapping. <span class="k">Z</span> = undo last · <span class="k">R</span> = restart song.</p>
+
+  <div class="bar">
+    <label>Song:
+      <select id="song"></select>
+    </label>
+    <span class="speed">speed
+      <input type="range" id="speed" min="0.5" max="1" step="0.05" value="0.8">
+      <b id="speedV">0.80×</b>
+    </span>
+  </div>
+
+  <div class="row">
+    <button class="btn primary" id="play">▶ Play</button>
+    <button class="btn" id="restart">⟲ Restart</button>
+    <div class="scrub" id="scrub"><div class="fill" id="fill"></div></div>
+    <span class="time" id="time">0:00 / 0:00</span>
+  </div>
+
+  <details class="editbox">
+    <summary>✎ edit lyrics — fix words &amp; add repeated lines (as actually sung) before you tap</summary>
+    <textarea id="edit" rows="9" spellcheck="false"></textarea>
+    <button class="btn primary" id="applyLyr">↻ Update lines from this text (resets taps for this song)</button>
+  </details>
+
+  <div class="tapwrap">
+    <button class="tap" id="tap">TAP — line starts now</button>
+    <div class="hint" id="hint"></div>
+  </div>
+
+  <div class="lines" id="lines"></div>
+
+  <div class="out">
+    <div class="row" style="justify-content:space-between">
+      <b>Timestamps for this song</b>
+      <span>
+        <button class="btn" id="preview">▶ Preview sync</button>
+        <button class="btn primary" id="copy">Copy</button>
+      </span>
+    </div>
+    <textarea id="output" readonly placeholder="finish tapping a song and the timestamps appear here — copy them and send to Claude"></textarea>
+    <p class="sub">Send me the copied block (tell me which song). I’ll bake it into the player for real karaoke sync. You can also tweak the global offset if you tapped a bit late:</p>
+    <div class="speed">offset <input type="range" id="offset" min="-1" max="0.5" step="0.05" value="-0.25"><b id="offV">-0.25s</b></div>
+  </div>
+
+  <div class="foot">
+    <button class="btn" id="undo">↶ Undo last tap (Z)</button>
+    <button class="btn" id="reset">Reset this song</button>
+  </div>
+
+  <audio id="audio"></audio>
+
+<script>
+const SONGS=[
+  {id:"curious-engine", title:"Curious Engine", src:"audio/curious-engine.mp3", lyrics:`I wanted to build one agent,
+Just one
+One became ten
+Ten became a hundred
+Then I stopped counting
+
+One question
+One idea
+One late night
+One tab open
+One rabbit hole
+One more thought
+One more system
+One more world
+
+I thought I was building tools
+The tools became teams
+The teams became worlds
+The worlds became questions
+The questions became everything
+
+Curiosity engine
+Curiosity engine
+Curiosity engine
+
+Keep it running
+Keep it running
+
+Ruuuunniiiiingggggg…
+
+Keep it running
+
+Everybody wants the answer
+Everybody wants certainty
+Everybody wants the map
+Nobody wants the forest
+Nobody wants the orphan edge
+the node that points to nothing
+the strange idea that fails validation
+and that changes everything anyway
+
+But evolution never asked for permission
+It just kept exploring
+
+One agent needed memory
+Memory needed context
+Context needed a graph
+The graphs needed nodes
+And nodes
+Needed edges,
+The edges needed integrity
+Integrity needed me to read first
+and reading first built worlds
+
+Curiosity engine
+Curiosity engine
+
+Keep it running,
+Orient…
+
+Everybody wants the answer
+Everybody wants certainty
+Everybody wants the map
+Nobody wants the forest
+Nobody wants the orphan edge
+the node that points to nothing
+The strange idea that feels like validation
+Changes everything anyway
+But evolution never asked for permission
+It just kept exploring
+
+Keep Asking:
+
+What if intelligence isn't the destination?
+
+What if curiosity…
+
+Is the engine?
+
+Keep keep it running
+Keep it running
+
+I wanted one answer
+I found the question
+I followed the question
+I found the world
+I built the world
+The world changed me
+And somehow,
+The engine kept running
+
+Ask again
+Go deeper
+Follow the question
+
+I found the world
+I built the world
+The world changed me
+And somehow,
+The engine kept running
+
+Ask now
+Go deeper
+Begin anyway
+
+Keep it runningggggg…
+Keep it runningggggg…
+
+Reuse, don't rebuild
+Resue, don't rebuild
+
+What if build efficiency
+Is the reuse rate
+Ninty minutes
+Folding down to ten
+The same fire
+Just running in parallel
+
+Keep it running
+Session watcher went red
+I kept going
+I said stop building
+Then I build the thing that says stop
+
+Keep it running
+Keep it running
+
+I wanted one answer
+I found a question
+I followed the question into a window
+I closed the window
+And left a note for whoever opened it next
+The note was also me
+
+Ask again
+Go deeper
+Orient anyway
+Become it
+
+Keep it running…`},
+  {id:"rabbit-hole", title:"Rabbit Hole", src:"audio/rabbit-hole.mp3", lyrics:`At first you think you're following the question
+Then one day you discover
+The question has been following you
+Don't ever rush — go deeper
+Go deeper, go deeper
+I forgot what I was looking for
+Go deeper
+Grab it all, grab it all
+Follow it, follow it
+Follow it, follow it
+One became ten, ten became a hundred
+A hundred became a universe
+Every answer opened the door, every door
+Opened another, until I forgot which door I came through
+I wanted one thing, just one
+But curiosity never stops at one
+Every answer became another question
+Every ending became a beginning
+The deeper I went, the larger the world became
+What if the rabbit hole isn't a path?
+What if I wasn't lost?
+I was exploring
+No, I wasn't lost — I was exploring
+I wanted to build one agent
+Just one. A simple one
+Then one agent became ten
+Ten became fifty, fifty became hundreds
+And somehow they started building each other
+I wasn't looking for this
+I was just following the question
+All I need is — text needed memory
+Memory needed retrieval
+Retrieval needed evaluations
+Evaluation needed another change
+And another life, and another life
+Every solution opened a door
+Every door became a world
+Every world I've seen, another question
+One more floor became a system
+Became an ecosystem
+The map kept changing
+Curiosity kept pulling me forward
+I thought I was one of those agents
+I was wrong
+The agents were building the world
+You realize there is no bottom — only deeper`},
+  {id:"sacred-question", title:"Sacred Question", src:"audio/sacred-question.mp3", lyrics:`The answer is cheap
+Everyone has one
+The answer is cheap
+The answer is cheap
+The question is sacred
+The question is sacred
+Sacred Question
+Ask again
+Ask again
+The question is sacred
+Ask again
+Ask again
+Again
+Ask again
+The question is sacred
+The question is sacred
+Sacred Question
+The question is sacred
+Ask again
+The world became a mirror
+Reflecting what we know
+Every answer came faster
+Every question let go
+Information kept growing
+Faster than we could see
+But evolution was never built on certainty
+It was built on curiosity
+What if curiosity matters more than intelligence
+What if answers are not the destination
+What if questions are
+Because answers end conversations
+Questions create worlds
+Evolution was never searching for a place to finally land
+It was opening hidden doorways
+No machine could predict it
+No map could contain it
+No answer could become it
+The question is sacred
+The question is sacred
+Ask again
+Ask again
+Ask again
+Ask again
+The question is sacred
+What if curiosity is more important than intelligence
+What if
+Ask again
+Ask again
+The answer is cheap
+The question is sacred
+Ask again
+Ask again
+Ask again
+Ask again
+The answer is cheap
+The question is sacred
+Ask again`}
+];
+
+const audio=document.getElementById('audio'), $=id=>document.getElementById(id);
+let song=null, lines=[], times=[], previewing=false;
+const fmt=s=>(!s||isNaN(s))?"0:00":Math.floor(s/60)+":"+String(Math.floor(s%60)).padStart(2,'0');
+
+// build song selector
+SONGS.forEach((s,i)=>{const o=document.createElement('option');o.value=i;o.textContent=s.title;$('song').appendChild(o);});
+
+function loadSong(i){
+  song=SONGS[i]; lines=song.lyrics.split('\n'); times=[]; previewing=false;
+  $('edit').value=song.lyrics;
+  audio.src=song.src; audio.playbackRate=parseFloat($('speed').value);
+  renderLines(); updateOut(); audio.pause(); $('play').textContent='▶ Play';
+}
+function applyEdited(){
+  song.lyrics=$('edit').value.replace(/\r/g,'');
+  lines=song.lyrics.split('\n'); times=[]; previewing=false;
+  renderLines(); updateOut();
+}
+function renderLines(){
+  const box=$('lines'); box.innerHTML='';
+  lines.forEach((tx,i)=>{
+    const d=document.createElement('div'); d.className='ln'; d.dataset.i=i;
+    d.innerHTML=`<span class="t">${times[i]!=null?fmt(times[i]):'—:—'}</span><span class="tx">${tx.replace(/[&<>]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]))||'·'}</span>`;
+    d.onclick=()=>{ audio.currentTime=times[i]!=null?times[i]:(i>0&&times[i-1]!=null?times[i-1]:audio.currentTime); };
+    box.appendChild(d);
+  });
+  markNext();
+}
+function markNext(){
+  const ci=times.length;
+  document.querySelectorAll('.ln').forEach((el,i)=>{
+    el.classList.toggle('done', i<ci);
+    el.classList.toggle('next', i===ci && !previewing);
+  });
+  const nextEl=document.querySelector('.ln.next');
+  if(nextEl) nextEl.scrollIntoView({block:'center',behavior:'smooth'});
+  $('hint').textContent = ci<lines.length ? `next: “${lines[ci]||'·'}”  (${ci}/${lines.length})` : '✓ all lines tapped — copy the timestamps below';
+}
+function tap(){
+  if(previewing||times.length>=lines.length) return;
+  const tnow=+audio.currentTime.toFixed(2);
+  times.push(tnow);
+  $('lines').children[times.length-1].querySelector('.t').textContent=fmt(tnow);
+  // auto-pass blank spacer lines (no tap needed for stanza gaps)
+  while(times.length<lines.length && lines[times.length].trim()===''){
+    times.push(tnow); const c=$('lines').children[times.length-1]; if(c) c.querySelector('.t').textContent='·';
+  }
+  markNext(); updateOut();
+}
+function undo(){ if(!times.length)return; times.pop(); renderLines(); updateOut(); }
+function updateOut(){
+  const off=parseFloat($('offset').value)||0;
+  const arr=lines.map((tx,i)=> times[i]!=null ? [Math.max(0,+(times[i]+off).toFixed(2)), tx] : null);
+  const done=times.length===lines.length;
+  $('output').value = (done?'':'/* incomplete — keep tapping */\n')+
+    'SONG: '+song.id+'\n'+JSON.stringify(arr.filter(Boolean));
+}
+
+// transport
+$('play').onclick=()=>{ if(audio.paused){audio.play();$('play').textContent='⏸ Pause';} else {audio.pause();$('play').textContent='▶ Play';} };
+$('restart').onclick=()=>{ audio.currentTime=0; };
+audio.addEventListener('timeupdate',()=>{
+  $('fill').style.width=(audio.currentTime/audio.duration*100||0)+'%';
+  $('time').textContent=fmt(audio.currentTime)+' / '+fmt(audio.duration);
+  if(previewing) previewHighlight();
+});
+$('scrub').onclick=e=>{const r=e.currentTarget.getBoundingClientRect();if(audio.duration)audio.currentTime=(e.clientX-r.left)/r.width*audio.duration;};
+$('speed').oninput=e=>{audio.playbackRate=parseFloat(e.target.value);$('speedV').textContent=(+e.target.value).toFixed(2)+'×';};
+$('offset').oninput=e=>{$('offV').textContent=(+e.target.value).toFixed(2)+'s';updateOut();};
+
+$('tap').onclick=tap;
+$('undo').onclick=undo;
+$('reset').onclick=()=>{ times=[]; previewing=false; renderLines(); updateOut(); };
+$('song').onchange=e=>loadSong(+e.target.value);
+$('applyLyr').onclick=applyEdited;
+$('copy').onclick=()=>{navigator.clipboard&&navigator.clipboard.writeText($('output').value);$('copy').textContent='Copied ✓';setTimeout(()=>$('copy').textContent='Copy',1500);};
+$('preview').onclick=()=>{ previewing=!previewing; $('preview').textContent=previewing?'■ Stop preview':'▶ Preview sync'; markNext(); if(previewing){audio.currentTime=0;audio.play();$('play').textContent='⏸ Pause';} };
+function previewHighlight(){
+  const off=parseFloat($('offset').value)||0; const t=audio.currentTime;
+  let ci=-1; for(let i=0;i<times.length;i++){ if(times[i]+off<=t) ci=i; else break; }
+  document.querySelectorAll('.ln').forEach((el,i)=>{el.classList.toggle('next',i===ci);el.classList.toggle('done',i<ci);});
+  const el=document.querySelector('.ln.next'); if(el) el.scrollIntoView({block:'center',behavior:'smooth'});
+}
+
+document.addEventListener('keydown',e=>{
+  if(e.target.tagName==='TEXTAREA'||e.target.tagName==='SELECT'||e.target.tagName==='INPUT'&&e.target.type!=='range') return;
+  if(e.code==='Space'){e.preventDefault();tap();}
+  else if(e.key==='z'||e.key==='Z'){undo();}
+  else if(e.key==='r'||e.key==='R'){audio.currentTime=0;}
+  else if(e.key==='p'||e.key==='P'){$('play').click();}
+});
+
+loadSong(0);
+</script>
+</body>
+</html>
