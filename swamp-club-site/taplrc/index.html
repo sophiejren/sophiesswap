@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>TapLRC — tap-to-sync lyric timestamps (.lrc maker)</title>
+<meta name="description" content="A tiny, free, no-install web tool to make synced .lrc lyric files. Load audio, paste lyrics, tap along. Everything stays on your device." />
+<style>
+  :root{
+    --bg:#0e1116; --panel:#161b22; --panel2:#1c222c; --line:#272e3a;
+    --ink:#e8edf4; --dim:#8b95a4; --accent:#7c8cff; --accent2:#56d6c2; --good:#56d6a0; --warn:#ffb454;
+    --radius:12px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{font-family:'Inter',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink);
+    line-height:1.5;min-height:100vh;padding:24px 16px 140px;max-width:860px;margin:0 auto}
+  a{color:var(--accent)}
+  h1{font-size:22px;font-weight:700;letter-spacing:-.01em;display:flex;align-items:center;gap:10px}
+  h1 .logo{display:inline-flex;width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--accent),var(--accent2));
+    align-items:center;justify-content:center;font-size:18px}
+  .tag{color:var(--dim);font-size:14px;margin:6px 0 2px}
+  .ghrow{display:flex;gap:14px;align-items:center;font-size:13px;color:var(--dim);margin-top:8px;flex-wrap:wrap}
+  .ghrow a{text-decoration:none}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px;margin-top:16px}
+  .card h2{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--dim);font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+  .step{display:inline-flex;width:20px;height:20px;border-radius:50%;background:var(--accent);color:#0b0e13;font-size:12px;font-weight:700;align-items:center;justify-content:center}
+  .drop{border:1.5px dashed var(--line);border-radius:var(--radius);padding:26px;text-align:center;color:var(--dim);cursor:pointer;transition:.15s}
+  .drop:hover,.drop.over{border-color:var(--accent);color:var(--ink);background:var(--panel2)}
+  .drop b{color:var(--accent)}
+  .loaded{display:flex;align-items:center;gap:10px;font-size:14px}
+  .loaded .dot{width:8px;height:8px;border-radius:50%;background:var(--good)}
+  textarea,input[type=text]{width:100%;background:var(--panel2);border:1px solid var(--line);border-radius:10px;color:var(--ink);
+    font-family:inherit;font-size:14px;padding:11px 13px;resize:vertical}
+  textarea{min-height:150px;line-height:1.6}
+  textarea:focus,input:focus{outline:none;border-color:var(--accent)}
+  .meta{display:flex;gap:10px;margin-top:10px;flex-wrap:wrap}
+  .meta input{flex:1;min-width:140px}
+  .btn{background:var(--panel2);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:10px 16px;
+    font-family:inherit;font-size:14px;font-weight:500;cursor:pointer;transition:.12s}
+  .btn:hover{border-color:var(--accent)} .btn:active{transform:scale(.97)} .btn:disabled{opacity:.4;cursor:default}
+  .btn.primary{background:var(--accent);color:#0b0e13;border-color:var(--accent);font-weight:700}
+  .btn.primary:hover{filter:brightness(1.08)}
+  .row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .transport{display:flex;align-items:center;gap:10px;margin:6px 0 14px}
+  .scrub{flex:1;height:8px;min-width:120px;border-radius:8px;background:var(--panel2);position:relative;cursor:pointer}
+  .fill{position:absolute;left:0;top:0;bottom:0;width:0;background:var(--accent);border-radius:8px}
+  .time{font-size:12px;color:var(--dim);font-variant-numeric:tabular-nums;min-width:96px;text-align:right}
+  .speed{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--dim)}
+  input[type=range]{accent-color:var(--accent)}
+  .tapwrap{position:sticky;top:0;z-index:5;background:linear-gradient(180deg,var(--bg) 72%,transparent);padding:8px 0 10px}
+  .tap{width:100%;padding:20px;border-radius:14px;border:none;background:linear-gradient(135deg,var(--accent),var(--accent2));
+    color:#0b0e13;font-size:18px;font-weight:800;letter-spacing:.02em;cursor:pointer;transition:.08s}
+  .tap:active{transform:scale(.985);filter:brightness(1.1)}
+  .hint{font-size:12.5px;color:var(--dim);text-align:center;margin-top:8px}
+  .lines{margin-top:6px;max-height:none}
+  .ln{display:flex;gap:14px;align-items:baseline;padding:7px 8px;border-radius:8px;transition:.15s}
+  .ln .t{font-size:11px;color:var(--dim);min-width:58px;font-variant-numeric:tabular-nums}
+  .ln .tx{font-size:15px;color:#aab4c2}
+  .ln.done .tx{color:var(--ink)} .ln.done .t{color:var(--accent2)}
+  .ln.next{background:var(--panel2)} .ln.next .tx{color:var(--ink);font-weight:700}
+  .ln.blank{opacity:.5}
+  .out textarea{min-height:130px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px;color:#bfe6d4}
+  .pill{display:inline-flex;gap:0;border:1px solid var(--line);border-radius:9px;overflow:hidden}
+  .pill button{background:var(--panel2);border:none;color:var(--dim);padding:7px 14px;font-size:13px;cursor:pointer}
+  .pill button.on{background:var(--accent);color:#0b0e13;font-weight:600}
+  .foot{position:fixed;left:0;right:0;bottom:0;background:var(--panel);border-top:1px solid var(--line);padding:11px 16px;
+    display:flex;gap:10px;justify-content:center;flex-wrap:wrap;align-items:center}
+  .foot .sp{flex:1}
+  .k{font-family:ui-monospace,monospace;background:var(--panel2);border:1px solid var(--line);padding:1px 6px;border-radius:5px;font-size:12px}
+  .muted{color:var(--dim);font-size:13px}
+  .hide{display:none !important}
+  .priv{margin-top:18px;font-size:12.5px;color:var(--dim);text-align:center}
+  @media(max-width:560px){ .time{min-width:0} h1{font-size:19px} }
+</style>
+</head>
+<body>
+  <h1><span class="logo">♪</span> TapLRC</h1>
+  <p class="tag">Make synced <b>.lrc</b> lyric files by ear — load audio, paste lyrics, tap along. No install, no upload; everything stays on your device.</p>
+  <div class="ghrow">
+    <span><span class="k">Space</span> tap · <span class="k">Z</span> undo · <span class="k">R</span> restart · <span class="k">P</span> play</span>
+    <a href="https://github.com" id="ghLink" target="_blank" rel="noopener">★ Star on GitHub</a>
+  </div>
+
+  <!-- step 1: audio -->
+  <div class="card">
+    <h2><span class="step">1</span> Load your audio</h2>
+    <div class="drop" id="drop">
+      <div id="dropText">Drop an audio file here, or <b>click to choose</b><br><span class="muted">mp3 · wav · m4a · ogg — stays local</span></div>
+      <div class="loaded hide" id="loaded"><span class="dot"></span><span id="audioName"></span> <span class="muted" id="audioDur"></span></div>
+    </div>
+    <input type="file" id="file" accept="audio/*" class="hide" />
+  </div>
+
+  <!-- step 2: lyrics -->
+  <div class="card">
+    <h2><span class="step">2</span> Paste your lyrics</h2>
+    <textarea id="lyrics" placeholder="One line per lyric line.&#10;Repeat choruses as actually sung.&#10;Blank lines become stanza gaps (no tap needed)."></textarea>
+    <div class="meta">
+      <input type="text" id="mTitle" placeholder="Title (optional, for [ti:] tag)" />
+      <input type="text" id="mArtist" placeholder="Artist (optional, for [ar:] tag)" />
+    </div>
+    <div class="row" style="margin-top:12px">
+      <button class="btn primary" id="start">Start syncing →</button>
+      <span class="muted" id="lineCount"></span>
+    </div>
+  </div>
+
+  <!-- step 3: sync -->
+  <div class="card hide" id="syncCard">
+    <h2><span class="step">3</span> Tap each line as it starts</h2>
+    <div class="transport">
+      <button class="btn primary" id="play">▶ Play</button>
+      <button class="btn" id="restart" title="Restart (R)">⟲</button>
+      <div class="scrub" id="scrub"><div class="fill" id="fill"></div></div>
+      <span class="time" id="time">0:00 / 0:00</span>
+    </div>
+    <div class="row" style="margin:-6px 0 10px">
+      <span class="speed">speed <input type="range" id="speed" min="0.5" max="1" step="0.05" value="0.8"><b id="speedV">0.80×</b></span>
+      <span class="muted">tip: 0.75× is easier to tap accurately</span>
+    </div>
+
+    <div class="tapwrap">
+      <button class="tap" id="tap">TAP — line starts now</button>
+      <div class="hint" id="hint"></div>
+    </div>
+
+    <div class="lines" id="linesBox"></div>
+  </div>
+
+  <!-- step 4: export -->
+  <div class="card hide out" id="outCard">
+    <h2><span class="step">4</span> Export</h2>
+    <div class="row" style="justify-content:space-between;margin-bottom:12px">
+      <div class="pill" id="fmtPill">
+        <button data-f="lrc" class="on">.lrc</button>
+        <button data-f="json">JSON</button>
+      </div>
+      <span class="speed">offset <input type="range" id="offset" min="-1.5" max="0.8" step="0.05" value="-0.2"><b id="offV">-0.20s</b></span>
+    </div>
+    <textarea id="output" readonly></textarea>
+    <div class="row" style="margin-top:12px">
+      <button class="btn primary" id="download">Download .lrc</button>
+      <button class="btn" id="copy">Copy</button>
+      <button class="btn" id="preview">▶ Preview sync</button>
+      <span class="sp"></span>
+      <span class="muted" id="progress"></span>
+    </div>
+  </div>
+
+  <p class="priv">🔒 100% local — your audio and lyrics never leave your browser. Free &amp; open source (MIT).</p>
+
+  <div class="foot">
+    <button class="btn" id="undo">↶ Undo (Z)</button>
+    <button class="btn" id="reset">Reset taps</button>
+    <span class="sp"></span>
+    <span class="muted" id="footStat"></span>
+  </div>
+
+  <audio id="audio"></audio>
+
+<script>
+const $=id=>document.getElementById(id);
+const audio=$('audio');
+let lines=[], times=[], previewing=false, ready=false;
+const fmt=s=>(s==null||isNaN(s))?"0:00":Math.floor(s/60)+":"+String(Math.floor(s%60)).padStart(2,'0');
+const lrcStamp=s=>{const m=Math.floor(s/60),sec=(s%60).toFixed(2).padStart(5,'0');return `[${String(m).padStart(2,'0')}:${sec}]`;};
+
+/* ---- step 1: audio loading ---- */
+const drop=$('drop'), fileInput=$('file');
+drop.addEventListener('click',()=>fileInput.click());
+fileInput.addEventListener('change',e=>{ if(e.target.files[0]) loadAudio(e.target.files[0]); });
+['dragover','dragenter'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.add('over');}));
+['dragleave','drop'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.remove('over');}));
+drop.addEventListener('drop',e=>{ const f=[...e.dataTransfer.files].find(f=>f.type.startsWith('audio')); if(f) loadAudio(f); });
+function loadAudio(f){
+  audio.src=URL.createObjectURL(f);
+  $('audioName').textContent=f.name;
+  audio.addEventListener('loadedmetadata',()=>{ $('audioDur').textContent='· '+fmt(audio.duration); },{once:true});
+  $('dropText').classList.add('hide'); $('loaded').classList.remove('hide');
+}
+
+/* ---- step 2 -> 3 ---- */
+$('lyrics').addEventListener('input',()=>{ const n=$('lyrics').value.split('\n').filter(l=>l.trim()).length; $('lineCount').textContent=n?`${n} lines`:''; });
+$('start').onclick=()=>{
+  if(!audio.src){ alert('Load an audio file first (step 1).'); return; }
+  const raw=$('lyrics').value.replace(/\r/g,'').replace(/\n{3,}/g,'\n\n').trim();
+  if(!raw){ alert('Paste some lyrics first (step 2).'); return; }
+  lines=raw.split('\n'); times=[]; previewing=false; ready=true;
+  $('syncCard').classList.remove('hide'); $('outCard').classList.remove('hide');
+  renderLines(); updateOut();
+  $('syncCard').scrollIntoView({behavior:'smooth',block:'start'});
+};
+
+/* ---- sync ---- */
+function renderLines(){
+  const box=$('linesBox'); box.innerHTML='';
+  lines.forEach((tx,i)=>{
+    const blank=tx.trim()==='';
+    const d=document.createElement('div'); d.className='ln'+(blank?' blank':'');
+    d.innerHTML=`<span class="t">${times[i]!=null?fmt(times[i]):'—:—'}</span><span class="tx">${esc(tx)||'·'}</span>`;
+    d.onclick=()=>{ if(times[i]!=null) audio.currentTime=times[i]; };
+    box.appendChild(d);
+  });
+  markNext();
+}
+function esc(s){return String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
+function markNext(){
+  const ci=times.length;
+  [...$('linesBox').children].forEach((el,i)=>{
+    el.classList.toggle('done', i<ci && !previewing);
+    el.classList.toggle('next', i===ci && !previewing);
+  });
+  const next=$('linesBox').querySelector('.next');
+  if(next) next.scrollIntoView({block:'center',behavior:'smooth'});
+  $('hint').textContent = ci<lines.length ? `next: “${(lines[ci]||'·').trim()||'(blank — auto)'}”  ·  ${ci}/${lines.length}` : '✓ done — grab your .lrc below';
+  $('footStat').textContent = `${Math.min(ci,lines.length)}/${lines.length} timed`;
+}
+function tap(){
+  if(previewing||times.length>=lines.length) return;
+  const t=+audio.currentTime.toFixed(2);
+  times.push(t);
+  const cell=$('linesBox').children[times.length-1]; if(cell) cell.querySelector('.t').textContent=fmt(t);
+  while(times.length<lines.length && lines[times.length].trim()===''){ times.push(t); const c=$('linesBox').children[times.length-1]; if(c)c.querySelector('.t').textContent='·'; }
+  markNext(); updateOut();
+}
+function undo(){ if(!times.length)return; times.pop(); while(times.length && lines[times.length] && lines[times.length].trim()==='') times.pop(); renderLines(); updateOut(); }
+
+/* ---- export ---- */
+let fmtMode='lrc';
+function updateOut(){
+  const off=parseFloat($('offset').value)||0;
+  if(fmtMode==='lrc'){
+    let head=''; const ti=$('mTitle').value.trim(), ar=$('mArtist').value.trim();
+    if(ti) head+=`[ti:${ti}]\n`; if(ar) head+=`[ar:${ar}]\n`; head+='[tool:TapLRC]\n';
+    const body=lines.map((tx,i)=> times[i]!=null && tx.trim()!=='' ? lrcStamp(Math.max(0,times[i]+off))+tx.trim() : null ).filter(Boolean).join('\n');
+    $('output').value=head+body;
+  } else {
+    const arr=lines.map((tx,i)=> times[i]!=null ? [Math.max(0,+(times[i]+off).toFixed(2)), tx] : null).filter(Boolean);
+    $('output').value=JSON.stringify(arr);
+  }
+  const done=times.length===lines.length;
+  $('progress').textContent = done? 'complete ✓' : `${times.length}/${lines.length} timed`;
+}
+$('fmtPill').addEventListener('click',e=>{ if(e.target.dataset.f){ fmtMode=e.target.dataset.f;
+  [...$('fmtPill').children].forEach(b=>b.classList.toggle('on',b.dataset.f===fmtMode)); updateOut(); } });
+$('offset').oninput=e=>{ $('offV').textContent=(+e.target.value).toFixed(2)+'s'; updateOut(); };
+$('copy').onclick=()=>{ navigator.clipboard&&navigator.clipboard.writeText($('output').value); $('copy').textContent='Copied ✓'; setTimeout(()=>$('copy').textContent='Copy',1400); };
+$('download').onclick=()=>{
+  const prev=fmtMode; if(fmtMode!=='lrc'){fmtMode='lrc';updateOut();}
+  const name=($('mTitle').value.trim()||'lyrics').replace(/[^\w\-]+/g,'_');
+  const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([$('output').value],{type:'text/plain'}));
+  a.download=name+'.lrc'; document.body.appendChild(a); a.click(); a.remove();
+  if(prev!=='lrc'){fmtMode=prev;updateOut();}
+};
+
+/* ---- transport ---- */
+$('play').onclick=()=>{ if(audio.paused){audio.play();$('play').textContent='⏸ Pause';} else {audio.pause();$('play').textContent='▶ Play';} };
+$('restart').onclick=()=>{ audio.currentTime=0; };
+audio.addEventListener('timeupdate',()=>{
+  $('fill').style.width=(audio.currentTime/audio.duration*100||0)+'%';
+  $('time').textContent=fmt(audio.currentTime)+' / '+fmt(audio.duration);
+  if(previewing) previewHi();
+});
+audio.addEventListener('ended',()=>{ $('play').textContent='▶ Play'; if(previewing){previewing=false;$('preview').textContent='▶ Preview sync';markNext();} });
+$('scrub').onclick=e=>{ const r=e.currentTarget.getBoundingClientRect(); if(audio.duration) audio.currentTime=(e.clientX-r.left)/r.width*audio.duration; };
+$('speed').oninput=e=>{ audio.playbackRate=parseFloat(e.target.value); $('speedV').textContent=(+e.target.value).toFixed(2)+'×'; };
+
+$('tap').onclick=tap; $('undo').onclick=undo;
+$('reset').onclick=()=>{ times=[]; previewing=false; $('preview').textContent='▶ Preview sync'; renderLines(); updateOut(); };
+
+/* ---- preview ---- */
+$('preview').onclick=()=>{ if(!times.length) return; previewing=!previewing; $('preview').textContent=previewing?'■ Stop preview':'▶ Preview sync';
+  markNext(); if(previewing){ audio.currentTime=0; audio.play(); $('play').textContent='⏸ Pause'; } };
+function previewHi(){
+  const off=parseFloat($('offset').value)||0, t=audio.currentTime; let ci=-1;
+  for(let i=0;i<times.length;i++){ if(times[i]+off<=t) ci=i; else break; }
+  [...$('linesBox').children].forEach((el,i)=>{ el.classList.toggle('next',i===ci); el.classList.toggle('done',i<ci); });
+  const el=$('linesBox').querySelector('.next'); if(el) el.scrollIntoView({block:'center',behavior:'smooth'});
+}
+
+/* ---- keys ---- */
+document.addEventListener('keydown',e=>{
+  if(!ready) return;
+  const t=e.target.tagName;
+  if(t==='TEXTAREA'||t==='INPUT'&&e.target.type!=='range'){ return; }
+  if(e.code==='Space'){ e.preventDefault(); tap(); }
+  else if(e.key==='z'||e.key==='Z'){ undo(); }
+  else if(e.key==='r'||e.key==='R'){ audio.currentTime=0; }
+  else if(e.key==='p'||e.key==='P'){ $('play').click(); }
+  else if(e.key==='ArrowLeft'){ audio.currentTime=Math.max(0,audio.currentTime-2); }
+  else if(e.key==='ArrowRight'){ audio.currentTime=Math.min(audio.duration||0,audio.currentTime+2); }
+});
+</script>
+</body>
+</html>
