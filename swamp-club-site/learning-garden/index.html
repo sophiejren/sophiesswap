@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Masters of Graphic Design — Field Notes from the Swamp</title>
+<meta name="description" content="How I learn design — a hand-drawn field guide to 31 masters of graphic design across seven traditions, from Swiss grids to Japanese emptiness. Field Notes No.01 from Sophie's Swamp.">
+<link rel="canonical" href="https://sophieren.com/learning-garden/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Sophie's Swamp">
+<meta property="og:title" content="Masters of Graphic Design — Field Notes from the Swamp">
+<meta property="og:description" content="A hand-drawn field guide to 31 masters of graphic design across seven traditions. How I actually learn design — by redrawing the work.">
+<meta property="og:url" content="https://sophieren.com/learning-garden/">
+<meta property="og:image" content="https://sophieren.com/images/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Masters of Graphic Design — Field Notes from the Swamp">
+<meta name="twitter:description" content="A hand-drawn field guide to 31 masters of graphic design, across seven traditions.">
+<meta name="twitter:image" content="https://sophieren.com/images/og-image.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    /* pulled straight from sophieren.com */
+    --ink:#081310; --swamp-deep:#0b2018; --swamp:#0f2e22; --swamp-light:#16412f;
+    --panel:#102a20; --moss:#1f5238;
+    --neon-yellow:#ffd23f; --neon-pink:#ff4d8d; --neon-cyan:#52ffe0;
+    --neon-orange:#ff8a3d; --neon-lime:#b6ff5b;
+    --cream:#f3eedd; --muted:#86a596; --line:rgba(243,238,221,.12);
+    --plate:#0a1c15;
+    --display:"Bungee",sans-serif;
+    --sans:"Space Grotesk",system-ui,sans-serif;
+  }
+  *,*::before,*::after{box-sizing:border-box;}
+  body{margin:0;background:var(--ink);color:var(--cream);font-family:var(--sans);
+    line-height:1.55;-webkit-font-smoothing:antialiased;}
+  ::selection{background:var(--neon-yellow);color:var(--ink);}
+  a{color:inherit;}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 clamp(20px,5vw,64px);}
+
+  /* breadcrumb bar */
+  .garden-bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+    font-family:var(--display);font-size:11px;letter-spacing:3px;
+    color:var(--neon-yellow);padding:30px 0 0;}
+  .garden-bar .sep{color:var(--muted);opacity:.7;}
+  .garden-bar .crumb{color:var(--muted);}
+
+  header.top{border-bottom:1px solid var(--line);padding:26px 0 36px;}
+  .eyebrow{font-family:var(--sans);font-weight:700;font-size:12px;letter-spacing:2.5px;
+    text-transform:uppercase;color:var(--neon-cyan);margin:0 0 22px;}
+  h1{font-family:var(--display);font-size:clamp(2.1rem,6.2vw,4.4rem);line-height:1.02;
+    letter-spacing:-0.5px;font-weight:700;margin:0;color:var(--cream);max-width:16ch;}
+  h1 .pop{color:var(--neon-yellow);}
+  .deck{font-size:clamp(1rem,1.5vw,1.18rem);color:var(--cream);max-width:60ch;margin:26px 0 0;line-height:1.65;}
+  .deck em{font-style:normal;color:var(--neon-lime);}
+  .meta-row{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;
+    font-family:var(--sans);font-weight:500;font-size:11px;letter-spacing:1.5px;
+    text-transform:uppercase;color:var(--muted);margin-top:30px;}
+  .meta-row a{color:var(--neon-yellow);text-decoration:none;border-bottom:1px solid currentColor;}
+
+  /* each section carries its own neon via --acc */
+  section.cat{padding:56px 0 8px;}
+  .cat-head{display:grid;grid-template-columns:auto 1fr;gap:22px;align-items:baseline;
+    border-top:1px solid var(--line);padding-top:22px;margin-bottom:32px;}
+  .cat-num{font-family:var(--display);font-size:13px;letter-spacing:2px;color:var(--acc);}
+  .cat-title{font-family:var(--display);font-size:clamp(1.2rem,2.6vw,2rem);font-weight:700;
+    letter-spacing:-0.5px;margin:0;color:var(--cream);line-height:1.05;}
+  .cat-note{grid-column:2;font-size:0.95rem;color:var(--muted);margin:8px 0 0;max-width:60ch;line-height:1.6;}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1px;
+    background:var(--line);border:1px solid var(--line);}
+  .card{background:var(--swamp);padding:26px 24px 0;display:flex;flex-direction:column;
+    transition:background .2s;}
+  .card:hover{background:var(--swamp-light);}
+  .card .idx{font-family:var(--display);font-size:10px;letter-spacing:2px;color:var(--acc);margin-bottom:14px;}
+  .card h3{font-family:var(--display);font-size:1.15rem;line-height:1.15;letter-spacing:-0.3px;
+    font-weight:700;margin:0;color:var(--cream);}
+  .card .yrs{font-family:var(--sans);font-weight:500;font-size:11px;color:var(--muted);letter-spacing:1px;margin:9px 0 0;}
+  .card .known{font-weight:700;font-size:0.92rem;margin:16px 0 0;color:var(--cream);}
+  .card p.body{font-size:0.9rem;color:#cfd8cf;margin:10px 0 0;line-height:1.6;}
+  .card p.body em{color:var(--acc);font-style:italic;}
+  .card .take{font-family:var(--sans);font-weight:700;font-size:10.5px;letter-spacing:1px;
+    text-transform:uppercase;color:var(--acc);margin:16px 0 0;padding-top:13px;border-top:1px solid var(--line);}
+  .plate{margin:18px -24px 0;}
+  .plate svg{display:block;width:100%;height:auto;}
+  .plate figcaption{font-family:var(--sans);font-weight:500;font-size:9.5px;letter-spacing:1px;
+    text-transform:uppercase;color:var(--muted);padding:10px 24px 18px;display:flex;
+    justify-content:space-between;align-items:baseline;gap:10px;}
+  .plate figcaption a{color:var(--acc);text-decoration:none;border-bottom:1px solid currentColor;white-space:nowrap;}
+  .plate figcaption a:hover{color:var(--cream);}
+
+  /* field note */
+  .note{margin-top:64px;border-top:1px solid var(--line);padding-top:38px;}
+  .note .tag{font-family:var(--display);font-size:11px;letter-spacing:3px;color:var(--neon-pink);margin:0 0 18px;}
+  .note h2{font-family:var(--display);font-size:clamp(1.3rem,3vw,2.1rem);font-weight:700;
+    letter-spacing:-0.5px;margin:0 0 18px;max-width:22ch;line-height:1.1;color:var(--cream);}
+  .note h2 .pop{color:var(--neon-pink);}
+  .note p{font-size:1.02rem;color:#cfd8cf;max-width:64ch;line-height:1.75;margin:0 0 16px;}
+  .note p em{color:var(--neon-lime);font-style:italic;}
+  .note .sign{font-family:var(--sans);font-weight:500;font-size:11px;letter-spacing:2px;
+    text-transform:uppercase;color:var(--muted);margin-top:24px;}
+
+  footer{border-top:1px solid var(--line);margin-top:54px;padding:28px 0 72px;display:flex;
+    justify-content:space-between;flex-wrap:wrap;gap:12px;align-items:center;
+    font-family:var(--sans);font-weight:500;font-size:11px;letter-spacing:1.5px;
+    text-transform:uppercase;color:var(--muted);}
+  footer .brand{font-family:var(--display);letter-spacing:2px;color:var(--neon-yellow);}
+  footer a{color:var(--neon-yellow);text-decoration:none;border-bottom:1px solid currentColor;}
+
+  @media (max-width:600px){.cat-head{grid-template-columns:1fr;gap:6px;}.cat-note{grid-column:1;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <nav class="garden-bar">
+    <span>SWAMP CLUB · FIELD NOTES</span>
+    <span class="sep">/</span>
+    <span class="crumb">N°01 — The Study</span>
+  </nav>
+
+  <header class="top">
+    <p class="eyebrow">How I Learn Design</p>
+    <h1>Masters of Graphic <span class="pop">Design</span></h1>
+    <p class="deck">This is one corner of the swamp where I keep my teachers. The way I learn design is simple — I go to the source and study the people who shaped how the modern page looks. Thirty-one designers across seven <em>traditions</em>, each redrawn by hand so I actually understand the decision underneath the work, not just admire it.</p>
+    <div class="meta-row"><span>By Sophie · <a href="https://sophieren.com" target="_blank" rel="noopener">sophieren.com</a></span><span>Seven traditions · Thirty-one practitioners · More notes growing →</span></div>
+  </header>
+
+  <section class="cat" style="--acc:var(--neon-cyan);">
+    <div class="cat-head">
+      <span class="cat-num">01</span>
+      <h2 class="cat-title">Swiss Style &amp; Grid Systems</h2>
+      <p class="cat-note">The rational backbone of editorial design — objective, structured, built on the mathematics of the grid. The tradition I lean on most when I want order before expression.</p>
+    </div>
+    <div class="grid">
+      <div class="card">
+        <div class="idx">01 · ZÜRICH</div>
+        <h3>Josef Müller-Brockmann</h3>
+        <div class="yrs">1914–1996 · Switzerland</div>
+        <p class="known">Father of the grid system.</p>
+        <p class="body">His book <em>Grid Systems in Graphic Design</em> codified the modular grid as a discipline. Concert posters built from pure geometry, rhythm and Akzidenz-Grotesk — no decoration, only structure.</p>
+        <p class="take">Take: Structure is the message</p>
+        <figure class="plate"><svg viewBox="0 0 280 150" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg"><rect width="280" height="150" fill="#0a1c15"/><path d="M 24 120 A 30 30 0 0 1 54 150" fill="none" stroke="#f3eedd" stroke-width="2"/><path d="M 24 98 A 52 52 0 0 1 76 150" fill="none" stroke="#f3eedd" stroke-width="3"/><path d="M 24 76 A 74 74 0 0 1 98 150" fill="none" stroke="#f3eedd" stroke-width="4"/><path d="M 24 54 A 96 96 0 0 1 120 150" fill="none" stroke="#52ffe0" stroke-width="5"/><path d="M 24 30 A 120 120 0 0 1 144 150" fill="none" stroke="#f3eedd" stroke-width="6"/><path d="M 24 4 A 146 146 0 0 1 170 150" fill="none" stroke="#f3eedd" stroke-width="7.5"/><path d="M 24 -26 A 176 176 0 0 1 200 150" fill="none" stroke="#f3eedd" stroke-width="9"/></svg><figcaption><span>Musica Viva concert poster</span><a href="https://en.wikipedia.org/wiki/Josef_M%C3%BCller-Brockmann" target="_blank" rel="noopener">View ↗</a></figcaption></figure>
+      </div>
+      <div class="card">
+        <div class="idx">02 · NEW YORK / MILAN</div>
+        <h3>Massimo Vignelli</h3>
+        <div class="yrs">1931–2014 · Italy / USA</div>
+        <p class="known">“If you can design one thing, you can design everything.”</p>
+        <p class="body">The NYC Subway map, the American Airlines identity, the National Park guides. A radical minimalist working from a handful of typefaces — Helvetica, Bodoni, Garamond — who refused fashion.</p>
+        <p class="take">Take: Less, but better — forever</p>
+        <figure class="plate"><svg viewBox="0 0 280 150" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg"><rect width="280" height="150" fill="#0a1c15"/><line x1="18" y1="138" x2="250" y2="18" stroke="#ff4d4d" stroke-width="6" stroke-linecap="round"/><line x1="34" y1="150" x2="266" y2="30" stroke="#52ffe0" stroke-width="6" stroke-linecap="round"/><line x1="6" y1="118" x2="238" y2="-2" stroke="#b6ff5b" stroke-width="6" stroke-linecap="round"/><line x1="50" y1="150" x2="280" y2="46" stroke="#ff8a3d" stroke-width="6" stroke-linecap="round"/><circle cx="108" cy="112" r="5" fill="#0a1c15" stroke="#f3eedd" stroke-width="2"/><circle cx="178" cy="76" r="5" fill="#0a1c15" stroke="#f3eedd" stroke-width="2"/></svg><figcaption><span>NYC Subway map</span><a href="https://en.wikipedia.org/wiki/New_York_City_Subway_map" target="_blank" rel="noopener">View ↗</a></figcaption></figure>
+      </div>
+      <div class="card">
+        <div class="idx">03 · AMSTERDAM</div>
+        <h3>Wim Crouwel</h3>
+        <div class="yrs">1928–2019 · Netherlands</div>
+        <p class="known">“Mr. Gridnik.”</p>
+        <p class="body">Designer of the experimental New Alphabet and decades of Stedelijk Museum catalogues. Pushed systematic, grid-locked typography to its most extreme, machine-logical end.</p>
+        <p class="take">Take: Total systems thinking</p>
+        <figure class="plate"><svg viewBox="0 0 280 150" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg"><rect width="280" height="150" fill="#081310"/><line x1="92" y1="24" x2="182" y2="24" stroke="#1f5238" stroke-width="1"/><line x1="92" y1="42" x2="182" y2="42" stroke="#1f5238" stroke-width="1"/><line x1="92" y1="60" x2="182" y2="60" stroke="#1f5238" stroke-width="1"/><line x1="92" y1="78" x2="182" y2="78" stroke="#1f5238" stroke-width="1"/><line x1="92" y1="96" x2="182" y2="96" stroke="#1f5238" stroke-width="1"/><line x1="92" y1="114" x2="182" y2="114" stroke="#1f5238" stroke-width="1"/><line x1="92" y1="24" x2="92" y2="114" stroke="#1f5238" stroke-width="1"/><line x1="110" y1="24" x2="110" y2="114" stroke="#1f5238" stroke-width="1"/><line x1="128" y1="24" x2="128" y2="114" stroke="#1f5238" stroke-width="1"/><line x1="146" y1="24" x2="146" y2="114" stroke="#1f5238" stroke-width="1"/><line x1="164" y1="24" x2="164" y2="114" stroke="#1f5238" stroke-width="1"/><line x1="182" y1="24" x2="182" y2="114" stroke="#1f5238" stroke-width="1"/><rect x="111" y="25" width="16" height="16" rx="3" fill="#f3eedd"/><rect x="129" y="25" width="16" height="16" rx="3" fill="#f3eedd"/><rect x="147" y="25" width="16" height="16" rx="3" fill="#f3eedd"/><rect x="93" y="43" width="16" height="16" rx="3" fill="#f3eedd"/><rect x="165" y="43" width="16" height="16" rx="3" fill="#f3eedd"/><rect x="93" y="61" width="16" height="16" rx="3" fill="#52ffe0"/><rect x="111" y="61" width="16" height="16" rx="3" fill="#52ffe0"/><rect x="129" y="61" width="16" height="16" rx="3" fill="#52ffe0"/><rect x="147" y="61" width="16" height="16" rx="3" fill="#52ffe0"/><rect x="165" y="61" width="16" height="16" rx="3" fill="#52ffe0"/><rect x="93" y="79" width="16" height="16" rx="3" fill="#f3eedd"/><rect x="111" y="97" width="16" height="16" rx="3" fill="#f3eedd"/><rect x="129" y="97" width="16" height="16" rx="3" fill="#f3eedd"/><rect x="147" y="97" width="16" height="16" rx="3" fill="#f3eedd"/></svg><figcaption><span>New Alphabet</span><a href="https://en.wikipedia.org/wiki/Wim_Crouwel" target="_blank" rel="noopener">View ↗</a></figcaption></figure>
+      </div>
+      <div class="card">
+        <div class="idx">04 · LEIPZIG / BASEL</div>
+        <h3>Jan Tschichold</h3>
+        <div class="yrs">1902–1974 · Germany / Switzerland</div>
+        <p class="known">Author of <em>Die neue Typographie</em>.</p>
+        <p class="body">Codified asymmetric modernist typography, then later wrote the Penguin Books composition rules that disciplined an entire paperback empire. A one-man bridge from the avant-garde to everyday print.</p>
+        <p class="take">Take: Rules set the type free</p>
+        <figure class="plate"><svg viewBox="0 0 280 150" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg"><rect width="280" height="150" fill="#0a1c15"/><rect x="40" y="28" width="6" height="94" fill="#52ffe0"/><rect x="58" y="32" width="150" height="11" fill="#f3eedd"/><rect x="58" y="56" width="96" height="5" fill="#86a596"/><rect x="58" y="68" width="124" height="5" fill="#86a596"/><rect x="58" y="80" width="74" height="5" fill="#86a596"/><line x1="58" y1="102" x2="240" y2="102" stroke="#52ffe0" stroke-width="2"/><rect x="58" y="110" width="44" height="6" fill="#f3eedd"/></svg><figcaption><span>Die neue Typographie</span><a href="https://en.wikipedia.org/wiki/Jan_Tschichold" target="_blank" rel="noopener">View ↗</a></figcaption></figure>
+      </div>
+      <div class="card">
+        <div class="idx">05 · SWITZERLAND / PARIS</div>
+        <h3>Adrian Frutiger</h3>
+        <div class="yrs">1928–2015 · Switzerland</div>
+        <p class="known">Designer of Univers &amp; Frutiger.</p>
+        <p class="body">Mapped the first truly systematic type family — Univers, organised by a numbered weight grid — and drew the signage face for Charles de Gaulle airport that became a global standard for legibility.</p>
+        <p class="take">Take: A typeface is a system, not a shape</p>
+        <figure class="plate"><svg viewBox="0 0 280 150" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg"><rect width="280" height="150" fill="#0a1c15"/><text x="138" y="122" text-anchor="middle" font-family="'Helvetica Neue',Arial,sans-serif" font-weight="700" font-size="132" fill="#f3eedd">a</text><line x1="44" y1="128" x2="236" y2="128" stroke="#52ffe0" stroke-width="3"/></svg><figcaption><span>Univers / Frutiger</span><a href="https://en.wikipedia.org/wiki/Adrian_Frutiger" target="_blank" rel="noopener">View ↗</a></figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="cat" style="--acc:var(--neon-pink);">
+    <div class="cat-head">
+      <span class="cat-num">02</span>
+      <h2 class="cat-title">Magazine &amp; Editorial Design</h2>
+      <p class="cat-note">The art of pacing a reader through pages — white space, scale, contrast, and the choreography of the turning page. The tradition I steal from every time I build a page on my own site.</p>
+    </div>
+    <div class="grid">
+      <div class="card">
+        <div class="idx">06 · NEW YORK</div>
+        <h3>Alexey Brodovitch</h3>
+        <div class="yrs">1898–1971 · Russia / USA</div>
+        <p class="known">Legendary art director of <em>Harper's Bazaar</em>.</p>
+        <p class="body">Over 24 years he defined modern magazine rhythm — dramatic white space, full-bleed photography, type that breathes across the spread. His mantra to students: “Astonish me.”</p>
+        <p class="take">Take: The spread is the unit, not the page</p>
+        <figure class="plate"><svg viewBox="0 0 280 150" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg"><rect width="280" height="150" fill="#0a1c15"/><line x1="140" y1="14" x2="140" y2="136" stroke="#1f5238" stroke-width="1"/><rect x="30" y="30" width="86" height="92" fill="#f3eedd"/><text x="160" y="48" font-family="Georgia,'Times New Roman',serif" font-style="italic" font-size="26" fill="#f3eedd">Bazaar</text><line x1="160" y1="68" x2="248" y2="68" stroke="#86a596" stroke-width="2"/><line x1="160" y1="80" x2="230" y2="80" stroke="#86a596" stroke-width="2"/><line x1="160" y1="92" x2="212" y2="92" stroke="#86a596" stroke-width="2"/><path d="M30 132 C 90 150, 200 100, 250 124" fill="none" stroke="#ff4d8d" stroke-width="2"/></svg><figcaption><span>Harper's Bazaar spreads</span><a href="https://en.wikipedia.org/wiki/Alexey_Brodovitch" target="_blank" rel="noopener">View ↗</a></figcaption></figure>
+      </div>
+      <div class="card">
+        <div class="idx">07 · NEW YORK / PARIS</div>
+        <h3>Fabien Baron</h3>
+        <div class="yrs">b. 1959 · France</div>
+        <p class="known"><em>Harper's Bazaar</em>, <em>Interview</em>, Calvin Klein.</p>
+        <p class="body">The most influential editorial director of the 1990s. Oversized Didot type, stark black-and-white, luxurious emptiness — a contemporary minimal elegance that still defines fashion publishing.</p>
+        <p class="take">Take: Confidence is built from emptiness</p>
+        <figure class="plate"><svg viewBox="0 0 280 150" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg"><rect width="280" height="150" fill="#081310"/><text x="140" y="104" text-anchor="middle" font-family="Didot,'Bodoni MT',Georgia,serif" font-style="italic" font-size="78" fill="#f3eedd">B</text><text x="140" y="130" text-anchor="middle" font-family="'Space Grotesk',Helvetica,Arial,sans-serif" font-size="10" letter-spacing="6" fill="#ff4d8d">BAZAAR</text></svg><figcaption><span>Harper's Bazaar redesign</span><a href="https://en.wikipedia.org/wiki/Fabien_Baron" target="_blank" rel="noopener">View ↗</a></figcaption></figure>
+      </div>
+      <div class="card">
+        <div class="idx">08 · LONDON</div>
+        <h3>Neville Brody</h3>
+        <div class="yrs">b. 1957 · United Kingdom</div>
+        <p class="known">Art director of <em>The Face</em>.</p>
+        <p class="body">Turned 1980s magazine typography into raw, expressive, rule-breaking art. Custom letterforms and bold graphic systems made the page itself feel like youth culture.</p>
+        <p class="take">Take: Type can be attitude</p>
+        <figure class="plate"><svg viewBox="0 0 280 150" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg"><rect width="280" height="150" fill="#0a1c15"/><rect x="0" y="40" width="280" height="40" fill="#f3eedd"/><rect x="34" y="40" width="40" height="40" fill="#ff4d8d"/><text x="140" y="71" text-anchor="middle" font-family="'Arial Black',Helvetica,sans-serif" font-weight="900" font-size="30" letter-spacing="2" fill="#081310">THE FACE</text><text x="34" y="112" font-family="'Space Grotesk',monospace" font-size="11" letter-spacing="3" fill="#f3eedd">NEW WAVE TYPOGRAPHY</text></svg><figcaption><span>The Face</span><a href="https://en.wikipedia.org/wiki/Neville_Brody" target="_blank" rel="noopener">View ↗</a></figcaption></figure>
+      </div>
+      <div class="card">
+        <div class="idx">09 · NEW YORK</div>
+        <h3>Cipe Pineles</h3>
+        <div class="yrs">1908–1991 · Austria / USA</div>
+        <p class="known">First autonomous female art director in the US.</p>
+        <p class="body">Art-directed <em>Seventeen</em>, <em>Charm</em> and <em>Glamour</em>, commissioning fine artists to illustrate editorial and treating young women readers as intelligent. The first woman admitted to the New York Art Directors Club.</p>
+        <p class="take">Take: Respect the reader and the page follows</p>
+        <figure class="plate"><svg viewBox="0 0 280 150" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg"><rect width="280" height="150" fill="#0a1c15"/><rect x="78" y="18" width="124" height="120" fill="#0a1c15" stroke="#f3eedd" stroke-width="2"/><text x="140" y="64" text-anchor="middle" font-family="'Brush Script MT','Snell Roundhand',cursive,Georgia" font-style="italic" font-size="34" fill="#ff4d8d">Charm</text><line x1="96" y1="88" x2="184" y2="88" stroke="#86a596" stroke-width="2"/><line x1="96" y1="100" x2="166" y2="100" stroke="#86a596" stroke-width="2"/><rect x="104" y="112" width="72" height="14" fill="#f3eedd"/></svg><figcaption><span>Charm / Seventeen</span><a href="https://en.wikipedia.org/wiki/Cipe_Pineles" target="_blank" rel="noopener">View ↗</a></figcaption></figure>
+      </div>
+      <div class="card">
+        <div class="idx">10 · NEW YORK</div>
+        <h3>George Lois</h3>
+        <div class="yrs">1931–2022 · USA</div>
+        <p class="known">The <em>Esquire</em> covers.</p>
+        <p class="body">Ninety-two covers that turned a magazine into cultural commentary — Ali pierced by arrows, Warhol drowning in a soup can. Proof that one fearless image can say more than the whole issue.</p>
+        <p class="take">Take: One image, maximum nerve</p>
+        <figure class="plate"><svg viewBox="0 0 280 150" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg"><rect width="280" height="150" fill="#0a1c15"/><rect x="78" y="18" width="124" height="120" fill="#0a1c15" stroke="#f3eedd" stroke-width="2"/><text x="140" y="40" text-anchor="middle" font-family="Georgia,serif" font-weight="bold" font-size="18" letter-spacing="2" fill="#f3eedd">ESQUIRE</text><circle cx="140" cy="92" r="30" fill="none" stroke="#ff4d8d" stroke-width="4"/><line x1="104" y1="92" x2="172" y2="92" stroke="#ff4d8d" stroke-width="3"/><path d="M165 85 L174 92 L165 99" fill="none" stroke="#ff4d8d" stroke-width="3"/></svg><figcaption><span>Esquire covers</span><a href="https://en.wikipedia.org/wiki/George_Lois" target="_blank" rel="noopener">View ↗</a></figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="cat" style="--acc:var(--neon-lime);">
+    <div class="cat-head">
+      <span class="cat-num">03</span>
+      <h2 class="cat-title">Typography, Posters &amp; Identity</h2>
+      <p class="cat-note">Designers who made type and mark do the heavy lifting — from corporate identity to type-as-image. The discipline of saying the most with a single sign.</p>
+    </div>
+    <div class="grid">
+      <div class="card">
+        <div class="idx">11 · NEW YORK</div>
+        <h3>Paula Scher</h3>
+        <div class="yrs">b. 1948 · USA · Pentagram</div>
+        <p class="known">Type as image, environment as canvas.</p>
+        <p class="body">The Public Theater identity, Citibank, the typographic maps. Bold, dense, energetic lettering that fills the whole frame and turns words into pictures.</p>
+        <p class="take">Take: Words can be the image</p>
+        <figure class="plate"><svg viewBox="0 0 280 150" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg"><rect width="280" height="150" fill="#081310"/><text x="20" y="30" font-family="'Arial Narrow','Helvetica Neue',sans-serif" font-weight="800" font-size="30" fill="#f3eedd" letter-spacing="-1" transform="skewX(-6)" >THE</text><text x="20" y="92" font-family="'Arial Narrow','Helvetica Neue',sans-serif" font-weight="800" font-size="54" fill="#b6ff5b" letter-spacing="-1" transform="skewX(-6)" >PUBLIC</text><text x="20" y="132" font-family="'Arial Narrow','Helvetica Neue',sans-serif" font-weight="800" font-size="40" fill="#f3eedd" letter-spacing="-1" transform="skewX(-6)" >THEATER</text></svg><figcaption><span>The Public Theater identity</span><a href="https://en.wikipedia.org/wiki/Paula_Scher" target="_blank" rel="noopener">View ↗</a></figcaption></figure>
+      </div>
+      <div class="card">
+        <div class="idx">12 · LOS ANGELES</div>
+        <h3>Saul Bass</h3>
+        <div class="yrs">1920–1996 · USA</div>
+        <p class="known">Film titles &amp; corporate marks.</p>
+        <p class="body">Title sequences for Hitchcock and Scorsese; logos for AT&amp;T and United Airlines. Reduced complex ideas to a single, unforgettable graphic gesture.</p>
+        <p class="take">Take: One idea, distilled to a symbol</p>
+        <figure class="plate"><svg viewBox="0 0 280 150" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg"><rect width="280" height="150" fill="#0a1c15"/><path d="M 140.0 75.0 L 140.6 75.1 L 141.1 75.4 L 141.6 75.9 L 141.8 76.6 L 141.9 77.4 L 141.7 78.2 L 141.3 79.1 L 140.6 79.9 L 139.7 80.5 L 138.6 81.0 L 137.3 81.2 L 135.9 81.1 L 134.5 80.7 L 133.0 80.0 L 131.7 78.9 L 130.5 77.5 L 129.6 75.8 L 129.0 73.9 L 128.8 71.8 L 129.0 69.6 L 129.7 67.3 L 130.8 65.2 L 132.4 63.2 L 134.4 61.4 L 136.8 60.0 L 139.5 59.1 L 142.4 58.7 L 145.5 58.8 L 148.6 59.5 L 151.7 60.8 L 154.5 62.7 L 157.0 65.2 L 159.0 68.2 L 160.5 71.6 L 161.4 75.4 L 161.6 79.3 L 161.1 83.3 L 159.7 87.3 L 157.7 91.0 L 154.9 94.4 L 151.5 97.3 L 147.4 99.6 L 143.0 101.1 L 138.2 101.9 L 133.3 101.7 L 128.4 100.6 L 123.6 98.6 L 119.2 95.8 L 115.3 92.1 L 112.1 87.6 L 109.7 82.6 L 108.2 77.1 L 107.8 71.3 L 108.4 65.4 L 110.1 59.6 L 112.8 54.1 L 116.6 49.1 L 121.3 44.8 L 126.8 41.4 L 132.9 39.0 L 139.4 37.7 L 146.2 37.6 L 153.0 38.7 L 159.6 41.1 L 165.8 44.7 L 171.2 49.4 L 175.9 55.1 L 179.4 61.7 L 181.8 68.8 L 182.8 76.4 L 182.5 84.2 L 180.7 91.9 L 177.5 99.2 L 173.0 106.0 L 167.3 111.9 L 160.5 116.7 L 152.9 120.3 L 144.6 122.5 L 136.0 123.2 L 127.3 122.3 L 118.8 119.8 L 110.7 115.8 L 103.5 110.3 L 97.2 103.5 L 92.2 95.6 L 88.7 86.9 L 86.8 77.6 L 86.6 67.9 L 88.2 58.3 L 91.5 49.0 L 96.4 40.3 L 102.9 32.6 L 110.8 26.1 L 119.8 21.1 L 129.7 17.8 L 140.1 16.2 L 150.7 16.6 L 161.2 18.9 L 171.2 23.1 L 180.4 29.0 L 188.5 36.6 L 195.1 45.6 L 200.0 55.8 L 203.1 66.8 L 204.2 78.2 L 203.2 89.8 L 200.0 101.1 L 194.9 111.8 L 187.9 121.5 L 179.1 129.8 L 169.0 136.5 L 157.6 141.2 L 145.6 143.9 L 133.1 144.4 L 120.6 142.6 L 108.5 138.6 L 97.3 132.4 L 87.2 124.3 L 78.7 114.4 L 72.1 103.0 L 67.6 90.5 L 65.4 77.3" fill="none" stroke="#b6ff5b" stroke-width="3" stroke-linecap="round"/><circle cx="140" cy="75" r="3.5" fill="#f3eedd"/></svg><figcaption><span>Vertigo title sequence</span><a href="https://en.wikipedia.org/wiki/Saul_Bass" target="_blank" rel="noopener">View ↗</a></figcaption></figure>
+      </div>
+      <div class="card">
+        <div class="idx">13 · NEW YORK</div>
+        <h3>Paul Rand</h3>
+        <div class="yrs">1914–1996 · USA</div>
+        <p class="known">Father of corporate identity.</p>
+        <p class="body">IBM, ABC, UPS, Westinghouse. Brought European modernism to American business and proved a logo could be witty, simple, and built to last for decades.</p>
+        <p class="take">Take: Simplicity is hard-won, not plain</p>
+        <figure class="plate"><svg viewBox="0 0 280 150" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg"><rect width="280" height="150" fill="#0a1c15"/><defs><clipPath id="ibm"><text x="140" y="106" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-weight="bold" font-size="84" letter-spacing="2">IBM</text></clipPath></defs><g clip-path="url(#ibm)"><rect x="40" y="42" width="200" height="5.5" fill="#52ffe0"/><rect x="40" y="50.4" width="200" height="5.5" fill="#52ffe0"/><rect x="40" y="58.8" width="200" height="5.5" fill="#52ffe0"/><rect x="40" y="67.2" width="200" height="5.5" fill="#52ffe0"/><rect x="40" y="75.6" width="200" height="5.5" fill="#52ffe0"/><rect x="40" y="84.0" width="200" height="5.5" fill="#52ffe0"/><rect x="40" y="92.4" width="200" height="5.5" fill="#52ffe0"/><rect x="40" y="100.8" width="200" height="5.5" fill="#52ffe0"/></g></svg><figcaption><span>IBM logo</span><a href="https://en.wikipedia.org/wiki/Paul_Rand" target="_blank" rel="noopener">View ↗</a></figcaption></figure>
+      </div>
+      <div class="card">
+        <div class="idx">14 · NEW YORK</div>
+        <h3>Sagmeister &amp; Walsh</h3>
+        <div class="yrs">Stefan b. 1962 · Jessica b. 1986</div>
+        <p class="known">Conceptual, provocative, hand-made.</p>
+        <p class="body">Album art, TED-stage projects and identity work that treats emotion and risk as raw material. Proof that systematic discipline and wild concept can share a studio.</p>
+        <p class="take">Take: An idea you can feel</p>
+        <figure class="plate"><svg viewBox="0 0 280 150" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg"><rect width="280" height="150" fill="#0a1c15"/><text x="70" y="100" text-anchor="middle" font-family="Georgia,serif" font-weight="bold" font-size="96" fill="#f3eedd" transform="rotate(-12 70 80)">S</text><text x="140" y="100" text-anchor="middle" font-family="Georgia,serif" font-weight="bold" font-size="108" fill="#b6ff5b" transform="rotate(6 140 80)">&amp;</text><text x="210" y="100" text-anchor="middle" font-family="Georgia,serif" font-weight="bold" font-size="96" fill="#f3eedd" transform="rotate(-8 210 80)">W</text><text x="140" y="132" text-anchor="middle" font-family="'Space Grotesk',monospace" font-size="10" letter-spacing="2" fill="#86a596">CONCEPT FIRST</text></svg><figcaption><span>Sagmeister &amp; Walsh studio</span><a href="https://en.wikipedia.org/wiki/Stefan_Sagmeister" target="_blank" rel="noopener">View ↗</a></figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="cat" style="--acc:var(--neon-orange);">
+    <div class="cat-head">
+      <span class="cat-num">04</span>
+      <h2 class="cat-title">Posters &amp; Cultural Landmarks</h2>
+      <p class="cat-note">Work that escaped the design world and entered the culture — images so strong they became part of the shared visual language.</p>
+    </div>
+    <div class="grid">
+      <div class="card">
+        <div class="idx">15 · NEW YORK</div>
+        <h3>Milton Glaser</h3>
+        <div class="yrs">1929–2020 · USA</div>
+        <p class="known">“I♥NY” and the Dylan poster.</p>
+        <p class="body">Co-founder of <em>New York</em> magazine and Push Pin Studios. Warm, eclectic, idea-driven work that bridged fine art and popular communication.</p>
+        <p class="take">Take: An idea beats a style</p>
+        <figure class="plate"><svg viewBox="0 0 280 150" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg"><rect width="280" height="150" fill="#0a1c15"/><text x="96" y="74" text-anchor="middle" font-family="'American Typewriter','Courier New',monospace" font-weight="bold" font-size="52" fill="#f3eedd">I</text><path d="M 168 53.0 C 154.0 36.0 140.0 54.0 168 69.0 C 196.0 54.0 182.0 36.0 168 53.0 Z" fill="#ff4d4d"/><text x="140" y="128" text-anchor="middle" font-family="'American Typewriter','Courier New',monospace" font-weight="bold" font-size="52" fill="#f3eedd">NY</text></svg><figcaption><span>I ♥ NY</span><a href="https://en.wikipedia.org/wiki/I_Love_New_York" target="_blank" rel="noopener">View ↗</a></figcaption></figure>
+      </div>
+      <div class="card">
+        <div class="idx">16 · BASEL</div>
+        <h3>Armin Hofmann</h3>
+        <div class="yrs">1920–2020 · Switzerland</div>
+        <p class="known">The Basel School poster tradition.</p>
+        <p class="body">Master teacher whose posters balanced point, line and plane with near-musical precision. Shaped generations through the Basel design pedagogy.</p>
+        <p class="take">Take: Contrast, reduced to essentials</p>
+        <figure class="plate"><svg viewBox="0 0 280 150" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg"><rect width="280" height="150" fill="#0a1c15"/><rect x="26" y="28" width="74" height="96" fill="#f3eedd" transform="rotate(-8 63 76)"/><path d="M40 120 C 120 30, 200 130, 256 40" fill="none" stroke="#f3eedd" stroke-width="2"/><circle cx="150" cy="118" r="2.0" fill="#f3eedd"/><circle cx="172" cy="118" r="3.6" fill="#f3eedd"/><circle cx="194" cy="118" r="5.2" fill="#f3eedd"/><circle cx="216" cy="118" r="6.8" fill="#f3eedd"/><circle cx="238" cy="118" r="8.4" fill="#f3eedd"/><circle cx="260" cy="118" r="10.0" fill="#ff8a3d"/></svg><figcaption><span>Point, line &amp; plane</span><a href="https://en.wikipedia.org/wiki/Armin_Hofmann" target="_blank" rel="noopener">View ↗</a></figcaption></figure>
+      </div>
+      <div class="card">
+        <div class="idx">17 · NEW YORK</div>
+        <h3>Herb Lubalin</h3>
+        <div class="yrs">1918–1981 · USA</div>
+        <p class="known">Typographic genius; co-creator of Avant Garde.</p>
+        <p class="body">Pioneered “typographics” — letterforms ligatured, overlapped and sculpted into images. The <em>Mother &amp; Child</em> mark and the magazine <em>Avant Garde</em> defined an era of type.</p>
+        <p class="take">Take: Letters are a material to shape</p>
+        <figure class="plate"><svg viewBox="0 0 280 150" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg"><rect width="280" height="150" fill="#0a1c15"/><text x="140" y="116" text-anchor="middle" font-family="Georgia,serif" font-weight="bold" font-size="120" fill="#f3eedd">&amp;</text><circle cx="150" cy="58" r="11" fill="#ff8a3d"/></svg><figcaption><span>Mother &amp; Child / Avant Garde</span><a href="https://en.wikipedia.org/wiki/Herb_Lubalin" target="_blank" rel="noopener">View ↗</a></figcaption></figure>
+      </div>
+      <div class="card">
+        <div class="idx">18 · MOSCOW</div>
+        <h3>El Lissitzky</h3>
+        <div class="yrs">1890–1941 · Russia</div>
+        <p class="known">Constructivist pioneer.</p>
+        <p class="body">“Beat the Whites with the Red Wedge.” Fused art, typography and politics into dynamic geometric compositions that prefigured the entire modernist project.</p>
+        <p class="take">Take: Geometry as force and direction</p>
+        <figure class="plate"><svg viewBox="0 0 280 150" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg"><rect width="280" height="150" fill="#f3eedd"/><rect x="140" y="0" width="140" height="150" fill="#081310"/><circle cx="118" cy="75" r="56" fill="#f3eedd" stroke="#081310" stroke-width="2"/><path d="M250 30 L 250 120 L 96 75 Z" fill="#ff4d4d"/><rect x="20" y="128" width="120" height="6" fill="#081310"/></svg><figcaption><span>Beat the Whites with the Red Wedge</span><a href="https://en.wikipedia.org/wiki/Beat_the_Whites_with_the_Red_Wedge" target="_blank" rel="noopener">View ↗</a></figcaption></figure>
+      </div>
+      <div class="card">
+        <div class="idx">19 · PARIS</div>
+        <h3>A. M. Cassandre</h3>
+        <div class="yrs">1901–1968 · Ukraine / France</div>
+        <p class="known">Art Deco poster master.</p>
+        <p class="body">Posters for the ocean liner <em>Normandie</em>, Dubonnet and the Nord Express — monumental geometry, airbrushed light and integrated lettering that made advertising look like modern art.</p>
+        <p class="take">Take: Scale and geometry as spectacle</p>
+        <figure class="plate"><svg viewBox="0 0 280 150" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg"><rect width="280" height="150" fill="#0a1c15"/><path d="M118 18 L162 18 L150 120 L130 120 Z" fill="#f3eedd"/><rect x="96" y="120" width="88" height="6" fill="#ff8a3d"/><path d="M70 52 q7 -7 14 0" fill="none" stroke="#86a596" stroke-width="2"/><path d="M196 46 q7 -7 14 0" fill="none" stroke="#86a596" stroke-width="2"/><path d="M88 70 q5 -5 10 0" fill="none" stroke="#86a596" stroke-width="2"/></svg><figcaption><span>Normandie poster</span><a href="https://en.wikipedia.org/wiki/A._M._Cassandre" target="_blank" rel="noopener">View ↗</a></figcaption></figure>
+      </div>
+      <div class="card">
+        <div class="idx">20 · LOS ANGELES</div>
+        <h3>Shepard Fairey</h3>
+        <div class="yrs">b. 1970 · USA</div>
+        <p class="known">OBEY &amp; the Obama <em>Hope</em> poster.</p>
+        <p class="body">From a skate-sticker campaign to one of the most reproduced political images ever made. Stencilled propaganda aesthetics turned into street-level mass communication.</p>
+        <p class="take">Take: A poster can still move millions</p>
+        <figure class="plate"><svg viewBox="0 0 280 150" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg"><rect width="280" height="150" fill="#0a1c15"/><path d="M140 26 L149 50 L174 50 L154 65 L162 90 L140 75 L118 90 L126 65 L106 50 L131 50 Z" fill="#f3eedd"/><rect x="74" y="104" width="132" height="30" fill="#ff8a3d"/><text x="140" y="126" text-anchor="middle" font-family="'Arial Black',Helvetica,sans-serif" font-weight="900" font-size="22" letter-spacing="5" fill="#0a1c15">OBEY</text></svg><figcaption><span>OBEY / Hope</span><a href="https://en.wikipedia.org/wiki/Shepard_Fairey" target="_blank" rel="noopener">View ↗</a></figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="cat" style="--acc:var(--neon-yellow);">
+    <div class="cat-head">
+      <span class="cat-num">05</span>
+      <h2 class="cat-title">Digital, New Wave &amp; Postmodern</h2>
+      <p class="cat-note">When the Macintosh arrived, a generation tore up the grid — pixels, layers, noise and type that argues with itself. The tradition closest to the swamp's own remix instinct.</p>
+    </div>
+    <div class="grid">
+      <div class="card">
+        <div class="idx">21 · LOS ANGELES</div>
+        <h3>April Greiman</h3>
+        <div class="yrs">b. 1948 · USA</div>
+        <p class="known">Pioneer of digital design.</p>
+        <p class="body">One of the first designers to treat the Macintosh as a real medium — layering video stills, pixels and type into the hybrid imagery that defined American New Wave. Her <em>Design Quarterly 133</em> was a single fold-out poster of herself, life-size, built from pixels.</p>
+        <p class="take">Take: The computer is a material</p>
+        <figure class="plate"><svg viewBox="0 0 280 150" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg"><rect width="280" height="150" fill="#0a1c15"/><g transform="rotate(-18 140 75)"><rect x="56" y="64" width="168" height="20" fill="#f3eedd" opacity="0.9"/></g><rect x="92" y="40" width="12" height="12" fill="#ffd23f"/><rect x="108" y="40" width="12" height="12" fill="#f3eedd"/><rect x="92" y="56" width="12" height="12" fill="#f3eedd"/><rect x="170" y="92" width="12" height="12" fill="#ffd23f"/><rect x="186" y="92" width="12" height="12" fill="#f3eedd"/><rect x="186" y="108" width="12" height="12" fill="#ffd23f"/><line x1="40" y1="116" x2="240" y2="34" stroke="#52ffe0" stroke-width="1.5" opacity="0.7"/></svg><figcaption><span>Does It Make Sense?</span><a href="https://en.wikipedia.org/wiki/April_Greiman" target="_blank" rel="noopener">View ↗</a></figcaption></figure>
+      </div>
+      <div class="card">
+        <div class="idx">22 · SAN DIEGO</div>
+        <h3>David Carson</h3>
+        <div class="yrs">b. 1954 · USA</div>
+        <p class="known">Art director of <em>Ray Gun</em>.</p>
+        <p class="body">The face of 1990s deconstructed typography — torn grids, illegible-on-purpose layouts, type as raw emotion. He once set a dull interview entirely in a dingbat font. "The end of print," they called it.</p>
+        <p class="take">Take: Break it until it feels something</p>
+        <figure class="plate"><svg viewBox="0 0 280 150" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg"><rect width="280" height="150" fill="#0a1c15"/><text x="66" y="78" font-family="Georgia,serif" font-weight="bold" font-size="62" fill="#f3eedd" transform="rotate(-14 66 78)">R</text><text x="120" y="104" font-family="'Arial Black',sans-serif" font-weight="900" font-size="74" fill="#ffd23f" transform="rotate(11 120 104)">a</text><text x="186" y="70" font-family="Georgia,serif" font-style="italic" font-size="56" fill="#f3eedd" transform="rotate(-7 186 70)">y</text><path d="M28 126 L62 120 L92 130 L132 117 L182 128 L244 119" fill="none" stroke="#86a596" stroke-width="2"/></svg><figcaption><span>Ray Gun / end of print</span><a href="https://en.wikipedia.org/wiki/David_Carson_(graphic_designer)" target="_blank" rel="noopener">View ↗</a></figcaption></figure>
+      </div>
+      <div class="card">
+        <div class="idx">23 · BERKELEY</div>
+        <h3>Licko &amp; VanderLans</h3>
+        <div class="yrs">Zuzana b. 1961 · Rudy b. 1955</div>
+        <p class="known">Founders of <em>Emigre</em>.</p>
+        <p class="body">Their magazine and type foundry made the low-resolution screen a virtue — Licko's bitmap faces embraced the pixel instead of hiding it, and <em>Emigre</em> became the laboratory where digital typography grew up.</p>
+        <p class="take">Take: Design with the grain of the machine</p>
+        <figure class="plate"><svg viewBox="0 0 280 150" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg"><rect width="280" height="150" fill="#0a1c15"/><g fill="#f3eedd"><rect x="104" y="24" width="12" height="12"/><rect x="117" y="24" width="12" height="12"/><rect x="130" y="24" width="12" height="12"/><rect x="143" y="24" width="12" height="12"/><rect x="156" y="24" width="12" height="12"/><rect x="104" y="37" width="12" height="12"/><rect x="104" y="50" width="12" height="12"/><rect x="104" y="76" width="12" height="12"/><rect x="104" y="89" width="12" height="12"/><rect x="104" y="102" width="12" height="12"/><rect x="117" y="102" width="12" height="12"/><rect x="130" y="102" width="12" height="12"/><rect x="143" y="102" width="12" height="12"/><rect x="156" y="102" width="12" height="12"/></g><g fill="#ffd23f"><rect x="104" y="63" width="12" height="12"/><rect x="117" y="63" width="12" height="12"/><rect x="130" y="63" width="12" height="12"/><rect x="143" y="63" width="12" height="12"/></g></svg><figcaption><span>Emigre / bitmap type</span><a href="https://en.wikipedia.org/wiki/Zuzana_Licko" target="_blank" rel="noopener">View ↗</a></figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="cat" style="--acc:var(--neon-cyan);">
+    <div class="cat-head">
+      <span class="cat-num">06</span>
+      <h2 class="cat-title">Japanese &amp; Asian Masters</h2>
+      <p class="cat-note">A whole parallel lineage the Western canon usually skips — where Swiss rationality met Japanese space, calligraphy and emptiness, and produced some of the strongest graphic design on earth.</p>
+    </div>
+    <div class="grid">
+      <div class="card">
+        <div class="idx">24 · TOKYO</div>
+        <h3>Yusaku Kamekura</h3>
+        <div class="yrs">1915–1997 · Japan</div>
+        <p class="known">The Tokyo 1964 Olympics identity.</p>
+        <p class="body">The godfather of modern Japanese graphic design. His rising-sun emblem and photographic posters for the 1964 Games fused European modernism with a distinctly Japanese sense of symbol and ceremony.</p>
+        <p class="take">Take: A nation can be one mark</p>
+        <figure class="plate"><svg viewBox="0 0 280 150" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg"><rect width="280" height="150" fill="#0a1c15"/><circle cx="140" cy="50" r="28" fill="#ff4d4d"/><g fill="none" stroke="#f3eedd" stroke-width="2.5"><circle cx="108" cy="96" r="10"/><circle cx="132" cy="96" r="10"/><circle cx="156" cy="96" r="10"/><circle cx="120" cy="106" r="10"/><circle cx="144" cy="106" r="10"/></g><text x="140" y="136" text-anchor="middle" font-family="Georgia,serif" font-size="12" letter-spacing="3" fill="#52ffe0">TOKYO 1964</text></svg><figcaption><span>Tokyo 1964 emblem</span><a href="https://en.wikipedia.org/wiki/Yusaku_Kamekura" target="_blank" rel="noopener">View ↗</a></figcaption></figure>
+      </div>
+      <div class="card">
+        <div class="idx">25 · TOKYO</div>
+        <h3>Ikko Tanaka</h3>
+        <div class="yrs">1930–2002 · Japan</div>
+        <p class="known">Geometric tradition; creative force behind MUJI.</p>
+        <p class="body">Built faces of Noh and kabuki actors out of pure geometric colour blocks, and shaped the early art direction of MUJI. The cleanest possible meeting of grid logic and Japanese theatre.</p>
+        <p class="take">Take: Tradition, rebuilt from rectangles</p>
+        <figure class="plate"><svg viewBox="0 0 280 150" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg"><rect width="280" height="150" fill="#0a1c15"/><rect x="96" y="22" width="88" height="104" fill="#f3eedd"/><rect x="96" y="22" width="22" height="104" fill="#52ffe0"/><rect x="162" y="22" width="22" height="104" fill="#ff4d4d"/><rect x="122" y="56" width="16" height="6" fill="#0a1c15"/><rect x="144" y="56" width="16" height="6" fill="#0a1c15"/><rect x="130" y="92" width="24" height="7" fill="#ff4d4d"/></svg><figcaption><span>Nihon Buyō poster</span><a href="https://en.wikipedia.org/wiki/Ikko_Tanaka" target="_blank" rel="noopener">View ↗</a></figcaption></figure>
+      </div>
+      <div class="card">
+        <div class="idx">26 · TOKYO</div>
+        <h3>Tadanori Yokoo</h3>
+        <div class="yrs">b. 1936 · Japan</div>
+        <p class="known">Japan's psychedelic provocateur.</p>
+        <p class="body">The anti-Swiss — lurid rising suns, collage, eros and pop, often compared to Warhol but rooted in Japanese print. Proof that a national design culture is big enough to contain its own opposite.</p>
+        <p class="take">Take: Order needs its wild twin</p>
+        <figure class="plate"><svg viewBox="0 0 280 150" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg"><rect width="280" height="150" fill="#0a1c15"/><g stroke="#f3eedd" stroke-width="3"><line x1="140" y1="78" x2="208" y2="78"/><line x1="140" y1="78" x2="199" y2="112"/><line x1="140" y1="78" x2="174" y2="137"/><line x1="140" y1="78" x2="140" y2="146"/><line x1="140" y1="78" x2="106" y2="137"/><line x1="140" y1="78" x2="81" y2="112"/><line x1="140" y1="78" x2="72" y2="78"/><line x1="140" y1="78" x2="81" y2="44"/><line x1="140" y1="78" x2="106" y2="19"/><line x1="140" y1="78" x2="140" y2="10"/><line x1="140" y1="78" x2="174" y2="19"/><line x1="140" y1="78" x2="199" y2="44"/></g><circle cx="140" cy="78" r="20" fill="#ff4d4d"/></svg><figcaption><span>Psychedelic posters</span><a href="https://en.wikipedia.org/wiki/Tadanori_Yokoo" target="_blank" rel="noopener">View ↗</a></figcaption></figure>
+      </div>
+      <div class="card">
+        <div class="idx">27 · TOKYO</div>
+        <h3>Kenya Hara</h3>
+        <div class="yrs">b. 1958 · Japan</div>
+        <p class="known">Art director of MUJI; theorist of <em>emptiness</em>.</p>
+        <p class="body">Built a whole design philosophy around white, void and the un-designed. His MUJI horizon posters say almost nothing on purpose — and let the viewer pour everything in.</p>
+        <p class="take">Take: Emptiness is the loudest space</p>
+        <figure class="plate"><svg viewBox="0 0 280 150" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg"><rect width="280" height="150" fill="#0a1c15"/><line x1="24" y1="92" x2="256" y2="92" stroke="#f3eedd" stroke-width="1.5"/><circle cx="150" cy="92" r="3" fill="#52ffe0"/></svg><figcaption><span>MUJI / Horizon</span><a href="https://en.wikipedia.org/wiki/Kenya_Hara" target="_blank" rel="noopener">View ↗</a></figcaption></figure>
+      </div>
+      <div class="card">
+        <div class="idx">28 · HONG KONG</div>
+        <h3>Kan Tai-keung</h3>
+        <div class="yrs">b. 1942 · China / Hong Kong</div>
+        <p class="known">Ink painting meets modern identity.</p>
+        <p class="body">A founding figure of modern Chinese graphic design, fusing traditional ink-brush gesture and the seal with Western systems — proof the grid can hold a thousand years of calligraphy.</p>
+        <p class="take">Take: Heritage as living material</p>
+        <figure class="plate"><svg viewBox="0 0 280 150" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg"><rect width="280" height="150" fill="#0a1c15"/><path d="M48 44 C 110 64, 150 30, 232 112" fill="none" stroke="#f3eedd" stroke-width="9" stroke-linecap="round" opacity="0.92"/><path d="M58 104 C 120 84, 178 122, 238 74" fill="none" stroke="#86a596" stroke-width="4" stroke-linecap="round"/><rect x="196" y="22" width="30" height="30" fill="#ff4d4d"/><line x1="203" y1="30" x2="203" y2="44" stroke="#f3eedd" stroke-width="2"/><line x1="211" y1="30" x2="211" y2="44" stroke="#f3eedd" stroke-width="2"/><line x1="219" y1="30" x2="219" y2="44" stroke="#f3eedd" stroke-width="2"/></svg><figcaption><span>Ink + modern identity</span><a href="https://en.wikipedia.org/wiki/Kan_Tai-keung" target="_blank" rel="noopener">View ↗</a></figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="cat" style="--acc:var(--neon-pink);">
+    <div class="cat-head">
+      <span class="cat-num">07</span>
+      <h2 class="cat-title">Latin American Masters</h2>
+      <p class="cat-note">Latin America took the imported grid and gave it a wholly new voice — Ulm-trained rigour, revolutionary silkscreen posters, an Olympic identity that became a landmark. Design as identity, and often as resistance.</p>
+    </div>
+    <div class="grid">
+      <div class="card">
+        <div class="idx">29 · MEXICO CITY</div>
+        <h3>Lance Wyman</h3>
+        <div class="yrs">b. 1937 · USA / Mexico</div>
+        <p class="known">The Mexico '68 Olympic identity.</p>
+        <p class="body">American-born, but his system for the 1968 Mexico City Games is the defining landmark of Latin American design identity — radiating Op-Art letterforms fused with pre-Hispanic pattern, and a pictogram language that set the world standard.</p>
+        <p class="take">Take: A place can author a style</p>
+        <figure class="plate"><svg viewBox="0 0 280 150" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg"><rect width="280" height="150" fill="#0a1c15"/><g fill="none" stroke-width="2.5"><circle cx="140" cy="62" r="14" stroke="#f3eedd"/><circle cx="140" cy="62" r="24" stroke="#ff4d8d"/><circle cx="140" cy="62" r="34" stroke="#f3eedd"/><circle cx="140" cy="62" r="44" stroke="#ff4d8d"/></g><text x="140" y="130" text-anchor="middle" font-family="'Arial Black',sans-serif" font-weight="900" font-size="20" letter-spacing="2" fill="#f3eedd">MEXICO 68</text></svg><figcaption><span>Mexico '68 identity</span><a href="https://en.wikipedia.org/wiki/Lance_Wyman" target="_blank" rel="noopener">View ↗</a></figcaption></figure>
+      </div>
+      <div class="card">
+        <div class="idx">30 · SÃO PAULO</div>
+        <h3>Alexandre Wollner</h3>
+        <div class="yrs">1928–2018 · Brazil</div>
+        <p class="known">Father of Brazilian visual design.</p>
+        <p class="body">Ulm-trained, he brought rigorous grid modernism home and built the foundations of Brazilian corporate identity — including the Banco Itaú system. Concrete-art logic, tropical clarity.</p>
+        <p class="take">Take: Import the method, grow your own voice</p>
+        <figure class="plate"><svg viewBox="0 0 280 150" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg"><rect width="280" height="150" fill="#0a1c15"/><rect x="96" y="22" width="88" height="88" fill="none" stroke="#f3eedd" stroke-width="2"/><line x1="125.3" y1="22" x2="125.3" y2="110" stroke="#1f5238" stroke-width="1"/><line x1="154.7" y1="22" x2="154.7" y2="110" stroke="#1f5238" stroke-width="1"/><line x1="96" y1="51.3" x2="184" y2="51.3" stroke="#1f5238" stroke-width="1"/><line x1="96" y1="80.7" x2="184" y2="80.7" stroke="#1f5238" stroke-width="1"/><rect x="154.7" y="22" width="29.3" height="29.3" fill="#ff4d8d"/><circle cx="140" cy="66" r="34" fill="none" stroke="#f3eedd" stroke-width="2"/></svg><figcaption><span>Brazilian modernism</span><a href="https://en.wikipedia.org/wiki/Alexandre_Wollner" target="_blank" rel="noopener">View ↗</a></figcaption></figure>
+      </div>
+      <div class="card">
+        <div class="idx">31 · HAVANA</div>
+        <h3>Félix Beltrán</h3>
+        <div class="yrs">1938–2022 · Cuba / Mexico</div>
+        <p class="known">Father of the Cuban poster.</p>
+        <p class="body">His post-1959 political posters turned flat colour and bold geometry into a revolutionary visual language seen around the world — silkscreen urgency with a designer's precision.</p>
+        <p class="take">Take: A poster is a position</p>
+        <figure class="plate"><svg viewBox="0 0 280 150" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg"><rect width="280" height="150" fill="#0a1c15"/><circle cx="122" cy="68" r="42" fill="#ff4d8d"/><circle cx="162" cy="68" r="42" fill="none" stroke="#f3eedd" stroke-width="4"/><rect x="70" y="120" width="140" height="8" fill="#f3eedd"/></svg><figcaption><span>Cuban poster movement</span><a href="https://en.wikipedia.org/wiki/F%C3%A9lix_Alberto_Beltr%C3%A1n_Concepci%C3%B3n" target="_blank" rel="noopener">View ↗</a></figcaption></figure>
+      </div>
+      </div>
+  </section>
+
+  <section class="note">
+    <p class="tag">FIELD NOTE · WHY I COPY FIRST</p>
+    <h2>Copying the masters before I trust my own <span class="pop">taste</span></h2>
+    <p>I don't learn design by collecting screenshots. I learn it by <em>redrawing</em> the work until I understand the decision underneath it — why the grid lands where it does, why the white space is that big, why one red wedge can carry a whole revolution. Every sketch on this page is something I traced by hand so the idea would stick.</p>
+    <p>Seven traditions, thirty-one people. Some teach me order, some teach me nerve. I keep them in the same swamp on purpose — because the work I want to make lives exactly where Swiss discipline meets a little swamp-club mischief.</p>
+    <p class="sign">— Sophie · Field Notes N°01 · more growing in the swamp</p>
+  </section>
+
+  <footer>
+    <span class="brand">SWAMP CLUB · FIELD NOTES</span>
+    <span><a href="https://sophieren.com" target="_blank" rel="noopener">sophieren.com</a> · More notes growing in the swamp →</span>
+  </footer>
+</div>
+</body>
+</html>
